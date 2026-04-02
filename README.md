@@ -30,6 +30,9 @@ tt parse transcript.txt --out steps.json
 # Build graph only
 tt graph transcript.txt --out graph.json
 
+# Use LLM-assisted bond classification
+tt analyze transcript.txt --backend ollama --model llama3.1:8b
+
 # Pipe from stdin
 cat thinking_block.txt | tt analyze -
 
@@ -71,7 +74,7 @@ Each stage produces a JSON artifact. Stages can be run independently.
 - Bond classification is still heuristic-heavy; contradiction and entropy findings are noisy on long prose traces.
 - Graph connectivity depends on format cues (e.g., headings, labels, discourse markers). Some linear prose still under-links.
 - ASCII rendering is functional but not yet optimized for very large traces (layout compression and emphasis still basic).
-- Optional backend-assisted bond judging hooks exist in code, but CLI plumbing for backend selection is not yet exposed.
+- Optional backend-assisted bond judging is available for `tt graph` and `tt analyze`, but it is not required for the local core pipeline.
 
 ### Repro for current milestone
 

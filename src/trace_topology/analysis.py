@@ -1,8 +1,54 @@
 from __future__ import annotations
 
+import re
 from collections import Counter, defaultdict
 
 from trace_topology.models import AnalysisReport, BondType, Finding, FindingType, TraceGraph
+
+CONCLUSION_RE = re.compile(
+    r"\b(therefore|thus|in conclusion|ultimately|final answer|the answer is|the result is|given everything above)\b",
+    re.IGNORECASE,
+)
+SHIFT_RE = re.compile(r"\b(move on|for now|set that aside|leave that)\b", re.IGNORECASE)
+ABANDON_RE = re.compile(
+    r"\b(cannot finish|can't finish|cannot prove|can't prove|stuck|cannot complete|can't complete)\b",
+    re.IGNORECASE,
+)
+TOKEN_RE = re.compile(r"[a-z]{3,}")
+STOPWORDS = {
+    "the",
+    "and",
+    "that",
+    "this",
+    "with",
+    "from",
+    "they",
+    "them",
+    "their",
+    "there",
+    "same",
+    "must",
+    "should",
+    "would",
+    "could",
+    "into",
+    "every",
+    "fully",
+}
+NEGATION_WORDS = {"not", "never", "no", "without", "none", "cannot", "can't"}
+ANTONYM_MAP = {
+    "visible": "invisible",
+    "invisible": "visible",
+    "expose": "hidden",
+    "hidden": "expose",
+    "public": "private",
+    "private": "public",
+    "transparent": "hidden",
+    "safe": "unsafe",
+    "unsafe": "safe",
+    "allow": "forbid",
+    "forbid": "allow",
+}
 
 
 def _adjacency(graph: TraceGraph) -> dict[str, list[str]]:
@@ -12,11 +58,20 @@ def _adjacency(graph: TraceGraph) -> dict[str, list[str]]:
     return out
 
 
+def _text_tokens(text: str) -> set[str]:
+    return {token for token in TOKEN_RE.findall(text.lower()) if token not in STOPWORDS}
+
+
+def _is_conclusion(step_text: str, step_type: str) -> bool:
+    return step_type == "conclusion" or bool(CONCLUSION_RE.search(step_text))
+
+
 def detect_cycles(graph: TraceGraph) -> list[Finding]:
     adj = _adjacency(graph)
     visited: set[str] = set()
     stack: set[str] = set()
     findings: list[Finding] = []
+    seen_cycles: set[tuple[str, ...]] = set()
 
     def dfs(node: str, path: list[str]) -> None:
         visited.add(node)
@@ -26,6 +81,10 @@ def detect_cycles(graph: TraceGraph) -> list[Finding]:
                 dfs(nxt, path + [nxt])
             elif nxt in stack:
                 cycle_nodes = path[path.index(nxt) :] if nxt in path else [node, nxt]
+                canonical = tuple(sorted(set(cycle_nodes)))
+                if canonical in seen_cycles:
+                    continue
+                seen_cycles.add(canonical)
                 findings.append(
                     Finding(
                         type=FindingType.CYCLE,
@@ -47,13 +106,38 @@ def detect_dangling_nodes(graph: TraceGraph) -> list[Finding]:
     incoming = Counter(b.target for b in graph.bonds)
     outgoing = Counter(b.source for b in graph.bonds)
     findings: list[Finding] = []
+    flagged: set[str] = set()
+    for idx, step in enumerate(graph.steps):
+        step_low = step.text.lower()
+        is_conclusion = _is_conclusion(step.text, step.step_type)
+        next_step = graph.steps[idx + 1] if idx + 1 < len(graph.steps) else None
+
+        if (
+            outgoing[step.id] == 0
+            and incoming[step.id] > 0
+            and next_step is not None
+            and (
+                ABANDON_RE.search(step_low)
+                or SHIFT_RE.search(next_step.text.lower())
+                or step.step_type in {"exploration", "correction"}
+            )
+            and not is_conclusion
+        ):
+            flagged.add(step.id)
+
+        is_isolated = incoming[step.id] == 0 and outgoing[step.id] == 0
+        if not is_isolated or is_conclusion or SHIFT_RE.search(step_low):
+            continue
+        if len(graph.steps) == 1 or 0 < idx < len(graph.steps) - 1:
+            flagged.add(step.id)
+
     for step in graph.steps:
-        if incoming[step.id] == 0 and outgoing[step.id] == 0:
+        if step.id in flagged:
             findings.append(
                 Finding(
                     type=FindingType.DANGLING,
                     steps_involved=[step.id],
-                    description="Reasoning step is disconnected from the graph.",
+                    description="Reasoning branch is abandoned before it reconnects.",
                     severity="moderate",
                     score=0.7,
                 )
@@ -66,7 +150,7 @@ def detect_unsupported_terminals(graph: TraceGraph) -> list[Finding]:
     outgoing = Counter(b.source for b in graph.bonds)
     findings: list[Finding] = []
     for step in graph.steps:
-        if outgoing[step.id] == 0 and step.step_type == "conclusion" and incoming[step.id] == 0:
+        if outgoing[step.id] == 0 and _is_conclusion(step.text, step.step_type) and incoming[step.id] == 0:
             findings.append(
                 Finding(
                     type=FindingType.UNSUPPORTED_TERMINAL,
@@ -85,15 +169,19 @@ def detect_contradictions(graph: TraceGraph) -> list[Finding]:
         for b in graph.steps[i + 1 :]:
             a_low = a.text.lower()
             b_low = b.text.lower()
-            if (
-                "not" in a_low
-                and "not" not in b_low
-                and any(tok in b_low for tok in a_low.replace("not", "").split()[:4])
-            ) or (
-                "not" in b_low
-                and "not" not in a_low
-                and any(tok in a_low for tok in b_low.replace("not", "").split()[:4])
-            ):
+            a_tokens = _text_tokens(a_low)
+            b_tokens = _text_tokens(b_low)
+            shared = a_tokens & b_tokens
+            negated = (
+                bool(NEGATION_WORDS & set(a_low.split())) != bool(NEGATION_WORDS & set(b_low.split()))
+                and len(shared) >= 2
+            )
+            antonym = any(
+                antonym in b_tokens
+                for token in a_tokens
+                if (antonym := ANTONYM_MAP.get(token)) is not None
+            ) and len(shared) >= 1
+            if negated or antonym:
                 findings.append(
                     Finding(
                         type=FindingType.CONTRADICTION,
@@ -107,7 +195,7 @@ def detect_contradictions(graph: TraceGraph) -> list[Finding]:
 
 
 def detect_entropy_divergence(graph: TraceGraph) -> list[Finding]:
-    if len(graph.steps) < 4:
+    if len(graph.steps) < 3:
         return []
     lens = [len(step.text.split()) for step in graph.steps]
     first = sum(lens[: len(lens) // 2]) / max(1, len(lens) // 2)

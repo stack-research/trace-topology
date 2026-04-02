@@ -19,3 +19,19 @@ def test_detects_unsupported_terminal() -> None:
     report = analyze_graph(graph)
     types = {f.type.value for f in report.findings}
     assert "unsupported_terminal" in types
+
+
+def test_targeted_synthetic_primary_findings(samples_dir) -> None:
+    expected = {
+        "synthetic_contradiction_privacy_0001.txt": "contradiction",
+        "synthetic_dangling_multipart_0001.txt": "dangling",
+        "synthetic_entropy_openended_0001.txt": "entropy_divergence",
+        "synthetic_unsupported_terminal_0001.txt": "unsupported_terminal",
+    }
+    for name, finding_type in expected.items():
+        transcript = (samples_dir / name).read_text(encoding="utf-8")
+        steps = parse_transcript(transcript)
+        graph = build_graph(steps, transcript_id=name)
+        report = analyze_graph(graph)
+        types = {finding.type.value for finding in report.findings}
+        assert finding_type in types, name

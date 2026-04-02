@@ -12,20 +12,39 @@ TRANSITION_RE = re.compile(
     r"\b(therefore|because|however|but|wait|actually|reconsider|on the other hand|so)\b",
     re.IGNORECASE,
 )
+LINE_STEP_RE = re.compile(
+    r"^\s*(?:\d+[\.\)]\s+|[-*]\s+|P\d+\s*:|wait\b|actually\b|therefore\b|thus\b|then\b|so\b|but\b)",
+    re.IGNORECASE,
+)
+CONCLUSION_RE = re.compile(
+    r"\b(therefore|thus|in conclusion|ultimately|final answer|the answer is|the result is|given everything above)\b",
+    re.IGNORECASE,
+)
+CORRECTION_RE = re.compile(
+    r"\b(wait|reconsider|i was wrong|that was wrong|correction|mistake|ignored|ignore)\b",
+    re.IGNORECASE,
+)
+EXPLORATION_RE = re.compile(r"\b(maybe|perhaps|could|might|another angle|alternatively)\b", re.IGNORECASE)
+DERIVATION_RE = re.compile(
+    r"\b(because|given|hence|since|which means|this means)\b|^\s*then\b|^\s*actually i should\b",
+    re.IGNORECASE,
+)
 
 
 def _step_type(text: str) -> str:
     low = text.lower()
-    if any(tok in low for tok in ["wait", "actually", "reconsider", "i was wrong"]):
+    if CORRECTION_RE.search(text):
         return "correction"
-    if any(tok in low for tok in ["maybe", "perhaps", "could", "might"]):
-        return "exploration"
-    if any(tok in low for tok in ["therefore", "thus", "so ", "in conclusion", "final"]):
+    if CONCLUSION_RE.search(text):
         return "conclusion"
-    if any(tok in low for tok in ["because", "given", "hence"]):
+    if EXPLORATION_RE.search(text):
+        return "exploration"
+    if DERIVATION_RE.search(text):
         return "derivation"
     if "?" in text:
         return "question"
+    if low.startswith("actually "):
+        return "derivation"
     return "claim"
 
 
@@ -41,9 +60,12 @@ def _split_blocks(text: str) -> list[tuple[int, int, str]]:
     if not text.strip():
         return chunks
 
+    lines = text.splitlines()
+    if _should_split_lines(lines):
+        return _split_by_lines(text, lines)
+
     # For long markdown-ish traces, paragraph boundaries are usually better
     # than splitting on every line wrap.
-    lines = text.splitlines()
     if len(lines) >= 3:
         line_chunks = []
         cursor = 0
@@ -106,6 +128,41 @@ def _split_blocks(text: str) -> list[tuple[int, int, str]]:
         else:
             refined.append((start, end, seg))
     return refined
+
+
+def _should_split_lines(lines: list[str]) -> bool:
+    non_empty = [line.strip() for line in lines if line.strip()]
+    if len(non_empty) < 2:
+        return False
+    if any(not _looks_like_step_line(line) for line in non_empty):
+        return False
+    return True
+
+
+def _looks_like_step_line(line: str) -> bool:
+    stripped = line.strip()
+    if not stripped:
+        return False
+    if LINE_STEP_RE.search(stripped):
+        return True
+    if len(stripped) <= 140 and stripped[-1] in ".!?":
+        return True
+    return False
+
+
+def _split_by_lines(text: str, lines: list[str]) -> list[tuple[int, int, str]]:
+    pieces: list[tuple[int, int, str]] = []
+    cursor = 0
+    for raw in lines:
+        stripped = raw.strip()
+        start = cursor
+        end = cursor + len(raw)
+        cursor = end + 1
+        if not stripped:
+            continue
+        true_start = text.find(stripped, start, end + 1)
+        pieces.append((true_start, true_start + len(stripped), stripped))
+    return pieces
 
 
 def _split_by_transitions(text: str) -> list[tuple[int, int, str]]:

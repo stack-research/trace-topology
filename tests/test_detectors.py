@@ -29,6 +29,21 @@ def test_detect_cycles_positive_and_negative() -> None:
     assert not detect_cycles(g_neg)
 
 
+def test_detect_cycles_deduplicates_same_loop() -> None:
+    graph = TraceGraph(
+        transcript_id="c3",
+        steps=[Step("s1", "a", 0, 1), Step("s2", "b", 2, 3), Step("s3", "c", 4, 5)],
+        bonds=[
+            Bond("s1", "s2", BondType.COVALENT),
+            Bond("s2", "s3", BondType.COVALENT),
+            Bond("s3", "s1", BondType.COVALENT),
+            Bond("s1", "s3", BondType.COVALENT),
+        ],
+    )
+    findings = detect_cycles(graph)
+    assert len(findings) == 1
+
+
 def test_detect_dangling_positive_and_negative() -> None:
     g_pos = TraceGraph(transcript_id="d1", steps=[Step("s1", "alone", 0, 5)], bonds=[])
     g_neg = TraceGraph(

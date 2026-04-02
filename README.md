@@ -71,10 +71,10 @@ Each stage produces a JSON artifact. Stages can be run independently.
 
 ### Known limitations
 
-- Bond classification is still heuristic-heavy; contradiction and entropy findings are noisy on long prose traces.
-- Graph connectivity depends on format cues (e.g., headings, labels, discourse markers). Some linear prose still under-links.
+- **Detectors / findings:** Heuristic-based; behavior is regression-tested on golden fixtures, but long free-form traces can still produce false positives or false negatives.
+- **Graph / bonds:** Support edges are much stronger on gold and several real traces; a common failure mode is **bad step boundaries** (e.g. over-segmented terse traces), not only missing links in linear prose. Format cues (headings, labels, discourse markers) still help.
 - ASCII rendering is functional but not yet optimized for very large traces (layout compression and emphasis still basic).
-- Optional backend-assisted bond judging is available for `tt graph` and `tt analyze`, but it is not required for the local core pipeline.
+- Optional backend-assisted bond judging is available for `tt graph` and `tt analyze` (`--backend none|ollama|anthropic`); it is not required for the local core pipeline.
 
 ### Repro for current milestone
 

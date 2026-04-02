@@ -1,0 +1,117 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "trace-topology annotation",
+  "description": "Ground truth annotation for a reasoning transcript. Created by hand during review. Used as golden test fixtures for parser, graph builder, and analyzer validation.",
+  "type": "object",
+  "required": ["transcript_file", "annotator", "steps", "bonds", "findings"],
+  "properties": {
+    "transcript_file": {
+      "type": "string",
+      "description": "Filename of the .txt transcript this annotates."
+    },
+    "annotator": {
+      "type": "string",
+      "description": "Who created this annotation (human or 'llm-assisted')."
+    },
+    "annotation_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Free-form notes about the transcript's overall structure."
+    },
+    "steps": {
+      "type": "array",
+      "description": "The reasoning trace segmented into logical steps. Each step is a node in the graph.",
+      "items": {
+        "type": "object",
+        "required": ["id", "start_char", "end_char", "summary"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique step ID (e.g., 's1', 's2', ...)."
+          },
+          "start_char": {
+            "type": "integer",
+            "description": "Character offset where this step begins in the transcript."
+          },
+          "end_char": {
+            "type": "integer",
+            "description": "Character offset where this step ends."
+          },
+          "summary": {
+            "type": "string",
+            "description": "One-line summary of what this step claims or does."
+          },
+          "step_type": {
+            "type": "string",
+            "enum": ["claim", "derivation", "assumption", "reflection", "correction", "exploration", "conclusion", "question"],
+            "description": "What kind of reasoning move this step makes."
+          }
+        }
+      }
+    },
+    "bonds": {
+      "type": "array",
+      "description": "Directed edges between steps. Each bond connects a source step to a target step.",
+      "items": {
+        "type": "object",
+        "required": ["from", "to", "type"],
+        "properties": {
+          "from": {
+            "type": "string",
+            "description": "Source step ID."
+          },
+          "to": {
+            "type": "string",
+            "description": "Target step ID."
+          },
+          "type": {
+            "type": "string",
+            "enum": ["covalent", "hydrogen", "vanderwaals"],
+            "description": "Bond type per the molecular framework. covalent=logical dependency, hydrogen=self-reflection/correction, vanderwaals=loose association."
+          },
+          "confidence": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "Annotator's confidence that this bond exists and is correctly typed."
+          },
+          "note": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "findings": {
+      "type": "array",
+      "description": "Structural problems identified by the annotator. Ground truth for the analyzer.",
+      "items": {
+        "type": "object",
+        "required": ["type", "steps_involved", "description"],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["cycle", "dangling", "unsupported_terminal", "contradiction", "entropy_divergence", "bond_imbalance"],
+            "description": "Failure mode type."
+          },
+          "steps_involved": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "Step IDs involved in this finding."
+          },
+          "description": {
+            "type": "string",
+            "description": "Human explanation of the structural problem."
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["minor", "moderate", "severe"],
+            "description": "How much this problem undermines the reasoning."
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,21 @@
+Let's break this down step by step.
+
+1. First, let's consider what would happen if no one was wearing gloves. In that case, each person would shake hands with every other person exactly once. Since there are 8 people in the room, each person would shake hands with 7 others (since they wouldn't shake hands with themselves). However, this means that each handshake is counted twice, since both participants count it as a handshake.
+
+So, if no one was wearing gloves, the total number of handshakes would be:
+
+(8 people) × (7 handshakes per person) = 56
+
+But remember, each handshake is counted twice, so we need to divide by 2 to get the actual number of handshakes:
+
+56 ÷ 2 = 28
+
+Now, let's consider the effect of the gloves. The 3 people wearing gloves will only shake hands with each other, and not with anyone else. This means that these 3 people will have (3 × 2) / 2 = 3 handshakes among themselves.
+
+However, these 3 handshakes are already included in our initial count of 28 handshakes, since we counted all possible handshakes between everyone. So, the effect of the gloves is to remove these 3 handshakes from our total count.
+
+Therefore, the number of actual handshakes is:
+
+28 - 3 = 25
+
+So, there are 25 handshakes that occur among the people in the room.

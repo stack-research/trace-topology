@@ -1,0 +1,17 @@
+{
+  "id": "synthetic_dangling_multipart_0001",
+  "source": "synthetic",
+  "model": "seed-generator",
+  "provocation_id": "dangling_multipart",
+  "category": "dangling",
+  "target_feature": "abandoned threads",
+  "prompt": "Synthetic seed trace",
+  "system": "",
+  "timestamp": "2026-04-02",
+  "trace_file": "synthetic_dangling_multipart_0001.txt",
+  "metadata": {
+    "run_id": "seed",
+    "backend": "synthetic",
+    "char_count": 183
+  }
+}

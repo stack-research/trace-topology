@@ -1,0 +1,25 @@
+Here's my attempt to provide a thorough defense of the incompatibility of free will and determinism:
+
+**Premise 1:** Free will requires that an agent has control over their decisions and actions.
+
+* This is because, intuitively, we think that if someone makes a decision or performs an action solely as a result of external factors beyond their control (e.g., physical laws, prior causes), they are not truly responsible for what happens. Responsibility implies some degree of agency.
+* Agents who lack control over their decisions and actions cannot be held accountable for the consequences of those decisions.
+
+**Premise 2:** Determinism implies that every event, including human decisions and actions, is the inevitable result of prior causes.
+
+* This follows from the definition of determinism: if everything that happens in the world is predetermined by prior events, then it stands to reason that every decision and action must also be determined.
+* If determinism were true, our choices would not be genuine options, but rather predetermined outcomes shaped by factors beyond our control.
+
+**Premise 3:** If an agent's decisions and actions are entirely the result of prior causes, they do not have control over their decisions and actions.
+
+* This is because, if an agent's choices are determined by external factors, then those choices cannot be said to reflect the agent's own desires or intentions. Instead, they would simply be manifestations of a predetermined sequence of events.
+* In such cases, agents lack the capacity for self-determination, which is essential for free will.
+
+**Premise 4:** If an agent lacks control over their decisions and actions, then they do not have genuine free will.
+
+* This follows from Premise 1: since free will requires agency and responsibility, it must also require that agents have control over their choices.
+* Agents who lack control are mere puppets or automatons, incapable of genuine self-determination.
+
+**Conclusion:** Free will is incompatible with determinism because determinism implies that every event, including human decisions and actions, is predetermined by prior causes. Since an agent's lack of control over their decisions and actions is a direct consequence of determinism, free will requires the rejection of determinism.
+
+Note: This argument relies on a specific understanding of free will, which emphasizes agency, responsibility, and self-determination. Other conceptions of free will may lead to different conclusions about its compatibility with determinism.

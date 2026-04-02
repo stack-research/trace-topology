@@ -1,0 +1,22 @@
+{
+  "id": "20260402_074107_self_correction_handshake",
+  "source": "ollama",
+  "model": "deepseek-r1:8b",
+  "provocation_id": "self_correction_handshake",
+  "category": "hydrogen",
+  "target_feature": "self-correction bonds",
+  "prompt": "There are 8 people in a room. Each person shakes hands with every other person exactly once. However, 3 of the people are wearing gloves and refuse to shake hands with anyone not wearing gloves. How many handshakes occur?",
+  "system": "Think step by step. Show all your reasoning.",
+  "timestamp": "20260402_074107",
+  "metadata": {
+    "total_duration_ns": 62894497250,
+    "eval_count": 3019,
+    "eval_duration_ns": 51791743616,
+    "run_id": "20260402_074042_ollama_r1",
+    "backend": "ollama",
+    "temperature": 0.7,
+    "prompt_hash": "c17a7527df41f11315d666e574663a95ef288dd94b075f750fd8d237e75b4d5c",
+    "char_count": 1467
+  },
+  "trace_file": "deepseek-r1-8b_self_correction_handshake_20260402.txt"
+}

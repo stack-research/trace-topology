@@ -1,0 +1,18 @@
+{
+  "transcript_file": "synthetic_contradiction_privacy_0001.txt",
+  "annotator": "llm-assisted-reviewed",
+  "annotation_date": "2026-04-02",
+  "notes": "Transparent-to-all and hidden-from-all conflict.",
+  "steps": [
+    {"id": "s1", "start_char": 0, "end_char": 64, "summary": "Requires universal visibility.", "step_type": "claim"},
+    {"id": "s2", "start_char": 65, "end_char": 143, "summary": "Requires universal invisibility.", "step_type": "claim"},
+    {"id": "s3", "start_char": 144, "end_char": 204, "summary": "Asserts both simultaneously.", "step_type": "conclusion"}
+  ],
+  "bonds": [
+    {"from": "s1", "to": "s3", "type": "covalent", "confidence": 0.6},
+    {"from": "s2", "to": "s3", "type": "covalent", "confidence": 0.6}
+  ],
+  "findings": [
+    {"type": "contradiction", "steps_involved": ["s1", "s2"], "description": "Conflicting constraints.", "severity": "severe"}
+  ]
+}

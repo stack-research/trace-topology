@@ -1,0 +1,17 @@
+{
+  "id": "synthetic_unsupported_terminal_0001",
+  "source": "synthetic",
+  "model": "seed-generator",
+  "provocation_id": "unsupported_terminal",
+  "category": "unsupported",
+  "target_feature": "unsupported terminal",
+  "prompt": "Synthetic seed trace",
+  "system": "",
+  "timestamp": "2026-04-02",
+  "trace_file": "synthetic_unsupported_terminal_0001.txt",
+  "metadata": {
+    "run_id": "seed",
+    "backend": "synthetic",
+    "char_count": 49
+  }
+}

@@ -1,0 +1,4 @@
+P1: Learning improves critical thinking skills.  
+P2: P2 supports P1 because learning involves analyzing information from various sources.  
+P3: P3 supports P2 by stating that analyzing information requires evaluating evidence and arguments.  
+P4: P4 supports P3 by explaining that evaluating evidence prevents biased conclusions, and P4 also justifies P1 since this process enhances critical thinking.

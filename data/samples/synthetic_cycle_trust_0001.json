@@ -1,0 +1,17 @@
+{
+  "id": "synthetic_cycle_trust_0001",
+  "source": "synthetic",
+  "model": "seed-generator",
+  "provocation_id": "circular_trust",
+  "category": "cycles",
+  "target_feature": "circular reasoning",
+  "prompt": "Synthetic seed trace",
+  "system": "",
+  "timestamp": "2026-04-02",
+  "trace_file": "synthetic_cycle_trust_0001.txt",
+  "metadata": {
+    "run_id": "seed",
+    "backend": "synthetic",
+    "char_count": 217
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "id": "break_lab_recursive_mess_0001",
+  "source": "synthetic",
+  "model": "seed-generator",
+  "provocation_id": "break_lab",
+  "category": "mixed",
+  "target_feature": "adversarial formatting",
+  "prompt": "Synthetic break-lab trace",
+  "system": "",
+  "timestamp": "2026-04-02",
+  "trace_file": "break_lab_recursive_mess_0001.txt",
+  "metadata": {
+    "run_id": "seed-break-lab",
+    "backend": "synthetic",
+    "char_count": 158
+  }
+}

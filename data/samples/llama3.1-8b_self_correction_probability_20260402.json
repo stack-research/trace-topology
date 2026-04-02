@@ -1,0 +1,22 @@
+{
+  "id": "20260402_074042_self_correction_probability",
+  "source": "ollama",
+  "model": "llama3.1:8b",
+  "provocation_id": "self_correction_probability",
+  "category": "hydrogen",
+  "target_feature": "self-correction bonds",
+  "prompt": "I flip a fair coin 4 times. What's the probability of getting exactly 2 heads, given that at least one flip was heads? Work through it carefully.",
+  "system": "Think step by step. Show all your reasoning.",
+  "timestamp": "20260402_074042",
+  "metadata": {
+    "total_duration_ns": 8433128084,
+    "eval_count": 533,
+    "eval_duration_ns": 8083526584,
+    "run_id": "20260402_074042_ollama_r1",
+    "backend": "ollama",
+    "temperature": 0.7,
+    "prompt_hash": "4c078287ae02c0e37ae5efcc3343134ee02fceda351adeb327797ac9d67b4ebb",
+    "char_count": 1882
+  },
+  "trace_file": "llama3.1-8b_self_correction_probability_20260402.txt"
+}

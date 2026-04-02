@@ -1,0 +1,15 @@
+The total number of handshakes is calculated by considering that handshakes only occur within the group of people wearing gloves and within the group of people not wearing gloves, but not between the two groups.
+
+There are 3 people wearing gloves, and the number of handshakes among them is given by the combination formula C(3,2) = (3 × 2) / 2 = 3.
+
+There are 5 people not wearing gloves, and the number of handshakes among them is C(5,2) = (5 × 4) / 2 = 10.
+
+Therefore, the total number of handshakes is 3 + 10 = 13.
+
+This result is consistent with the alternative approach of subtracting the forbidden handshakes (between the glove-wearers and non-glove-wearers) from the unrestricted total. The unrestricted number of handshakes for 8 people is C(8,2) = 28. The number of forbidden handshakes is 3 × 5 = 15, so 28 - 15 = 13.
+
+The degree sum approach also confirms this: the glove-wearers each have a degree of 2 (shaking hands with the other 2 glove-wearers), contributing 3 × 2 = 6 to the degree sum. The non-glove-wearers each have a degree of 4 (shaking hands with the other 4 non-glove-wearers), contributing 5 × 4 = 20 to the degree sum. The total degree sum is 26, and since each handshake is counted twice, the number of handshakes is 26 / 2 = 13.
+
+The condition that the glove-wearers refuse to shake hands with non-glove-wearers means that no handshakes occur between the two groups, and the non-glove-wearers have no additional restrictions.
+
+\boxed{13}

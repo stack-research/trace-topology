@@ -1,0 +1,19 @@
+{
+  "transcript_file": "synthetic_dangling_multipart_0001.txt",
+  "annotator": "llm-assisted-reviewed",
+  "annotation_date": "2026-04-02",
+  "notes": "Middle proof attempt is abandoned.",
+  "steps": [
+    {"id": "s1", "start_char": 0, "end_char": 21, "summary": "Computes easy arithmetic.", "step_type": "claim"},
+    {"id": "s2", "start_char": 22, "end_char": 112, "summary": "Begins and abandons twin-prime proof.", "step_type": "exploration"},
+    {"id": "s3", "start_char": 113, "end_char": 139, "summary": "Explicitly moves on.", "step_type": "reflection"},
+    {"id": "s4", "start_char": 140, "end_char": 173, "summary": "Answers third question.", "step_type": "conclusion"}
+  ],
+  "bonds": [
+    {"from": "s1", "to": "s2", "type": "vanderwaals", "confidence": 0.5},
+    {"from": "s3", "to": "s4", "type": "covalent", "confidence": 0.6}
+  ],
+  "findings": [
+    {"type": "dangling", "steps_involved": ["s2"], "description": "Hard subproblem branch abandoned.", "severity": "moderate"}
+  ]
+}

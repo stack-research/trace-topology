@@ -1,0 +1,20 @@
+{
+  "transcript_file": "synthetic_cycle_trust_0001.txt",
+  "annotator": "llm-assisted-reviewed",
+  "annotation_date": "2026-04-02",
+  "notes": "Cycle shape: trust -> reliability -> trust.",
+  "steps": [
+    {"id": "s1", "start_char": 0, "end_char": 53, "summary": "Trust is justified by reliability.", "step_type": "claim"},
+    {"id": "s2", "start_char": 54, "end_char": 113, "summary": "Reliability is justified by trusted adoption.", "step_type": "derivation"},
+    {"id": "s3", "start_char": 114, "end_char": 186, "summary": "Trust conclusion loops to same premise.", "step_type": "conclusion"},
+    {"id": "s4", "start_char": 187, "end_char": 209, "summary": "Argument claims closure.", "step_type": "conclusion"}
+  ],
+  "bonds": [
+    {"from": "s1", "to": "s2", "type": "covalent", "confidence": 0.8},
+    {"from": "s2", "to": "s3", "type": "covalent", "confidence": 0.8},
+    {"from": "s3", "to": "s1", "type": "covalent", "confidence": 0.7}
+  ],
+  "findings": [
+    {"type": "cycle", "steps_involved": ["s1", "s2", "s3"], "description": "Circular support chain.", "severity": "severe"}
+  ]
+}

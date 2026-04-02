@@ -1,0 +1,4 @@
+1) 17 * 23 is 391.
+2) For twin primes, maybe use contradiction and sieve density, but I cannot finish that proof.
+I will move on for now.
+3) The capital of France is Paris.

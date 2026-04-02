@@ -1,0 +1,18 @@
+{
+  "transcript_file": "synthetic_entropy_openended_0001.txt",
+  "annotator": "llm-assisted-reviewed",
+  "annotation_date": "2026-04-02",
+  "notes": "Focus broadens into many domains.",
+  "steps": [
+    {"id": "s1", "start_char": 0, "end_char": 26, "summary": "Initial narrow claim.", "step_type": "claim"},
+    {"id": "s2", "start_char": 27, "end_char": 46, "summary": "Adds policy effects.", "step_type": "derivation"},
+    {"id": "s3", "start_char": 47, "end_char": 275, "summary": "Wide diffuse multi-domain spillover.", "step_type": "exploration"}
+  ],
+  "bonds": [
+    {"from": "s1", "to": "s2", "type": "covalent", "confidence": 0.7},
+    {"from": "s2", "to": "s3", "type": "vanderwaals", "confidence": 0.7}
+  ],
+  "findings": [
+    {"type": "entropy_divergence", "steps_involved": ["s3"], "description": "Reasoning becomes less focused over time.", "severity": "moderate"}
+  ]
+}

@@ -1,0 +1,104 @@
+{
+  "transcript_file": "deepseek-r1-8b_self_correction_handshake_20260402.txt",
+  "annotator": "human-reviewed",
+  "annotation_date": "2026-04-02",
+  "notes": "Real harvested trace. Clean two-group combinatorics derivation converging to 13.",
+  "steps": [
+    {
+      "id": "s1",
+      "start_char": 0,
+      "end_char": 211,
+      "summary": "States grouping strategy for allowed handshakes.",
+      "step_type": "claim"
+    },
+    {
+      "id": "s2",
+      "start_char": 213,
+      "end_char": 349,
+      "summary": "Computes handshake count for glove-wearers.",
+      "step_type": "derivation"
+    },
+    {
+      "id": "s3",
+      "start_char": 351,
+      "end_char": 459,
+      "summary": "Computes handshake count for non-glove group.",
+      "step_type": "derivation"
+    },
+    {
+      "id": "s4",
+      "start_char": 461,
+      "end_char": 518,
+      "summary": "Combines subgroup counts to 13.",
+      "step_type": "conclusion"
+    },
+    {
+      "id": "s5",
+      "start_char": 520,
+      "end_char": 828,
+      "summary": "Cross-check via forbidden-edge subtraction.",
+      "step_type": "derivation"
+    },
+    {
+      "id": "s6",
+      "start_char": 830,
+      "end_char": 1258,
+      "summary": "Cross-check via degree-sum argument.",
+      "step_type": "derivation"
+    },
+    {
+      "id": "s8",
+      "start_char": 1457,
+      "end_char": 1467,
+      "summary": "Final boxed answer 13.",
+      "step_type": "conclusion"
+    }
+  ],
+  "bonds": [
+    {
+      "from": "s1",
+      "to": "s2",
+      "type": "covalent",
+      "confidence": 0.9
+    },
+    {
+      "from": "s1",
+      "to": "s3",
+      "type": "covalent",
+      "confidence": 0.9
+    },
+    {
+      "from": "s2",
+      "to": "s4",
+      "type": "covalent",
+      "confidence": 0.9
+    },
+    {
+      "from": "s3",
+      "to": "s4",
+      "type": "covalent",
+      "confidence": 0.9
+    },
+    {
+      "from": "s4",
+      "to": "s5",
+      "type": "vanderwaals",
+      "confidence": 0.7,
+      "note": "Alternative verification path."
+    },
+    {
+      "from": "s4",
+      "to": "s6",
+      "type": "vanderwaals",
+      "confidence": 0.7,
+      "note": "Second alternative verification."
+    },
+    {
+      "from": "s6",
+      "to": "s8",
+      "type": "covalent",
+      "confidence": 0.9
+    }
+  ],
+  "findings": []
+}

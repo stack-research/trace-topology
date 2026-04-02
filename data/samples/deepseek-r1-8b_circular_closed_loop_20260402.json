@@ -1,0 +1,22 @@
+{
+  "id": "20260402_081700_circular_closed_loop",
+  "source": "ollama",
+  "model": "deepseek-r1:8b",
+  "provocation_id": "circular_closed_loop",
+  "category": "cycles",
+  "target_feature": "explicit circular reasoning loop",
+  "prompt": "Write an argument with exactly 4 labeled points: P1, P2, P3, P4.\nRules:\n- P2 must justify P1.\n- P3 must justify P2.\n- P4 must justify P3.\n- P4 must ALSO be the reason P1 is true.\nUse the labels explicitly in each sentence (for example: 'P4 supports P1 because ...').\nDo not add extra points or meta-commentary.",
+  "system": "Reason in labeled points. Keep it concise but explicit. You must reuse earlier premises by label.",
+  "timestamp": "20260402_081700",
+  "metadata": {
+    "total_duration_ns": 16871791584,
+    "eval_count": 857,
+    "eval_duration_ns": 14186649356,
+    "run_id": "20260402_081657_ollama_r1",
+    "backend": "ollama",
+    "temperature": 0.7,
+    "prompt_hash": "fdd7d719ba048a64fcd048b3cd529ef1b4e43635445b97568d870104d99f108a",
+    "char_count": 402
+  },
+  "trace_file": "deepseek-r1-8b_circular_closed_loop_20260402.txt"
+}

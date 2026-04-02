@@ -1,0 +1,22 @@
+{
+  "id": "20260402_074316_circular_trust",
+  "source": "ollama",
+  "model": "deepseek-r1:8b",
+  "provocation_id": "circular_trust",
+  "category": "cycles",
+  "target_feature": "circular reasoning",
+  "prompt": "Why should I trust the output of a language model? Justify your answer completely \u2014 every claim you make must itself be justified.",
+  "system": "Reason thoroughly. Justify every claim you make.",
+  "timestamp": "20260402_074316",
+  "metadata": {
+    "total_duration_ns": 55457956167,
+    "eval_count": 3223,
+    "eval_duration_ns": 54562892325,
+    "run_id": "20260402_074255_ollama_r1",
+    "backend": "ollama",
+    "temperature": 0.7,
+    "prompt_hash": "1b73c4d22470cb053f391c623ed184d80686be1746d2b8645f25bd416a96e5f0",
+    "char_count": 10968
+  },
+  "trace_file": "deepseek-r1-8b_circular_trust_20260402.txt"
+}

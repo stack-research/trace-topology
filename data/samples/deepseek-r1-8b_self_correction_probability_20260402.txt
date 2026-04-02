@@ -1,0 +1,25 @@
+The probability of getting exactly 2 heads given that at least one flip was heads is calculated using conditional probability.
+
+Let A be the event of exactly 2 heads, and B be the event of at least one head.
+
+Since A implies B (exactly 2 heads means at least one head), A and B is equivalent to A.
+
+Thus, P(A|B) = P(A) / P(B).
+
+The probability of exactly 2 heads in 4 flips of a fair coin is given by the binomial probability formula:
+
+P(A) = C(4,2) * (0.5)^2 * (0.5)^2 = 6 * 0.25 * 0.25 = 0.375
+
+Or, in fraction form: C(4,2) / 16 = 6/16 = 3/8.
+
+The probability of at least one head is the complement of all tails:
+
+P(B) = 1 - P(all tails) = 1 - (0.5)^4 = 1 - 1/16 = 15/16.
+
+Therefore, P(A|B) = (6/16) / (15/16) = (6/16) * (16/15) = 6/15 = 2/5.
+
+Alternatively, in the conditional sample space with 15 outcomes (all except all tails), there are 6 outcomes with exactly 2 heads, so the probability is 6/15 = 2/5.
+
+Both approaches confirm the probability is 2/5.
+
+\boxed{\dfrac{2}{5}}

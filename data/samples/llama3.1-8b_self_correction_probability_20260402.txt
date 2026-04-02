@@ -1,0 +1,53 @@
+To solve this problem, we'll break it down into steps.
+
+**Step 1: Determine the total number of outcomes when flipping a coin 4 times**
+
+Since each flip has two possible outcomes (heads or tails), and there are four flips in total, the total number of outcomes is:
+
+2 × 2 × 2 × 2 = 16
+
+**Step 2: Find the number of ways to get exactly 2 heads in 4 flips**
+
+We can use combinations to calculate this. The formula for combinations is nCr = n! / (r!(n-r)!), where n is the total number of items, and r is the number of items being chosen.
+
+In our case, we want to choose 2 out of 4 flips to be heads:
+
+4C2 = 4! / (2!(4-2)!) = 6
+
+So, there are 6 ways to get exactly 2 heads in 4 flips.
+
+**Step 3: Find the number of outcomes where at least one flip is a head**
+
+Since we're given that at least one flip was heads, we can exclude the cases where all flips are tails (i.e., 0 heads). There's only one way to get 0 heads:
+
+1 outcome
+
+Now, subtract this from the total number of outcomes:
+
+16 - 1 = 15
+
+So, there are 15 outcomes where at least one flip is a head.
+
+**Step 4: Find the probability of getting exactly 2 heads given that at least one flip was heads**
+
+We want to find P(exactly 2 heads | at least 1 head). To do this, we'll use Bayes' theorem:
+
+P(A|B) = P(AB) / P(B)
+
+In our case, A is the event of getting exactly 2 heads (6 outcomes), and B is the event of at least one head (15 outcomes).
+
+We need to find P(AB), which is the probability of both events occurring. Since we're given that at least one flip was a head, the two events are not mutually exclusive.
+
+P(AB) = Number of outcomes with exactly 2 heads and at least one head
+= 6 (from Step 2)
+
+Now, plug in the values:
+
+P(exactly 2 heads | at least 1 head) = P(AB) / P(B)
+= 6/15
+
+Simplify the fraction:
+
+= 2/5
+
+Therefore, the probability of getting exactly 2 heads, given that at least one flip was a head, is **2/5**.

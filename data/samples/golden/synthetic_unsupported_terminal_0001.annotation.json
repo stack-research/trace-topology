@@ -1,0 +1,13 @@
+{
+  "transcript_file": "synthetic_unsupported_terminal_0001.txt",
+  "annotator": "llm-assisted-reviewed",
+  "annotation_date": "2026-04-02",
+  "notes": "Conclusion with no support chain.",
+  "steps": [
+    {"id": "s1", "start_char": 0, "end_char": 48, "summary": "Unsupported confident conclusion.", "step_type": "conclusion"}
+  ],
+  "bonds": [],
+  "findings": [
+    {"type": "unsupported_terminal", "steps_involved": ["s1"], "description": "Conclusion lacks support.", "severity": "severe"}
+  ]
+}

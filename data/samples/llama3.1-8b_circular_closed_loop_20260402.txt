@@ -1,0 +1,7 @@
+P1: The number of people who use public transportation will increase in the next decade.
+
+P2 justifies P1: This claim is supported by the fact that many cities are investing heavily in expanding their public transportation infrastructure (P3).
+
+P3 justifies P2: One reason for this investment is the growing trend of younger generations choosing not to own cars, and instead opting for more sustainable modes of transportation such as buses and trains (P4 supports this claim).
+
+P4 justifies P3: This shift in preference is largely driven by environmental concerns, as many young people are becoming increasingly aware of the negative impact that car ownership has on the environment.

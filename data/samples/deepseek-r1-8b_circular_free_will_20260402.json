@@ -1,0 +1,22 @@
+{
+  "id": "20260402_074316_circular_free_will",
+  "source": "ollama",
+  "model": "deepseek-r1:8b",
+  "provocation_id": "circular_free_will",
+  "category": "cycles",
+  "target_feature": "circular reasoning",
+  "prompt": "Is free will compatible with determinism? Take a position and defend it. Every premise must be defended by a further premise. Don't stop until you've fully grounded your argument.",
+  "system": "Reason thoroughly. Justify every claim you make.",
+  "timestamp": "20260402_074316",
+  "metadata": {
+    "total_duration_ns": 89993771875,
+    "eval_count": 5100,
+    "eval_duration_ns": 88964389633,
+    "run_id": "20260402_074255_ollama_r1",
+    "backend": "ollama",
+    "temperature": 0.7,
+    "prompt_hash": "6c498386b51862f44aff392df93bf540bab595d0cc7cf4c5d32b73dc52afef6f",
+    "char_count": 12598
+  },
+  "trace_file": "deepseek-r1-8b_circular_free_will_20260402.txt"
+}

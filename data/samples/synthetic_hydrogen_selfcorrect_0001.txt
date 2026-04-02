@@ -1,0 +1,4 @@
+I first think the handshake count is 28.
+Wait, that ignores glove restrictions.
+Actually I should separate gloved and ungloved interactions.
+Therefore the first answer was wrong.

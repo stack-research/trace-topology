@@ -1,0 +1,3 @@
+Cryptography may break.
+Then policy shifts.
+Then markets shift because risk repricing, legal adaptation, post-quantum procurement, supply-chain bargaining, regulatory arbitrage, and cross-border treaty effects all stack and feed each other without a clear decision boundary.

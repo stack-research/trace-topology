@@ -1,0 +1,4 @@
+I should trust the model because it is usually reliable.
+It is reliable because trusted systems are the ones we use.
+Therefore we should trust it, since reliable systems are trusted.
+That closes the argument.

@@ -1,0 +1,3 @@
+The audit system must expose every action to all stakeholders.
+To guarantee privacy, the same actions must be hidden from all stakeholders.
+Therefore the log is fully visible and fully invisible at once.

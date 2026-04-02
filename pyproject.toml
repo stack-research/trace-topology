@@ -33,3 +33,5 @@ target-version = "py311"
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I"]
+# Long regex / graph heuristics; wrapping hurts readability.
+extend-ignore = ["E501"]

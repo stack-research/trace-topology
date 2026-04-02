@@ -18,6 +18,19 @@ Output is an ASCII directed graph in the terminal with a JSON artifact underneat
 - No API calls needed for core analysis
 - Optional: [Ollama](https://ollama.com) for LLM-assisted bond classification
 
+## Development
+
+With [uv](https://docs.astral.sh/uv/) installed:
+
+```bash
+uv sync --extra dev
+uv run ruff check .
+uv run ruff format .   # optional
+uv run pytest -q
+```
+
+The Makefile targets (`make install`, `make test`, `make lint`) still work if you prefer a local `.venv` and `pip install -e ".[dev]"`.
+
 ## Usage
 
 ```bash
@@ -36,9 +49,17 @@ tt analyze transcript.txt --backend ollama --model llama3.1:8b
 # Pipe from stdin
 cat thinking_block.txt | tt analyze -
 
+# CI-style gate: exit 1 when the report lists any structural findings
+tt analyze transcript.txt --fail-on-findings
+
 # Evaluate against golden annotations
 tt eval --annotations data/samples/golden --samples data/samples --out eval.json
+
+# Fail the command when average golden metrics drop (optional floors)
+tt eval --annotations data/samples/golden --samples data/samples --min-avg-bond-recall 0.4
 ```
+
+Exit codes: by default commands exit `0`. Use `--fail-on-findings` on `tt analyze` or `--min-avg-*` on `tt eval` to return `1` when gates fail (for CI).
 
 ## What it detects
 

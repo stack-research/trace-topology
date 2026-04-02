@@ -78,6 +78,44 @@ def evaluate_annotation(annotation_path: Path, samples_dir: Path) -> EvalResult:
     )
 
 
+def summary_meets_minimums(
+    summary: dict,
+    *,
+    min_avg_bond_recall: float | None = None,
+    min_avg_bond_precision: float | None = None,
+    min_avg_finding_recall: float | None = None,
+    min_avg_finding_precision: float | None = None,
+) -> tuple[bool, list[str]]:
+    """Return (ok, reasons) comparing eval summary averages to optional floors."""
+    failures: list[str] = []
+    if not summary or summary.get("count", 0) == 0:
+        if any(
+            x is not None
+            for x in (
+                min_avg_bond_recall,
+                min_avg_bond_precision,
+                min_avg_finding_recall,
+                min_avg_finding_precision,
+            )
+        ):
+            failures.append("no annotation results to score (empty summary)")
+        return (not failures, failures)
+
+    checks: list[tuple[str, str, float | None]] = [
+        ("avg_bond_recall", "min_avg_bond_recall", min_avg_bond_recall),
+        ("avg_bond_precision", "min_avg_bond_precision", min_avg_bond_precision),
+        ("avg_finding_recall", "min_avg_finding_recall", min_avg_finding_recall),
+        ("avg_finding_precision", "min_avg_finding_precision", min_avg_finding_precision),
+    ]
+    for key, label, floor in checks:
+        if floor is None:
+            continue
+        value = float(summary.get(key, 0.0))
+        if value < floor:
+            failures.append(f"{key}={value:.4f} below {label}={floor}")
+    return (not failures, failures)
+
+
 def evaluate_annotations(annotation_dir: Path, samples_dir: Path) -> dict:
     results = []
     for path in sorted(annotation_dir.glob("*.json")):

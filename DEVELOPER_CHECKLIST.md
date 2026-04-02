@@ -8,7 +8,7 @@ Use `- [ ]` for open work and `- [x]` for done when you edit this file.
 
 ## Parser (step segmentation)
 
-- [ ] Reduce **over-segmentation** on terse, line-broken traces (e.g. some harvested Llama-style handshakes).
+- [x] Reduce **over-segmentation** on terse, line-broken traces (e.g. some harvested Llama-style handshakes). — Heuristic: line-split only when structural list markers dominate or dense long-line prose blocks; see `data/samples/terse_linebreak_prose_0001.txt`.
 - [ ] Solid coverage for **mixed formats**: numbered lists, markdown headings, thinking blocks, code-heavy traces.
 - [ ] Optional **configurable granularity** (sentence vs paragraph vs heuristic) for power users.
 - [ ] Document parser behavior and failure modes in `README.md` or a short `docs/` note.
@@ -29,13 +29,13 @@ Use `- [ ]` for open work and `- [x]` for done when you edit this file.
 
 - [ ] **ASCII layout** for large traces: compression, grouping, or phase summaries so output stays readable in a normal terminal.
 - [ ] **Stable JSON schemas** across versions; document breaking changes in `README.md`.
-- [ ] **Exit codes** (e.g. non-zero when structural failures exceed a threshold) for CI integration.
-- [ ] Keep **CLI/docs/examples aligned**: when flags or commands change, update `README.md` and `AGENTS.md` in the same pass; keep smoke tests for documented CLI surfaces.
+- [x] **Exit codes** (e.g. non-zero when structural failures exceed a threshold) for CI integration. — `tt analyze --fail-on-findings`; `tt eval --min-avg-bond-recall` (and related floors).
+- [x] Keep **CLI/docs/examples aligned**: when flags or commands change, update `README.md` and `AGENTS.md` in the same pass; keep smoke tests for documented CLI surfaces.
 
 ## Developer experience
 
-- [ ] **CI** (lint + tests on push/PR) if the repo is public or multi-contributor.
-- [ ] **Pre-commit** or documented `make`/`uv` one-liners for format + test before commit.
+- [x] **CI** (lint + tests on push/PR) if the repo is public or multi-contributor. — `.github/workflows/ci.yml` (uv, ruff, pytest).
+- [x] **Pre-commit** or documented `make`/`uv` one-liners for format + test before commit. — README **Development** section + existing Makefile.
 - [ ] **Example sessions** in `README.md`: harvest → analyze → eval on a sample file.
 - [ ] Optional **packaging** polish: `pip install`/Homebrew story if adoption matters.
 - [ ] Preserve the **zero-network core path**: parse/graph/analyze should still work when optional backend dependencies are not installed.
@@ -43,7 +43,7 @@ Use `- [ ]` for open work and `- [x]` for done when you edit this file.
 ## Data and evaluation
 
 - [ ] Grow **golden annotations** for real traces (hand-reviewed or assisted + corrected).
-- [ ] **Regression gates**: `tt eval` summary thresholds or trend notes in this checklist.
+- [x] **Regression gates**: `tt eval` summary thresholds or trend notes in this checklist. — Use `tt eval ... --min-avg-bond-recall F` (and other `--min-avg-*` flags); non-zero exit when below floor.
 - [ ] **UQM / external corpus** import path documented and tested when data is available.
 
 ## Ecosystem (later, if desired)

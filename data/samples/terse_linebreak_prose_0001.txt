@@ -1,0 +1,4 @@
+Let us work step by step.
+Each person shakes seven hands.
+We divide by two to correct double counting.
+The answer is twenty-eight.

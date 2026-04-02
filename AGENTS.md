@@ -100,4 +100,10 @@ tt analyze transcript.txt --backend ollama --model llama3.1:8b
 
 # Pipe from stdin
 cat transcript.txt | tt analyze -
+
+# CI gate: non-zero exit if any findings
+tt analyze transcript.txt --fail-on-findings
+
+# Golden eval with optional metric floors (non-zero if below)
+tt eval --annotations data/samples/golden --samples data/samples --min-avg-bond-recall 0.4
 ```

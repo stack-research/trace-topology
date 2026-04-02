@@ -7,7 +7,7 @@ from pathlib import Path
 import click
 
 from trace_topology.analysis import analyze_graph
-from trace_topology.eval import evaluate_annotations
+from trace_topology.eval import evaluate_annotations, summary_meets_minimums
 from trace_topology.graph import build_graph
 from trace_topology.parser import parse_to_artifact, parse_transcript
 from trace_topology.render import render_graph_ascii, render_report_ascii
@@ -112,12 +112,19 @@ def graph(
     show_default=True,
     help="Base URL for the Ollama backend.",
 )
+@click.option(
+    "--fail-on-findings",
+    is_flag=True,
+    default=False,
+    help="Exit with code 1 if the analysis report contains any findings (for CI gates).",
+)
 def analyze(
     transcript_path: str,
     out_path: str | None,
     backend_name: str,
     model: str | None,
     base_url: str,
+    fail_on_findings: bool,
 ) -> None:
     transcript = _read_input(transcript_path)
     steps = parse_transcript(transcript)
@@ -127,16 +134,65 @@ def analyze(
     payload = report.to_dict()
     _write_json(out_path, payload)
     click.echo(render_report_ascii(report))
+    if fail_on_findings and report.findings:
+        raise click.exceptions.Exit(1)
 
 
 @cli.command("eval")
 @click.option("--annotations", required=True, type=click.Path(path_type=Path, exists=True))
 @click.option("--samples", required=True, type=click.Path(path_type=Path, exists=True))
 @click.option("--out", "out_path", default=None, help="Write eval report JSON.")
-def eval_cmd(annotations: Path, samples: Path, out_path: str | None) -> None:
+@click.option(
+    "--min-avg-bond-recall",
+    type=float,
+    default=None,
+    metavar="F",
+    help="If set, exit 1 when summary avg_bond_recall is below F.",
+)
+@click.option(
+    "--min-avg-bond-precision",
+    type=float,
+    default=None,
+    metavar="F",
+    help="If set, exit 1 when summary avg_bond_precision is below F.",
+)
+@click.option(
+    "--min-avg-finding-recall",
+    type=float,
+    default=None,
+    metavar="F",
+    help="If set, exit 1 when summary avg_finding_recall is below F.",
+)
+@click.option(
+    "--min-avg-finding-precision",
+    type=float,
+    default=None,
+    metavar="F",
+    help="If set, exit 1 when summary avg_finding_precision is below F.",
+)
+def eval_cmd(
+    annotations: Path,
+    samples: Path,
+    out_path: str | None,
+    min_avg_bond_recall: float | None,
+    min_avg_bond_precision: float | None,
+    min_avg_finding_recall: float | None,
+    min_avg_finding_precision: float | None,
+) -> None:
     payload = evaluate_annotations(annotations, samples)
     _write_json(out_path, payload)
     click.echo(json.dumps(payload["summary"], indent=2))
+    ok, reasons = summary_meets_minimums(
+        payload["summary"],
+        min_avg_bond_recall=min_avg_bond_recall,
+        min_avg_bond_precision=min_avg_bond_precision,
+        min_avg_finding_recall=min_avg_finding_recall,
+        min_avg_finding_precision=min_avg_finding_precision,
+    )
+    if not ok:
+        for line in reasons:
+            click.echo(line, err=True)
+        raise click.exceptions.Exit(1)
 
 
 if __name__ == "__main__":

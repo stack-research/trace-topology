@@ -12,8 +12,9 @@ TRANSITION_RE = re.compile(
     r"\b(therefore|because|however|but|wait|actually|reconsider|on the other hand|so)\b",
     re.IGNORECASE,
 )
-LINE_STEP_RE = re.compile(
-    r"^\s*(?:\d+[\.\)]\s+|[-*]\s+|P\d+\s*:|wait\b|actually\b|therefore\b|thus\b|then\b|so\b|but\b)",
+# List / block markers only (excludes discourse words like "so", "but") for deciding line-split mode.
+STRUCTURAL_LINE_RE = re.compile(
+    r"^\s*(?:\d+[\.\)]\s+|[-*]\s+|P\d+\s*:|<redacted_thinking>|</redacted_thinking>|<thinking>|</thinking>)",
     re.IGNORECASE,
 )
 CONCLUSION_RE = re.compile(
@@ -130,23 +131,28 @@ def _split_blocks(text: str) -> list[tuple[int, int, str]]:
     return refined
 
 
+def _has_blank_line_separator(lines: list[str]) -> bool:
+    return any(not raw.strip() for raw in lines)
+
+
 def _should_split_lines(lines: list[str]) -> bool:
+    """Use one-step-per-line only for list-like traces or dense multi-sentence prose blocks.
+
+    Avoid treating every short line in a multi-paragraph trace (e.g. harvested CoT with blank
+    lines) as its own step—that caused severe over-segmentation.
+    """
     non_empty = [line.strip() for line in lines if line.strip()]
     if len(non_empty) < 2:
         return False
-    if any(not _looks_like_step_line(line) for line in non_empty):
-        return False
-    return True
-
-
-def _looks_like_step_line(line: str) -> bool:
-    stripped = line.strip()
-    if not stripped:
-        return False
-    if LINE_STEP_RE.search(stripped):
+    structural = sum(1 for line in non_empty if STRUCTURAL_LINE_RE.search(line))
+    if structural >= 2:
         return True
-    if len(stripped) <= 140 and stripped[-1] in ".!?":
-        return True
+    if structural == 0 and not _has_blank_line_separator(lines):
+        avg_len = sum(len(s) for s in non_empty) / len(non_empty)
+        # Dense prose: e.g. contradiction fixture (long sentences, no list markers).
+        # Short average lines without structure stay merged (terse handshake-style blocks).
+        if avg_len >= 48:
+            return True
     return False
 
 

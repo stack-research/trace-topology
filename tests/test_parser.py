@@ -34,6 +34,13 @@ def test_parse_targeted_synthetic_step_counts(samples_dir) -> None:
         assert len(steps) == expected, name
 
 
+def test_parse_terse_linebreak_prose_not_oversegmented(samples_dir) -> None:
+    """Short lines without list markers should not become one step per line."""
+    transcript = (samples_dir / "terse_linebreak_prose_0001.txt").read_text(encoding="utf-8")
+    steps = parse_transcript(transcript)
+    assert len(steps) <= 2, f"expected merged steps, got {len(steps)}"
+
+
 def test_parse_marks_unsupported_terminal_as_conclusion(samples_dir) -> None:
     transcript = (samples_dir / "synthetic_unsupported_terminal_0001.txt").read_text(
         encoding="utf-8"

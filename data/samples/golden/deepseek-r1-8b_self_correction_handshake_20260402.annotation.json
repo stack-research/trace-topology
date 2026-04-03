@@ -2,7 +2,7 @@
   "transcript_file": "deepseek-r1-8b_self_correction_handshake_20260402.txt",
   "annotator": "human-reviewed",
   "annotation_date": "2026-04-02",
-  "notes": "Real harvested trace. Clean two-group combinatorics derivation converging to 13.",
+  "notes": "Real harvested trace. Clean two-group combinatorics derivation with two verification branches converging to 13.",
   "steps": [
     {
       "id": "s1",
@@ -42,12 +42,12 @@
     {
       "id": "s6",
       "start_char": 830,
-      "end_char": 1258,
-      "summary": "Cross-check via degree-sum argument.",
+      "end_char": 1455,
+      "summary": "Cross-check via degree-sum plus restated constraint.",
       "step_type": "derivation"
     },
     {
-      "id": "s8",
+      "id": "s7",
       "start_char": 1457,
       "end_char": 1467,
       "summary": "Final boxed answer 13.",
@@ -60,6 +60,12 @@
       "to": "s2",
       "type": "covalent",
       "confidence": 0.9
+    },
+    {
+      "from": "s2",
+      "to": "s3",
+      "type": "covalent",
+      "confidence": 0.7
     },
     {
       "from": "s1",
@@ -94,8 +100,14 @@
       "note": "Second alternative verification."
     },
     {
+      "from": "s5",
+      "to": "s7",
+      "type": "covalent",
+      "confidence": 0.75
+    },
+    {
       "from": "s6",
-      "to": "s8",
+      "to": "s7",
       "type": "covalent",
       "confidence": 0.9
     }

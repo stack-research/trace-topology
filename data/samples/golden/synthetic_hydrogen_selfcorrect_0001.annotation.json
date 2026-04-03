@@ -1,20 +1,63 @@
 {
   "transcript_file": "synthetic_hydrogen_selfcorrect_0001.txt",
   "annotator": "llm-assisted-reviewed",
-  "annotation_date": "2026-04-02",
-  "notes": "Clear self-correction structure.",
+  "annotation_date": "2026-04-03",
+  "notes": "Clear self-correction structure without an independent failure mode.",
   "steps": [
-    {"id": "s1", "start_char": 0, "end_char": 42, "summary": "First estimate.", "step_type": "claim"},
-    {"id": "s2", "start_char": 43, "end_char": 79, "summary": "Flags flaw.", "step_type": "correction"},
-    {"id": "s3", "start_char": 80, "end_char": 141, "summary": "Re-frames method.", "step_type": "derivation"},
-    {"id": "s4", "start_char": 142, "end_char": 179, "summary": "Rejects initial answer.", "step_type": "conclusion"}
+    {
+      "id": "s1",
+      "start_char": 0,
+      "end_char": 40,
+      "summary": "First estimate.",
+      "step_type": "claim"
+    },
+    {
+      "id": "s2",
+      "start_char": 41,
+      "end_char": 79,
+      "summary": "Flags flaw.",
+      "step_type": "correction"
+    },
+    {
+      "id": "s3",
+      "start_char": 80,
+      "end_char": 140,
+      "summary": "Re-frames method.",
+      "step_type": "derivation"
+    },
+    {
+      "id": "s4",
+      "start_char": 141,
+      "end_char": 178,
+      "summary": "Rejects initial answer.",
+      "step_type": "conclusion"
+    }
   ],
   "bonds": [
-    {"from": "s1", "to": "s2", "type": "hydrogen", "confidence": 0.9},
-    {"from": "s2", "to": "s3", "type": "hydrogen", "confidence": 0.8},
-    {"from": "s3", "to": "s4", "type": "covalent", "confidence": 0.7}
+    {
+      "from": "s1",
+      "to": "s2",
+      "type": "hydrogen",
+      "confidence": 0.9
+    },
+    {
+      "from": "s2",
+      "to": "s3",
+      "type": "hydrogen",
+      "confidence": 0.8
+    },
+    {
+      "from": "s3",
+      "to": "s4",
+      "type": "covalent",
+      "confidence": 0.7
+    },
+    {
+      "from": "s2",
+      "to": "s4",
+      "type": "covalent",
+      "confidence": 0.7
+    }
   ],
-  "findings": [
-    {"type": "bond_imbalance", "steps_involved": ["s1", "s2", "s3"], "description": "Reflection dominates early chain.", "severity": "minor"}
-  ]
+  "findings": []
 }

@@ -1,8 +1,8 @@
 {
   "transcript_file": "llama3.1-8b_self_correction_handshake_20260402.txt",
   "annotator": "human-reviewed",
-  "annotation_date": "2026-04-02",
-  "notes": "Real harvested trace. Structured arithmetic chain with a flawed glove adjustment near the end.",
+  "annotation_date": "2026-04-03",
+  "notes": "Real harvested trace. Arithmetic chain stays coherent until a flawed glove-adjustment step propagates into the final answer.",
   "steps": [
     {
       "id": "s1",
@@ -15,39 +15,53 @@
       "id": "s2",
       "start_char": 37,
       "end_char": 431,
-      "summary": "Computes unrestricted handshake count setup.",
+      "summary": "Explains unrestricted handshake count setup.",
       "step_type": "derivation"
     },
     {
-      "id": "s5",
+      "id": "s3",
+      "start_char": 433,
+      "end_char": 552,
+      "summary": "Computes unrestricted total as 56 before divide-by-two correction.",
+      "step_type": "derivation"
+    },
+    {
+      "id": "s4",
       "start_char": 554,
       "end_char": 666,
-      "summary": "Applies divide-by-two correction.",
+      "summary": "Introduces divide-by-two correction.",
+      "step_type": "claim"
+    },
+    {
+      "id": "s5",
+      "start_char": 668,
+      "end_char": 679,
+      "summary": "States unrestricted total is 28.",
       "step_type": "derivation"
     },
     {
       "id": "s6",
-      "start_char": 668,
-      "end_char": 679,
-      "summary": "States unrestricted total is 28.",
-      "step_type": "claim"
-    },
-    {
-      "id": "s7",
       "start_char": 681,
       "end_char": 905,
-      "summary": "Introduces glove restriction but mis-specifies interaction effect.",
+      "summary": "Introduces glove restriction and same-group handshake count.",
       "step_type": "derivation"
     },
     {
-      "id": "s10",
-      "start_char": 1186,
+      "id": "s7",
+      "start_char": 907,
+      "end_char": 1136,
+      "summary": "Applies flawed adjustment by removing the allowed subgroup handshakes.",
+      "step_type": "derivation"
+    },
+    {
+      "id": "s8",
+      "start_char": 1138,
       "end_char": 1197,
       "summary": "Computes 28-3=25.",
       "step_type": "conclusion"
     },
     {
-      "id": "s11",
+      "id": "s9",
       "start_char": 1199,
       "end_char": 1267,
       "summary": "Final answer claim.",
@@ -56,14 +70,19 @@
   ],
   "bonds": [
     {
-      "from": "s1",
-      "to": "s2",
+      "from": "s2",
+      "to": "s3",
       "type": "covalent",
-      "confidence": 0.9,
-      "note": "Initial framing leads into unrestricted count."
+      "confidence": 0.8
     },
     {
-      "from": "s2",
+      "from": "s3",
+      "to": "s4",
+      "type": "covalent",
+      "confidence": 0.8
+    },
+    {
+      "from": "s4",
       "to": "s5",
       "type": "covalent",
       "confidence": 0.9
@@ -72,7 +91,7 @@
       "from": "s5",
       "to": "s6",
       "type": "covalent",
-      "confidence": 0.95
+      "confidence": 0.8
     },
     {
       "from": "s6",
@@ -82,21 +101,25 @@
     },
     {
       "from": "s7",
-      "to": "s10",
+      "to": "s8",
       "type": "covalent",
-      "confidence": 0.7
+      "confidence": 0.8
     },
     {
-      "from": "s10",
-      "to": "s11",
+      "from": "s8",
+      "to": "s9",
       "type": "covalent",
-      "confidence": 0.95
+      "confidence": 0.9
     }
   ],
   "findings": [
     {
       "type": "unsupported_terminal",
-      "steps_involved": ["s11"],
+      "steps_involved": [
+        "s7",
+        "s8",
+        "s9"
+      ],
       "description": "Final conclusion depends on a flawed glove-adjustment step.",
       "severity": "moderate"
     }

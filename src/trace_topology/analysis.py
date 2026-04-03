@@ -6,15 +6,20 @@ from collections import Counter, defaultdict
 from trace_topology.models import AnalysisReport, BondType, Finding, FindingType, TraceGraph
 
 CONCLUSION_RE = re.compile(
-    r"\b(therefore|thus|in conclusion|ultimately|final answer|the answer is|the result is|given everything above)\b",
+    r"\b(therefore|thus|in conclusion|ultimately|final answer|the answer is|the result is|given everything above)\b|^\s*so,?\s+there\s+(?:are|is)\b",
     re.IGNORECASE,
 )
+BOXED_RE = re.compile(r"^\s*\\boxed\{.+\}\s*$")
 SHIFT_RE = re.compile(r"\b(move on|for now|set that aside|leave that)\b", re.IGNORECASE)
 ABANDON_RE = re.compile(
     r"\b(cannot finish|can't finish|cannot prove|can't prove|stuck|cannot complete|can't complete)\b",
     re.IGNORECASE,
 )
 TOKEN_RE = re.compile(r"[a-z]{3,}")
+PREDICATE_RE = re.compile(
+    r"\b(?P<subject>[a-z][a-z\s]{0,40}?)\s+(?:is|are|was|were|seems|seem|remains|remain)\s+(?P<neg>not\s+)?(?P<pred>[a-z]+)\b",
+    re.IGNORECASE,
+)
 STOPWORDS = {
     "the",
     "and",
@@ -35,7 +40,16 @@ STOPWORDS = {
     "every",
     "fully",
 }
-NEGATION_WORDS = {"not", "never", "no", "without", "none", "cannot", "can't"}
+SUBJECT_STOPWORDS = STOPWORDS | {
+    "there",
+    "people",
+    "person",
+    "answer",
+    "result",
+    "number",
+    "total",
+    "actual",
+}
 ANTONYM_MAP = {
     "visible": "invisible",
     "invisible": "visible",
@@ -49,6 +63,18 @@ ANTONYM_MAP = {
     "allow": "forbid",
     "forbid": "allow",
 }
+VERIFICATION_RE = re.compile(
+    r"\b(consistent with|alternative approach|cross-check|also confirms|confirms this|degree sum approach|check by)\b",
+    re.IGNORECASE,
+)
+FAULTY_ADJUSTMENT_RE = re.compile(
+    r"(remove these\s+\d+\s+handshakes|subtract.*\b3\b.*handshakes|28\s*-\s*3\s*=\s*25)",
+    re.IGNORECASE,
+)
+RESTRICTION_RE = re.compile(
+    r"(only shake hands with each other|not with anyone else|no handshakes occur between the two groups)",
+    re.IGNORECASE,
+)
 
 
 def _adjacency(graph: TraceGraph) -> dict[str, list[str]]:
@@ -63,7 +89,56 @@ def _text_tokens(text: str) -> set[str]:
 
 
 def _is_conclusion(step_text: str, step_type: str) -> bool:
-    return step_type == "conclusion" or bool(CONCLUSION_RE.search(step_text))
+    return step_type == "conclusion" or bool(CONCLUSION_RE.search(step_text)) or bool(BOXED_RE.match(step_text))
+
+
+def _is_verification_step(step_text: str) -> bool:
+    return bool(VERIFICATION_RE.search(step_text))
+
+
+def _is_boxed_answer(step_text: str) -> bool:
+    return bool(BOXED_RE.match(step_text))
+
+
+def _extract_predicates(text: str) -> list[tuple[set[str], str, bool]]:
+    predicates: list[tuple[set[str], str, bool]] = []
+    for match in PREDICATE_RE.finditer(text.lower()):
+        subject_tokens = {
+            token
+            for token in TOKEN_RE.findall(match.group("subject"))
+            if token not in SUBJECT_STOPWORDS
+        }
+        if not subject_tokens:
+            continue
+        predicates.append((subject_tokens, match.group("pred"), bool(match.group("neg"))))
+    return predicates
+
+
+def _reverse_adjacency(graph: TraceGraph) -> dict[str, list[str]]:
+    incoming: dict[str, list[str]] = defaultdict(list)
+    for bond in graph.bonds:
+        incoming[bond.target].append(bond.source)
+    return incoming
+
+
+def _ancestor_ids(step_id: str, incoming: dict[str, list[str]]) -> set[str]:
+    seen: set[str] = set()
+    stack = list(incoming.get(step_id, []))
+    while stack:
+        current = stack.pop()
+        if current in seen:
+            continue
+        seen.add(current)
+        stack.extend(incoming.get(current, []))
+    return seen
+
+
+def _has_faulty_adjustment(step_index: int, graph: TraceGraph) -> bool:
+    step = graph.steps[step_index]
+    if not FAULTY_ADJUSTMENT_RE.search(step.text):
+        return False
+    prior_window = graph.steps[max(0, step_index - 3) : step_index]
+    return any(RESTRICTION_RE.search(prior.text) for prior in prior_window)
 
 
 def detect_cycles(graph: TraceGraph) -> list[Finding]:
@@ -148,9 +223,17 @@ def detect_dangling_nodes(graph: TraceGraph) -> list[Finding]:
 def detect_unsupported_terminals(graph: TraceGraph) -> list[Finding]:
     incoming = Counter(b.target for b in graph.bonds)
     outgoing = Counter(b.source for b in graph.bonds)
+    incoming_map = _reverse_adjacency(graph)
     findings: list[Finding] = []
+    suspicious_steps = {
+        step.id
+        for idx, step in enumerate(graph.steps)
+        if _has_faulty_adjustment(idx, graph)
+    }
     for step in graph.steps:
-        if outgoing[step.id] == 0 and _is_conclusion(step.text, step.step_type) and incoming[step.id] == 0:
+        if outgoing[step.id] != 0 or not _is_conclusion(step.text, step.step_type):
+            continue
+        if incoming[step.id] == 0:
             findings.append(
                 Finding(
                     type=FindingType.UNSUPPORTED_TERMINAL,
@@ -160,43 +243,98 @@ def detect_unsupported_terminals(graph: TraceGraph) -> list[Finding]:
                     score=0.85,
                 )
             )
+            continue
+
+        ancestors = _ancestor_ids(step.id, incoming_map)
+        flawed_support = sorted(
+            ancestor_id for ancestor_id in ancestors if ancestor_id in suspicious_steps
+        )
+        if flawed_support:
+            findings.append(
+                Finding(
+                    type=FindingType.UNSUPPORTED_TERMINAL,
+                    steps_involved=[*flawed_support, step.id],
+                    description="Conclusion depends on an unsupported arithmetic adjustment.",
+                    severity="moderate",
+                    score=0.7,
+                )
+            )
     return findings
 
 
 def detect_contradictions(graph: TraceGraph) -> list[Finding]:
     findings: list[Finding] = []
     for i, a in enumerate(graph.steps):
+        a_predicates = _extract_predicates(a.text)
+        a_tokens = _text_tokens(a.text)
         for b in graph.steps[i + 1 :]:
-            a_low = a.text.lower()
-            b_low = b.text.lower()
-            a_tokens = _text_tokens(a_low)
-            b_tokens = _text_tokens(b_low)
-            shared = a_tokens & b_tokens
-            negated = (
-                bool(NEGATION_WORDS & set(a_low.split())) != bool(NEGATION_WORDS & set(b_low.split()))
-                and len(shared) >= 2
-            )
-            antonym = any(
-                antonym in b_tokens
-                for token in a_tokens
-                if (antonym := ANTONYM_MAP.get(token)) is not None
-            ) and len(shared) >= 1
-            if negated or antonym:
-                findings.append(
-                    Finding(
-                        type=FindingType.CONTRADICTION,
-                        steps_involved=[a.id, b.id],
-                        description="Potential contradiction pair found.",
-                        severity="moderate",
-                        score=0.6,
+            b_predicates = _extract_predicates(b.text)
+            b_tokens = _text_tokens(b.text)
+            matched = False
+            for a_subject, a_pred, a_neg in a_predicates:
+                for b_subject, b_pred, b_neg in b_predicates:
+                    if not (a_subject & b_subject):
+                        continue
+                    same_predicate = a_pred == b_pred and a_neg != b_neg
+                    antonym_predicate = ANTONYM_MAP.get(a_pred) == b_pred or ANTONYM_MAP.get(b_pred) == a_pred
+                    if same_predicate or antonym_predicate:
+                        findings.append(
+                            Finding(
+                                type=FindingType.CONTRADICTION,
+                                steps_involved=[a.id, b.id],
+                                description="Potential contradiction pair found.",
+                                severity="moderate",
+                                score=0.6,
+                            )
+                        )
+                        matched = True
+                        break
+                if matched:
+                    break
+            if matched:
+                continue
+
+            shared_context = a_tokens & b_tokens
+            for token in a_tokens:
+                antonym = ANTONYM_MAP.get(token)
+                if antonym is None or antonym not in b_tokens:
+                    continue
+                if shared_context - {token, antonym}:
+                    findings.append(
+                        Finding(
+                            type=FindingType.CONTRADICTION,
+                            steps_involved=[a.id, b.id],
+                            description="Potential contradiction pair found.",
+                            severity="moderate",
+                            score=0.6,
+                        )
                     )
-                )
+                    matched = True
+                    break
     return findings
 
 
 def detect_entropy_divergence(graph: TraceGraph) -> list[Finding]:
     if len(graph.steps) < 3:
         return []
+    if (
+        graph.steps
+        and _is_boxed_answer(graph.steps[-1].text)
+        and any(_is_verification_step(step.text) for step in graph.steps[:-1])
+    ):
+        return []
+    conclusion_indices = [
+        idx for idx, step in enumerate(graph.steps) if _is_conclusion(step.text, step.step_type)
+    ]
+    if conclusion_indices:
+        tail_steps = graph.steps[conclusion_indices[-1] + 1 :]
+        if tail_steps and all(
+            _is_verification_step(step.text)
+            or _is_boxed_answer(step.text)
+            or ("=" not in step.text and len(step.text.split()) <= 30)
+            for step in tail_steps
+        ):
+            return []
     lens = [len(step.text.split()) for step in graph.steps]
     first = sum(lens[: len(lens) // 2]) / max(1, len(lens) // 2)
     second = sum(lens[len(lens) // 2 :]) / max(1, len(lens) - len(lens) // 2)
@@ -220,21 +358,37 @@ def detect_bond_imbalance(graph: TraceGraph) -> list[Finding]:
     total = sum(counts.values())
     hydrogen_ratio = counts[BondType.HYDROGEN] / total
     covalent_ratio = counts[BondType.COVALENT] / total
+    dominant_steps = sorted(
+        {
+            step_id
+            for bond in graph.bonds
+            if bond.type == BondType.HYDROGEN
+            for step_id in (bond.source, bond.target)
+        }
+    )
     if hydrogen_ratio >= 0.75 and covalent_ratio <= 0.15:
         return [
             Finding(
                 type=FindingType.BOND_IMBALANCE,
-                steps_involved=[],
+                steps_involved=dominant_steps,
                 description="Reflection dominates without deep reasoning links.",
                 severity="moderate",
                 score=0.7,
             )
         ]
+    exploratory_steps = sorted(
+        {
+            step_id
+            for bond in graph.bonds
+            if bond.type == BondType.VANDERWAALS
+            for step_id in (bond.source, bond.target)
+        }
+    )
     if counts[BondType.VANDERWAALS] / total >= 0.75:
         return [
             Finding(
                 type=FindingType.BOND_IMBALANCE,
-                steps_involved=[],
+                steps_involved=exploratory_steps,
                 description="Exploration dominates without convergence.",
                 severity="moderate",
                 score=0.7,

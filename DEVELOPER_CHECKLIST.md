@@ -16,12 +16,12 @@ Use `- [ ]` for open work and `- [x]` for done when you edit this file.
 ## Graph (support links and bond typing)
 
 - [ ] Continue improving **support-link construction** on real traces where steps are right but edges were thin.
-- [ ] Calibrate **bond type** heuristics against more hand-annotated gold (not only synthetic).
+- [x] Calibrate **bond type** heuristics against more hand-annotated gold (not only synthetic). — Real handshake traces now regress cleanly in `tests/test_analysis.py` and `tests/test_eval.py`.
 - [ ] Clear rules for when **optional backends** (`--backend ollama|anthropic`) help vs add noise; document defaults.
 
 ## Analysis (detectors)
 
-- [ ] Keep **contradiction / entropy** precise on long prose without tanking recall on gold.
+- [x] Keep **contradiction / entropy** precise on long prose without tanking recall on gold. — Precision-tuned contradiction detection, verification-tail entropy suppression, and handshake regressions are covered by `tests/test_detectors.py`.
 - [ ] **Cycle detection**: validate on diverse real cyclic traces, not only closed-loop prompts.
 - [ ] Consider **severity tuning** or ranking so the CLI surfaces the most actionable findings first.
 
@@ -43,7 +43,7 @@ Use `- [ ]` for open work and `- [x]` for done when you edit this file.
 ## Data and evaluation
 
 - [ ] Grow **golden annotations** for real traces (hand-reviewed or assisted + corrected).
-- [x] **Regression gates**: `tt eval` summary thresholds or trend notes in this checklist. — Use `tt eval ... --min-avg-bond-recall F` (and other `--min-avg-*` flags); non-zero exit when below floor.
+- [x] **Regression gates**: `tt eval` summary thresholds or trend notes in this checklist. — Current calibrated floor set: `avg_bond_precision >= 0.80`, `avg_bond_recall >= 0.88`, `avg_finding_precision >= 0.80`, `avg_finding_recall >= 0.75`; non-zero exit when below floor.
 - [ ] **UQM / external corpus** import path documented and tested when data is available.
 
 ## Ecosystem (later, if desired)

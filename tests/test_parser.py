@@ -100,3 +100,25 @@ def test_parse_mixed_fence_thinking_combination(samples_dir) -> None:
 
     assert steps[-1].step_type == "conclusion"
     assert thinking_steps[0].step_type in {"correction", "derivation"}
+
+
+def test_parse_deepseek_handshake_matches_calibrated_shape(samples_dir) -> None:
+    transcript = (samples_dir / "deepseek-r1-8b_self_correction_handshake_20260402.txt").read_text(
+        encoding="utf-8"
+    )
+    steps = parse_transcript(transcript)
+
+    assert len(steps) == 7
+    assert steps[-1].text == "\\boxed{13}"
+    assert "degree sum approach also confirms this" in steps[-2].text.lower()
+
+
+def test_parse_llama_handshake_merges_short_result_lines(samples_dir) -> None:
+    transcript = (samples_dir / "llama3.1-8b_self_correction_handshake_20260402.txt").read_text(
+        encoding="utf-8"
+    )
+    steps = parse_transcript(transcript)
+
+    assert len(steps) == 9
+    assert "28 - 3 = 25" in steps[-2].text
+    assert steps[-1].step_type == "conclusion"

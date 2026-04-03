@@ -105,7 +105,7 @@ def _is_thinking_tag_match(matched_text: str) -> bool:
     low = matched_text.lower()
     return "<think>" in low or "</think>" in low or "<thinking>" in low or "</thinking>" in low
 CONCLUSION_RE = re.compile(
-    r"\b(therefore|thus|in conclusion|ultimately|final answer|the answer is|the result is|given everything above)\b",
+    r"\b(therefore|thus|in conclusion|ultimately|final answer|the answer is|the result is|given everything above)\b|^\s*so,?\s+there\s+(?:are|is)\b",
     re.IGNORECASE,
 )
 CORRECTION_RE = re.compile(
@@ -117,14 +117,27 @@ DERIVATION_RE = re.compile(
     r"\b(because|given|hence|since|which means|this means)\b|^\s*then\b|^\s*actually i should\b",
     re.IGNORECASE,
 )
+BOXED_RE = re.compile(r"^\s*\\boxed\{.+\}\s*$")
+EQUATIONISH_RE = re.compile(
+    r"(=|÷|×|\+|\b\d+\s*-\s*\d+\b|\b\d+\s*/\s*\d+\b|\\boxed\{|C\(\d+,\d+\))"
+)
+SHORT_LEADIN_RE = re.compile(r"^\s*(so|therefore|thus|hence|but remember|in that case)\b", re.IGNORECASE)
+RESTATEMENT_TAIL_RE = re.compile(
+    r"^\s*(the condition that|this means|in other words|so this means)\b",
+    re.IGNORECASE,
+)
 
 
 def _step_type(text: str) -> str:
     low = text.lower()
+    if BOXED_RE.match(text):
+        return "conclusion"
     if CORRECTION_RE.search(text):
         return "correction"
     if CONCLUSION_RE.search(text):
         return "conclusion"
+    if EQUATIONISH_RE.search(text):
+        return "derivation"
     if EXPLORATION_RE.search(text):
         return "exploration"
     if DERIVATION_RE.search(text):
@@ -337,8 +350,80 @@ def _split_by_transitions(text: str, atomic_ranges: list[tuple[int, int]]) -> li
     return [(start, start + len(clean), clean)] if clean else []
 
 
+def _word_count(text: str) -> int:
+    return len(text.split())
+
+
+def _is_equationish(text: str) -> bool:
+    return bool(EQUATIONISH_RE.search(text))
+
+
+def _merge_two_chunks(
+    transcript: str,
+    left: tuple[int, int, str],
+    right: tuple[int, int, str],
+) -> tuple[int, int, str]:
+    start = left[0]
+    end = right[1]
+    segment = transcript[start:end].strip()
+    true_start = transcript.find(segment, start, end)
+    return (true_start, true_start + len(segment), segment)
+
+
+def _merge_chunks(
+    transcript: str, chunks: list[tuple[int, int, str]]
+) -> list[tuple[int, int, str]]:
+    if len(chunks) < 2:
+        return chunks
+
+    merged = list(chunks)
+
+    changed = True
+    while changed:
+        changed = False
+        i = 0
+        next_chunks: list[tuple[int, int, str]] = []
+        while i < len(merged):
+            current = merged[i]
+            current_text = current[2]
+            next_chunk = merged[i + 1] if i + 1 < len(merged) else None
+            prev_chunk = next_chunks[-1] if next_chunks else None
+
+            if next_chunk is not None:
+                next_text = next_chunk[2]
+                if (
+                    current_text.rstrip().endswith(":")
+                    and _word_count(current_text) <= 14
+                    and (SHORT_LEADIN_RE.search(current_text) or current_text.strip().endswith(":"))
+                    and (_is_equationish(next_text) or BOXED_RE.match(next_text))
+                ):
+                    next_chunks.append(_merge_two_chunks(transcript, current, next_chunk))
+                    i += 2
+                    changed = True
+                    continue
+
+            if (
+                prev_chunk is not None
+                and next_chunk is not None
+                and BOXED_RE.match(next_chunk[2])
+                and RESTATEMENT_TAIL_RE.search(current_text)
+                and not _is_equationish(current_text)
+                and _is_equationish(prev_chunk[2])
+            ):
+                next_chunks[-1] = _merge_two_chunks(transcript, prev_chunk, current)
+                i += 1
+                changed = True
+                continue
+
+            next_chunks.append(current)
+            i += 1
+        merged = next_chunks
+
+    return merged
+
+
 def parse_transcript(transcript: str) -> list[Step]:
-    chunks = _split_blocks(transcript)
+    chunks = _merge_chunks(transcript, _split_blocks(transcript))
     steps: list[Step] = []
     for idx, (start, end, segment) in enumerate(chunks, start=1):
         step = Step(

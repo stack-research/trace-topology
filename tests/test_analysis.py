@@ -35,3 +35,24 @@ def test_targeted_synthetic_primary_findings(samples_dir) -> None:
         report = analyze_graph(graph)
         types = {finding.type.value for finding in report.findings}
         assert finding_type in types, name
+
+
+def test_deepseek_handshake_is_clean(samples_dir) -> None:
+    transcript = (samples_dir / "deepseek-r1-8b_self_correction_handshake_20260402.txt").read_text(
+        encoding="utf-8"
+    )
+    steps = parse_transcript(transcript)
+    report = analyze_graph(build_graph(steps, transcript_id="deepseek-handshake"))
+
+    assert report.findings == []
+
+
+def test_llama_handshake_collapses_to_single_unsupported_terminal(samples_dir) -> None:
+    transcript = (samples_dir / "llama3.1-8b_self_correction_handshake_20260402.txt").read_text(
+        encoding="utf-8"
+    )
+    steps = parse_transcript(transcript)
+    report = analyze_graph(build_graph(steps, transcript_id="llama-handshake"))
+
+    finding_types = [finding.type.value for finding in report.findings]
+    assert finding_types == ["unsupported_terminal"]

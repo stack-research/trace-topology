@@ -90,6 +90,10 @@ def _is_short_result_step(step: Step) -> bool:
     return _word_count(text) <= 8 and bool(_numbers(text))
 
 
+def _has_numeric_content(step: Step) -> bool:
+    return bool(_numbers(step.text))
+
+
 def _support_score(source: Step, target: Step, tokens_by_step: dict[str, set[str]]) -> float:
     score = _jaccard(tokens_by_step[source.id], tokens_by_step[target.id])
     shared_numbers = _numbers(source.text) & _numbers(target.text)
@@ -178,6 +182,10 @@ def build_graph(
                 add_adjacency = True
             except Exception:
                 pass
+        if _is_verification_step(target):
+            last_conclusion = steps[last_conclusion_index] if last_conclusion_index >= 0 else None
+            if last_conclusion is not None and source.id != last_conclusion.id:
+                add_adjacency = False
         if add_adjacency:
             _append_bond(bonds, source, target, btype, conf, reason)
 
@@ -219,7 +227,11 @@ def build_graph(
                 (
                     step
                     for step in steps[:i - 1]
-                    if _word_count(step.text) <= 14 and _support_score(step, target, tokens_by_step) >= 0.30
+                    if _word_count(step.text) <= 14
+                    and not _has_numeric_content(step)
+                    and not _has_numeric_content(target)
+                    and not _is_short_result_step(target)
+                    and _support_score(step, target, tokens_by_step) >= 0.35
                 ),
                 None,
             )

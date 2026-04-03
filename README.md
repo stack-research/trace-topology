@@ -56,7 +56,11 @@ tt analyze transcript.txt --fail-on-findings
 tt eval --annotations data/samples/golden --samples data/samples --out eval.json
 
 # Fail the command when average golden metrics drop (optional floors)
-tt eval --annotations data/samples/golden --samples data/samples --min-avg-bond-recall 0.4
+tt eval --annotations data/samples/golden --samples data/samples \
+  --min-avg-bond-precision 0.8 \
+  --min-avg-bond-recall 0.88 \
+  --min-avg-finding-precision 0.8 \
+  --min-avg-finding-recall 0.75
 ```
 
 Exit codes: by default commands exit `0`. Use `--fail-on-findings` on `tt analyze` or `--min-avg-*` on `tt eval` to return `1` when gates fail (for CI).
@@ -88,12 +92,18 @@ Each stage produces a JSON artifact. Stages can be run independently.
 - JSON artifacts are emitted at every stage and can be evaluated against golden annotations.
 - Real transcript harvesting works via Ollama (`llama3.1:8b`, `deepseek-r1:8b` used in calibration).
 - Cycle detection is confirmed on a real harvested closed-loop trace (`deepseek-r1-8b_circular_closed_loop_20260402.txt`).
+- Self-correction arithmetic traces are calibrated so the clean DeepSeek handshake trace produces no findings and the flawed Llama handshake trace collapses to a single unsupported-terminal finding.
 - Golden-set regression harness is in place and run continuously during graph calibration.
+- Current golden baseline (`tt eval --annotations data/samples/golden --samples data/samples`) is:
+  - `avg_bond_precision = 0.883`
+  - `avg_bond_recall = 0.907`
+  - `avg_finding_precision = 0.822`
+  - `avg_finding_recall = 0.889`
 
 ### Known limitations
 
 - **Detectors / findings:** Heuristic-based; behavior is regression-tested on golden fixtures, but long free-form traces can still produce false positives or false negatives.
-- **Graph / bonds:** Support edges are much stronger on gold and several real traces; a common failure mode is **bad step boundaries** (e.g. over-segmented terse traces), not only missing links in linear prose. Format cues (headings, labels, discourse markers) still help.
+- **Graph / bonds:** Support edges are stronger on the current gold set and key real arithmetic traces, but a common failure mode is still **bad step boundaries**, not only missing links in linear prose. Format cues (headings, labels, discourse markers) still help.
 - The parser treats triple-backtick fenced code blocks, markdown headings, and `<think>` / `<thinking>` blocks as atomic regions to reduce over-segmentation.
 - ASCII rendering is functional but not yet optimized for very large traces (layout compression and emphasis still basic).
 - Optional backend-assisted bond judging is available for `tt graph` and `tt analyze` (`--backend none|ollama|anthropic`); it is not required for the local core pipeline.

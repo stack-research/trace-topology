@@ -37,3 +37,31 @@ def test_eval_targeted_synthetic_finding_recall(golden_dir, samples_dir) -> None
     for name in targeted:
         result = evaluate_annotation(Path(golden_dir / name), samples_dir)
         assert result.finding_recall > 0.0, name
+
+
+def test_eval_handshake_regressions(golden_dir, samples_dir) -> None:
+    deepseek = evaluate_annotation(
+        Path(golden_dir / "deepseek-r1-8b_self_correction_handshake_20260402.annotation.json"),
+        samples_dir,
+    )
+    llama = evaluate_annotation(
+        Path(golden_dir / "llama3.1-8b_self_correction_handshake_20260402.annotation.json"),
+        samples_dir,
+    )
+
+    assert deepseek.step_count_delta == 0
+    assert deepseek.finding_precision == 1.0
+    assert deepseek.finding_recall == 1.0
+    assert llama.step_count_delta == 0
+    assert llama.finding_precision == 1.0
+    assert llama.finding_recall == 1.0
+
+
+def test_eval_summary_meets_accuracy_floors(golden_dir, samples_dir) -> None:
+    payload = evaluate_annotations(golden_dir, samples_dir)
+    summary = payload["summary"]
+
+    assert summary["avg_bond_precision"] >= 0.80
+    assert summary["avg_bond_recall"] >= 0.88
+    assert summary["avg_finding_precision"] >= 0.80
+    assert summary["avg_finding_recall"] >= 0.75

@@ -146,3 +146,35 @@ def test_detect_bond_imbalance_positive_and_negative() -> None:
     )
     assert detect_bond_imbalance(g_pos)
     assert not detect_bond_imbalance(g_neg)
+
+
+def test_detect_contradiction_requires_real_polarity_conflict() -> None:
+    graph = TraceGraph(
+        transcript_id="k3",
+        steps=[
+            Step("s1", "There are 3 people wearing gloves.", 0, 35),
+            Step("s2", "There are 5 people not wearing gloves.", 36, 76),
+        ],
+        bonds=[],
+    )
+    assert not detect_contradictions(graph)
+
+
+def test_entropy_divergence_ignores_verification_and_boxed_tail() -> None:
+    graph = TraceGraph(
+        transcript_id="e3",
+        steps=[
+            Step("s1", "We split the room into two groups.", 0, 34, step_type="claim"),
+            Step("s2", "Therefore the subgroup counts sum to 13.", 35, 73, step_type="conclusion"),
+            Step(
+                "s3",
+                "This result is consistent with the alternative approach of subtracting the forbidden handshakes.",
+                74,
+                170,
+                step_type="derivation",
+            ),
+            Step("s4", "\\boxed{13}", 171, 181, step_type="conclusion"),
+        ],
+        bonds=[],
+    )
+    assert not detect_entropy_divergence(graph)

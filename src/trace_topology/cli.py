@@ -6,7 +6,7 @@ from pathlib import Path
 
 import click
 
-from trace_topology.analysis import analyze_graph
+from trace_topology.analysis import analyze_graph, finding_matches_gate
 from trace_topology.artifacts import graph_artifact
 from trace_topology.eval import evaluate_annotations, summary_meets_minimums
 from trace_topology.graph import build_graph
@@ -122,6 +122,19 @@ def graph(
     default=False,
     help="Exit with code 1 if the analysis report contains any findings (for CI gates).",
 )
+@click.option(
+    "--fail-on-min-severity",
+    type=click.Choice(["low", "moderate", "severe"]),
+    default=None,
+    help="Exit with code 1 if any finding is at or above this severity.",
+)
+@click.option(
+    "--fail-on-min-score",
+    type=float,
+    default=None,
+    metavar="F",
+    help="Exit with code 1 if any finding has score >= F.",
+)
 def analyze(
     transcript_path: str,
     out_path: str | None,
@@ -129,6 +142,8 @@ def analyze(
     model: str | None,
     base_url: str,
     fail_on_findings: bool,
+    fail_on_min_severity: str | None,
+    fail_on_min_score: float | None,
 ) -> None:
     transcript = _read_input(transcript_path)
     steps = parse_transcript(transcript)
@@ -142,6 +157,15 @@ def analyze(
     _write_json(out_path, payload)
     click.echo(render_report_ascii(report))
     if fail_on_findings and report.findings:
+        raise click.exceptions.Exit(1)
+    if (fail_on_min_severity is not None or fail_on_min_score is not None) and any(
+        finding_matches_gate(
+            finding,
+            min_severity=fail_on_min_severity,
+            min_score=fail_on_min_score,
+        )
+        for finding in report.findings
+    ):
         raise click.exceptions.Exit(1)
 
 

@@ -6,6 +6,7 @@ from trace_topology.analysis import analyze_graph
 from trace_topology.artifacts import SCHEMA_VERSION, eval_artifact, graph_artifact
 from trace_topology.eval import evaluate_annotations
 from trace_topology.graph import build_graph
+from trace_topology.models import AnalysisReport, Finding, FindingType, Step, TraceGraph
 from trace_topology.parser import parse_to_artifact, parse_transcript
 
 
@@ -64,3 +65,25 @@ def test_eval_artifact_helper_preserves_existing_payload_shape() -> None:
         "results": [{"transcript_file": "x.txt"}],
         "summary": {"count": 1},
     }
+
+
+def test_analysis_artifact_sorts_findings_highest_priority_first() -> None:
+    report = AnalysisReport(
+        graph=TraceGraph(
+            transcript_id="artifact-rank",
+            steps=[Step("s1", "A.", 0, 2), Step("s2", "B.", 3, 5)],
+            bonds=[],
+        ),
+        findings=[
+            Finding(FindingType.DANGLING, ["s2"], "dangling", severity="low", score=0.4),
+            Finding(FindingType.UNSUPPORTED_TERMINAL, ["s1"], "unsupported", severity="severe", score=0.85),
+        ],
+        stats={},
+    )
+
+    payload = report.to_dict()
+
+    assert [finding["type"] for finding in payload["findings"]] == [
+        "unsupported_terminal",
+        "dangling",
+    ]

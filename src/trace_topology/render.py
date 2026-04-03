@@ -4,6 +4,7 @@ import re
 from collections import Counter, defaultdict
 from dataclasses import dataclass
 
+from trace_topology.analysis import rank_findings
 from trace_topology.models import AnalysisReport, BondType, TraceGraph
 
 COMPACT_RENDER_THRESHOLD = 15
@@ -177,12 +178,13 @@ def _neighborhood_nodes(report: AnalysisReport, step_ids: list[str]) -> tuple[st
 
 
 def _render_hotspots(report: AnalysisReport) -> list[str]:
-    if not report.findings:
+    ranked_findings = rank_findings(report.findings, report.graph)
+    if not ranked_findings:
         return ["hotspots: none"]
 
     step_map = {step.id: step for step in report.graph.steps}
     grouped: dict[tuple[str, ...], list] = defaultdict(list)
-    for finding in report.findings:
+    for finding in ranked_findings:
         grouped[_neighborhood_nodes(report, finding.steps_involved)].append(finding)
 
     outgoing: dict[str, list] = defaultdict(list)
@@ -191,10 +193,19 @@ def _render_hotspots(report: AnalysisReport) -> list[str]:
 
     order = {step.id: idx for idx, step in enumerate(report.graph.steps)}
     lines = ["hotspots:"]
-    for hotspot_idx, (nodes, findings) in enumerate(
-        sorted(grouped.items(), key=lambda item: min(order.get(step_id, 0) for step_id in item[0])),
-        start=1,
-    ):
+    grouped_items = []
+    for nodes, findings in grouped.items():
+        ranked = rank_findings(findings, report.graph)
+        grouped_items.append((nodes, ranked))
+    grouped_items.sort(
+        key=lambda item: (
+            -{"low": 0, "moderate": 1, "severe": 2}[item[1][0].severity],
+            -item[1][0].score,
+            min(order.get(step_id, 0) for step_id in item[0]),
+        )
+    )
+
+    for hotspot_idx, (nodes, findings) in enumerate(grouped_items, start=1):
         labels = ", ".join(
             f"{finding.type.value} ({finding.severity}) steps={','.join(finding.steps_involved) if finding.steps_involved else '-'}"
             for finding in findings
@@ -217,6 +228,20 @@ def _render_hotspots(report: AnalysisReport) -> list[str]:
     return lines
 
 
+def _finding_summary(report: AnalysisReport) -> str:
+    ranked_findings = rank_findings(report.findings, report.graph)
+    by_severity = Counter(finding.severity for finding in ranked_findings)
+    top = ranked_findings[0].type.value if ranked_findings else "none"
+    return (
+        "finding-summary: "
+        f"total={len(ranked_findings)} "
+        f"severe={by_severity['severe']} "
+        f"moderate={by_severity['moderate']} "
+        f"low={by_severity['low']} "
+        f"top={top}"
+    )
+
+
 def render_graph_ascii(graph: TraceGraph) -> str:
     if _should_render_compact(graph):
         return _compact_graph_block(graph)
@@ -224,13 +249,14 @@ def render_graph_ascii(graph: TraceGraph) -> str:
 
 
 def render_report_ascii(report: AnalysisReport) -> str:
+    ranked_findings = rank_findings(report.findings, report.graph)
     if not _should_render_compact(report.graph):
         graph_block = _full_graph_block(report.graph)
-        lines = [graph_block, "", "findings:"]
-        if not report.findings:
+        lines = [graph_block, "", _finding_summary(report), "", "findings:"]
+        if not ranked_findings:
             lines.append("  - none")
         else:
-            for finding in report.findings:
+            for finding in ranked_findings:
                 steps = ",".join(finding.steps_involved) if finding.steps_involved else "-"
                 lines.append(
                     f"  - {finding.type.value} ({finding.severity}) "
@@ -241,6 +267,8 @@ def render_report_ascii(report: AnalysisReport) -> str:
         return "\n".join(lines)
 
     lines = _compact_graph_lines(report.graph)
+    lines.append("")
+    lines.append(_finding_summary(report))
     lines.append("")
     lines.extend(_render_hotspots(report))
     lines.append("")

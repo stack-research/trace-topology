@@ -23,7 +23,7 @@ Use `- [ ]` for open work and `- [x]` for done when you edit this file.
 
 - [x] Keep **contradiction / entropy** precise on long prose without tanking recall on gold. — Precision-tuned contradiction detection, verification-tail entropy suppression, and handshake regressions are covered by `tests/test_detectors.py`.
 - [x] **Cycle detection**: validate on diverse real cyclic traces, not only closed-loop prompts. — Gold now includes `synthetic_cycle_trust`, `deepseek-r1-8b_circular_closed_loop`, and two real `circular_trust` traces with cycle-specific eval assertions.
-- [ ] Consider **severity tuning** or ranking so the CLI surfaces the most actionable findings first.
+- [x] Consider **severity tuning** or ranking so the CLI surfaces the most actionable findings first. — Findings are now ranked deterministically by severity, score, type priority, and step order; `tt analyze` also supports severity-aware and score-aware CI gates.
 
 ## Rendering and CLI
 

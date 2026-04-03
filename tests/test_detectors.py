@@ -7,8 +7,9 @@ from trace_topology.analysis import (
     detect_dangling_nodes,
     detect_entropy_divergence,
     detect_unsupported_terminals,
+    finding_matches_gate,
 )
-from trace_topology.models import Bond, BondType, Step, TraceGraph
+from trace_topology.models import Bond, BondType, Finding, FindingType, Step, TraceGraph
 
 
 def test_detect_cycles_positive_and_negative() -> None:
@@ -219,3 +220,18 @@ def test_entropy_divergence_ignores_cycle_components() -> None:
         ],
     )
     assert not detect_entropy_divergence(graph, cycle_nodes={"s1", "s2", "s3"})
+
+
+def test_finding_matches_gate_supports_severity_score_and_intersection() -> None:
+    finding = Finding(
+        type=FindingType.UNSUPPORTED_TERMINAL,
+        steps_involved=["s1"],
+        description="unsupported",
+        severity="severe",
+        score=0.85,
+    )
+
+    assert finding_matches_gate(finding, min_severity="moderate")
+    assert finding_matches_gate(finding, min_score=0.8)
+    assert finding_matches_gate(finding, min_severity="severe", min_score=0.8)
+    assert not finding_matches_gate(finding, min_severity="severe", min_score=0.9)

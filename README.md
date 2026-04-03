@@ -80,6 +80,12 @@ cat thinking_block.txt | tt analyze -
 # CI-style gate: exit 1 when the report lists any structural findings
 tt analyze transcript.txt --fail-on-findings
 
+# Fail only on findings at or above a chosen severity
+tt analyze transcript.txt --fail-on-min-severity severe
+
+# Fail only on findings at or above a score threshold
+tt analyze transcript.txt --fail-on-min-score 0.8
+
 # Evaluate against golden annotations
 tt eval --annotations data/samples/golden --samples data/samples --out eval.json
 
@@ -91,11 +97,30 @@ tt eval --annotations data/samples/golden --samples data/samples \
   --min-avg-finding-recall 0.75
 ```
 
-Exit codes: by default commands exit `0`. Use `--fail-on-findings` on `tt analyze` or `--min-avg-*` on `tt eval` to return `1` when gates fail (for CI).
+Exit codes: by default commands exit `0`. Use `--fail-on-findings`, `--fail-on-min-severity`, or `--fail-on-min-score` on `tt analyze`, or `--min-avg-*` on `tt eval`, to return `1` when gates fail (for CI).
 
 Rendering adapts automatically: traces under 15 steps keep the full step-by-step adjacency view, while larger traces switch to a compact phase summary with aggregated phase links. `tt analyze` adds finding-local hotspot neighborhoods in that compact mode.
 
 Machine-readable outputs follow the v1 contract in [docs/ARTIFACT_CONTRACT.md](docs/ARTIFACT_CONTRACT.md). Breaking JSON changes must bump the schema version and be called out there.
+
+## Finding priority
+
+`tt analyze` now ranks findings in a stable order in both terminal output and JSON.
+
+Severity scale:
+
+- `low`
+- `moderate`
+- `severe`
+
+Ranking order:
+
+1. higher severity
+2. higher score
+3. finding-type priority
+4. earlier involved step
+
+The `analysis.findings` array is highest-priority first. The report also prints a `finding-summary:` line with counts by severity and the current top finding type.
 
 ## Parser behavior
 

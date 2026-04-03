@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import re
 from collections import Counter, defaultdict
+from typing import Iterable
 
 from trace_topology.models import AnalysisReport, BondType, Finding, FindingType, TraceGraph
 
@@ -75,6 +76,15 @@ RESTRICTION_RE = re.compile(
     r"(only shake hands with each other|not with anyone else|no handshakes occur between the two groups)",
     re.IGNORECASE,
 )
+SEVERITY_RANK = {"low": 0, "moderate": 1, "severe": 2}
+FINDING_TYPE_PRIORITY = {
+    FindingType.UNSUPPORTED_TERMINAL: 0,
+    FindingType.CONTRADICTION: 1,
+    FindingType.CYCLE: 2,
+    FindingType.DANGLING: 3,
+    FindingType.ENTROPY_DIVERGENCE: 4,
+    FindingType.BOND_IMBALANCE: 5,
+}
 
 
 def _adjacency(graph: TraceGraph) -> dict[str, list[str]]:
@@ -135,6 +145,41 @@ def _ancestor_ids(step_id: str, incoming: dict[str, list[str]]) -> set[str]:
 
 def _step_order(graph: TraceGraph) -> dict[str, int]:
     return {step.id: idx for idx, step in enumerate(graph.steps)}
+
+
+def _normalize_severity(severity: str) -> str:
+    return severity if severity in SEVERITY_RANK else "moderate"
+
+
+def _finding_rank_key(finding: Finding, step_order: dict[str, int]) -> tuple[int, float, int, int]:
+    earliest = min((step_order.get(step_id, 10**9) for step_id in finding.steps_involved), default=10**9)
+    severity_rank = SEVERITY_RANK[_normalize_severity(finding.severity)]
+    type_rank = FINDING_TYPE_PRIORITY.get(finding.type, 99)
+    return (-severity_rank, -finding.score, type_rank, earliest)
+
+
+def rank_findings(findings: Iterable[Finding], graph: TraceGraph) -> list[Finding]:
+    step_order = _step_order(graph)
+    normalized: list[Finding] = []
+    for finding in findings:
+        finding.severity = _normalize_severity(finding.severity)
+        normalized.append(finding)
+    return sorted(normalized, key=lambda finding: _finding_rank_key(finding, step_order))
+
+
+def finding_matches_gate(
+    finding: Finding,
+    *,
+    min_severity: str | None = None,
+    min_score: float | None = None,
+) -> bool:
+    severity_ok = True
+    score_ok = True
+    if min_severity is not None:
+        severity_ok = SEVERITY_RANK[_normalize_severity(finding.severity)] >= SEVERITY_RANK[min_severity]
+    if min_score is not None:
+        score_ok = finding.score >= min_score
+    return severity_ok and score_ok
 
 
 def _cycle_components(graph: TraceGraph) -> list[list[str]]:
@@ -247,8 +292,8 @@ def detect_dangling_nodes(graph: TraceGraph, cycle_nodes: set[str] | None = None
                     type=FindingType.DANGLING,
                     steps_involved=[step.id],
                     description="Reasoning branch is abandoned before it reconnects.",
-                    severity="moderate",
-                    score=0.7,
+                    severity="moderate" if incoming[step.id] > 0 else "low",
+                    score=0.65 if incoming[step.id] > 0 else 0.45,
                 )
             )
     return findings
@@ -292,8 +337,8 @@ def detect_unsupported_terminals(graph: TraceGraph, cycle_nodes: set[str] | None
                     type=FindingType.UNSUPPORTED_TERMINAL,
                     steps_involved=[*flawed_support, step.id],
                     description="Conclusion depends on an unsupported arithmetic adjustment.",
-                    severity="moderate",
-                    score=0.7,
+                    severity="severe",
+                    score=0.82,
                 )
             )
     return findings
@@ -320,8 +365,8 @@ def detect_contradictions(graph: TraceGraph) -> list[Finding]:
                                 type=FindingType.CONTRADICTION,
                                 steps_involved=[a.id, b.id],
                                 description="Potential contradiction pair found.",
-                                severity="moderate",
-                                score=0.6,
+                                severity="severe",
+                                score=0.83,
                             )
                         )
                         matched = True
@@ -342,8 +387,8 @@ def detect_contradictions(graph: TraceGraph) -> list[Finding]:
                             type=FindingType.CONTRADICTION,
                             steps_involved=[a.id, b.id],
                             description="Potential contradiction pair found.",
-                            severity="moderate",
-                            score=0.6,
+                            severity="severe",
+                            score=0.83,
                         )
                     )
                     matched = True
@@ -449,12 +494,20 @@ def analyze_graph(graph: TraceGraph) -> AnalysisReport:
     findings.extend(detect_contradictions(graph))
     findings.extend(detect_entropy_divergence(graph, cycle_nodes=cycle_nodes))
     findings.extend(detect_bond_imbalance(graph))
+    findings = rank_findings(findings, graph)
     if cycle_components:
         graph.metadata["cycle_components"] = cycle_components
+    severity_counts = Counter(f.severity for f in findings)
     stats = {
         "steps": len(graph.steps),
         "bonds": len(graph.bonds),
         "findings": len(findings),
         "by_type": dict(Counter(f.type.value for f in findings)),
+        "by_severity": {
+            "severe": severity_counts["severe"],
+            "moderate": severity_counts["moderate"],
+            "low": severity_counts["low"],
+        },
+        "top_finding_type": findings[0].type.value if findings else None,
     }
     return AnalysisReport(graph=graph, findings=findings, stats=stats)

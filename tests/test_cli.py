@@ -42,6 +42,73 @@ def test_analyze_fail_on_findings_exits_nonzero(tmp_path) -> None:
     assert result.exit_code == 1
 
 
+def test_analyze_fail_on_min_severity_exits_only_for_matching_findings(tmp_path) -> None:
+    transcript_path = tmp_path / "trace.txt"
+    transcript_path.write_text("Therefore the answer is 42.", encoding="utf-8")
+
+    runner = CliRunner()
+    severe_result = runner.invoke(
+        cli,
+        ["analyze", str(transcript_path), "--backend", "none", "--fail-on-min-severity", "severe"],
+    )
+    impossible_result = runner.invoke(
+        cli,
+        ["analyze", str(transcript_path), "--backend", "none", "--fail-on-min-score", "0.9"],
+    )
+
+    assert severe_result.exit_code == 1
+    assert impossible_result.exit_code == 0
+
+
+def test_analyze_fail_on_min_score_exits_for_matching_scores(tmp_path) -> None:
+    transcript_path = tmp_path / "trace.txt"
+    transcript_path.write_text("Therefore the answer is 42.", encoding="utf-8")
+
+    runner = CliRunner()
+    result = runner.invoke(
+        cli,
+        ["analyze", str(transcript_path), "--backend", "none", "--fail-on-min-score", "0.8"],
+    )
+
+    assert result.exit_code == 1
+
+
+def test_analyze_combined_severity_and_score_gate_uses_intersection(tmp_path) -> None:
+    transcript_path = tmp_path / "trace.txt"
+    transcript_path.write_text("Therefore the answer is 42.", encoding="utf-8")
+
+    runner = CliRunner()
+    failing = runner.invoke(
+        cli,
+        [
+            "analyze",
+            str(transcript_path),
+            "--backend",
+            "none",
+            "--fail-on-min-severity",
+            "severe",
+            "--fail-on-min-score",
+            "0.8",
+        ],
+    )
+    passing = runner.invoke(
+        cli,
+        [
+            "analyze",
+            str(transcript_path),
+            "--backend",
+            "none",
+            "--fail-on-min-severity",
+            "severe",
+            "--fail-on-min-score",
+            "0.9",
+        ],
+    )
+
+    assert failing.exit_code == 1
+    assert passing.exit_code == 0
+
+
 def test_eval_min_threshold_exits_nonzero(golden_dir, samples_dir) -> None:
     runner = CliRunner()
     result = runner.invoke(

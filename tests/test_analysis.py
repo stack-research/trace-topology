@@ -1,7 +1,8 @@
 from __future__ import annotations
 
-from trace_topology.analysis import analyze_graph
+from trace_topology.analysis import analyze_graph, rank_findings
 from trace_topology.graph import build_graph
+from trace_topology.models import Finding, FindingType, Step, TraceGraph
 from trace_topology.parser import parse_transcript
 
 
@@ -11,6 +12,8 @@ def test_analyze_returns_stats() -> None:
     report = analyze_graph(graph)
     assert "steps" in report.stats
     assert "findings" in report.stats
+    assert "by_severity" in report.stats
+    assert "top_finding_type" in report.stats
 
 
 def test_detects_unsupported_terminal() -> None:
@@ -69,3 +72,39 @@ def test_closed_loop_cycle_is_canonicalized(samples_dir) -> None:
     cycles = [finding.steps_involved for finding in report.findings if finding.type.value == "cycle"]
     assert cycles == [["s1", "s2", "s3", "s4"]]
     assert "entropy_divergence" not in {finding.type.value for finding in report.findings}
+
+
+def test_rank_findings_orders_by_severity_score_type_then_step() -> None:
+    graph = TraceGraph(
+        transcript_id="rank",
+        steps=[
+            Step("s1", "A.", 0, 2),
+            Step("s2", "B.", 3, 5),
+            Step("s3", "C.", 6, 8),
+            Step("s4", "D.", 9, 11),
+        ],
+        bonds=[],
+    )
+    findings = [
+        Finding(FindingType.DANGLING, ["s4"], "dangling", severity="low", score=0.9),
+        Finding(FindingType.CYCLE, ["s3"], "cycle", severity="severe", score=0.8),
+        Finding(FindingType.CONTRADICTION, ["s2"], "contradiction", severity="severe", score=0.8),
+        Finding(FindingType.BOND_IMBALANCE, ["s1"], "imbalance", severity="moderate", score=0.95),
+    ]
+
+    ranked = rank_findings(findings, graph)
+
+    assert [finding.type.value for finding in ranked] == [
+        "contradiction",
+        "cycle",
+        "bond_imbalance",
+        "dangling",
+    ]
+
+
+def test_contradiction_sorts_ahead_of_weaker_secondary_findings(samples_dir) -> None:
+    transcript = (samples_dir / "synthetic_contradiction_privacy_0001.txt").read_text(encoding="utf-8")
+    report = analyze_graph(build_graph(parse_transcript(transcript), transcript_id="contradiction"))
+
+    assert report.findings
+    assert report.findings[0].type.value == "contradiction"

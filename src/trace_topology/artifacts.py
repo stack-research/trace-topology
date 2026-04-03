@@ -54,10 +54,13 @@ def graph_artifact(graph: TraceGraph) -> dict:
 
 
 def analysis_artifact(report: AnalysisReport) -> dict:
+    from trace_topology.analysis import rank_findings
+
+    ranked_findings = rank_findings(report.findings, report.graph)
     return {
         **_base_header("analysis"),
         "graph": graph_payload(report.graph),
-        "findings": [finding.to_dict() for finding in report.findings],
+        "findings": [finding.to_dict() for finding in ranked_findings],
         "stats": report.stats,
     }
 

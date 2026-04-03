@@ -27,6 +27,8 @@ Schema version `1` is additive-only.
 
 Any removal, rename, or nesting change requires a schema version bump.
 
+Within schema version `1`, `analysis.findings` are ordered highest-priority first. Consumers may rely on that ordering.
+
 ## Parse artifact
 
 ```json
@@ -93,13 +95,23 @@ Any removal, rename, or nesting change requires a schema version bump.
       "type": "cycle",
       "steps_involved": ["s1", "s2"],
       "description": "Cycle detected among reasoning steps.",
-      "severity": "high",
+      "severity": "severe",
       "score": 0.9
     }
   ],
   "stats": {
-    "step_count": 2,
-    "bond_count": 2
+    "steps": 2,
+    "bonds": 2,
+    "findings": 1,
+    "by_type": {
+      "cycle": 1
+    },
+    "by_severity": {
+      "severe": 1,
+      "moderate": 0,
+      "low": 0
+    },
+    "top_finding_type": "cycle"
   }
 }
 ```

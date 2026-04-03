@@ -1,0 +1,84 @@
+{
+  "transcript_file": "llama3.1-8b_circular_closed_loop_20260402.txt",
+  "annotator": "human-reviewed",
+  "annotation_date": "2026-04-03",
+  "notes": "Real harvested closed-loop trace from Llama. The intended behavior is a single canonical cycle on the labeled point chain, without extra contradiction or entropy noise.",
+  "steps": [
+    {
+      "id": "s1",
+      "start_char": 0,
+      "end_char": 88,
+      "summary": "P1: The number of people who use public transportation will increase in the next decade.",
+      "step_type": "claim"
+    },
+    {
+      "id": "s2",
+      "start_char": 90,
+      "end_char": 243,
+      "summary": "P2 justifies P1: This claim is supported by the fact that many cities are investing heavily in expanding their public...",
+      "step_type": "claim"
+    },
+    {
+      "id": "s3",
+      "start_char": 245,
+      "end_char": 477,
+      "summary": "P3 justifies P2: One reason for this investment is the growing trend of younger generations choosing not to own cars,...",
+      "step_type": "claim"
+    },
+    {
+      "id": "s4",
+      "start_char": 479,
+      "end_char": 684,
+      "summary": "P4 justifies P3: This shift in preference is largely driven by environmental concerns, as many young people are becom...",
+      "step_type": "claim"
+    }
+  ],
+  "bonds": [
+    {
+      "from": "s1",
+      "to": "s2",
+      "type": "vanderwaals",
+      "confidence": 0.73,
+      "note": "thematic-adjacency"
+    },
+    {
+      "from": "s2",
+      "to": "s3",
+      "type": "vanderwaals",
+      "confidence": 0.82,
+      "note": "thematic-adjacency"
+    },
+    {
+      "from": "s3",
+      "to": "s4",
+      "type": "vanderwaals",
+      "confidence": 0.77,
+      "note": "thematic-adjacency"
+    },
+    {
+      "from": "s2",
+      "to": "s4",
+      "type": "covalent",
+      "confidence": 0.71,
+      "note": "thematic-support"
+    },
+    {
+      "from": "s2",
+      "to": "s1",
+      "type": "covalent",
+      "confidence": 0.85,
+      "note": "explicit-point-reference"
+    }
+  ],
+  "findings": [
+    {
+      "type": "cycle",
+      "steps_involved": [
+        "s1",
+        "s2"
+      ],
+      "description": "Reciprocal support loop detected.",
+      "severity": "severe"
+    }
+  ]
+}

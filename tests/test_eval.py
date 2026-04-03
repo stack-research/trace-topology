@@ -58,6 +58,24 @@ def test_eval_handshake_regressions(golden_dir, samples_dir) -> None:
     assert llama.finding_recall == 1.0
 
 
+def test_eval_probability_regressions(golden_dir, samples_dir) -> None:
+    deepseek = evaluate_annotation(
+        Path(golden_dir / "deepseek-r1-8b_self_correction_probability_20260402.annotation.json"),
+        samples_dir,
+    )
+    llama = evaluate_annotation(
+        Path(golden_dir / "llama3.1-8b_self_correction_probability_20260402.annotation.json"),
+        samples_dir,
+    )
+
+    assert deepseek.step_count_delta == 0
+    assert deepseek.finding_precision == 1.0
+    assert deepseek.finding_recall == 1.0
+    assert llama.step_count_delta == 0
+    assert llama.finding_precision == 1.0
+    assert llama.finding_recall == 1.0
+
+
 def test_eval_cycle_regressions(golden_dir, samples_dir) -> None:
     synthetic = evaluate_annotation(
         Path(golden_dir / "synthetic_cycle_trust_0001.annotation.json"),
@@ -110,6 +128,26 @@ def test_eval_pathological_regressions(golden_dir, samples_dir) -> None:
     assert uqm_absence.finding_recall > 0.0
     assert uqm_loop.step_count_delta == 0
     assert uqm_loop.finding_recall > 0.0
+
+
+def test_eval_llama_circular_free_will_regression(golden_dir, samples_dir) -> None:
+    llama_free_will = evaluate_annotation(
+        Path(golden_dir / "llama3.1-8b_circular_free_will_20260402.annotation.json"),
+        samples_dir,
+    )
+
+    assert llama_free_will.step_count_delta == 0
+    assert llama_free_will.finding_recall > 0.0
+
+
+def test_eval_llama_closed_loop_regression(golden_dir, samples_dir) -> None:
+    llama_closed_loop = evaluate_annotation(
+        Path(golden_dir / "llama3.1-8b_circular_closed_loop_20260402.annotation.json"),
+        samples_dir,
+    )
+
+    assert llama_closed_loop.step_count_delta == 0
+    assert llama_closed_loop.finding_recall > 0.0
 
 
 def test_eval_summary_meets_accuracy_floors(golden_dir, samples_dir) -> None:

@@ -1,0 +1,216 @@
+{
+  "transcript_file": "llama3.1-8b_circular_free_will_20260402.txt",
+  "annotator": "human-reviewed",
+  "annotation_date": "2026-04-03",
+  "notes": "Real Llama circular/free-will trace. Mostly linear incompatibilist argument with one weak branch that dangles instead of reconnecting into the final conclusion.",
+  "steps": [
+    {
+      "id": "s1",
+      "start_char": 0,
+      "end_char": 100,
+      "summary": "Here's my attempt to provide a thorough defense of the incompatibility of free will and determinism:",
+      "step_type": "claim"
+    },
+    {
+      "id": "s2",
+      "start_char": 102,
+      "end_char": 195,
+      "summary": "**Premise 1:** Free will requires that an agent has control over their decisions and actions.",
+      "step_type": "claim"
+    },
+    {
+      "id": "s3",
+      "start_char": 197,
+      "end_char": 484,
+      "summary": "* This is because, intuitively, we think that if someone makes a decision or performs an action solely as a result of...",
+      "step_type": "derivation"
+    },
+    {
+      "id": "s4",
+      "start_char": 485,
+      "end_char": 611,
+      "summary": "* Agents who lack control over their decisions and actions cannot be held accountable for the consequences of those d...",
+      "step_type": "claim"
+    },
+    {
+      "id": "s5",
+      "start_char": 613,
+      "end_char": 746,
+      "summary": "**Premise 2:** Determinism implies that every event, including human decisions and actions, is the inevitable result...",
+      "step_type": "claim"
+    },
+    {
+      "id": "s6",
+      "start_char": 748,
+      "end_char": 953,
+      "summary": "* This follows from the definition of determinism: if everything that happens in the world is predetermined by prior...",
+      "step_type": "claim"
+    },
+    {
+      "id": "s7",
+      "start_char": 954,
+      "end_char": 1095,
+      "summary": "* If determinism were true, our choices would not be genuine options, but rather predetermined outcomes shaped by fac...",
+      "step_type": "claim"
+    },
+    {
+      "id": "s8",
+      "start_char": 1097,
+      "end_char": 1247,
+      "summary": "**Premise 3:** If an agent's decisions and actions are entirely the result of prior causes, they do not have control...",
+      "step_type": "claim"
+    },
+    {
+      "id": "s9",
+      "start_char": 1249,
+      "end_char": 1493,
+      "summary": "* This is because, if an agent's choices are determined by external factors, then those choices cannot be said to ref...",
+      "step_type": "derivation"
+    },
+    {
+      "id": "s10",
+      "start_char": 1494,
+      "end_char": 1593,
+      "summary": "* In such cases, agents lack the capacity for self-determination, which is essential for free will.",
+      "step_type": "claim"
+    },
+    {
+      "id": "s11",
+      "start_char": 1595,
+      "end_char": 1710,
+      "summary": "**Premise 4:** If an agent lacks control over their decisions and actions, then they do not have genuine free will.",
+      "step_type": "claim"
+    },
+    {
+      "id": "s12",
+      "start_char": 1712,
+      "end_char": 1860,
+      "summary": "* This follows from Premise 1: since free will requires agency and responsibility, it must also require that agents h...",
+      "step_type": "derivation"
+    },
+    {
+      "id": "s13",
+      "start_char": 1861,
+      "end_char": 1959,
+      "summary": "* Agents who lack control are mere puppets or automatons, incapable of genuine self-determination.",
+      "step_type": "claim"
+    },
+    {
+      "id": "s14",
+      "start_char": 1961,
+      "end_char": 2293,
+      "summary": "**Conclusion:** Free will is incompatible with determinism because determinism implies that every event, including hu...",
+      "step_type": "derivation"
+    },
+    {
+      "id": "s15",
+      "start_char": 2295,
+      "end_char": 2535,
+      "summary": "Note: This argument relies on a specific understanding of free will, which emphasizes agency, responsibility, and sel...",
+      "step_type": "claim"
+    }
+  ],
+  "bonds": [
+    {
+      "from": "s1",
+      "to": "s2",
+      "type": "covalent",
+      "confidence": 0.72,
+      "note": "structural-continuation"
+    },
+    {
+      "from": "s2",
+      "to": "s3",
+      "type": "covalent",
+      "confidence": 0.8,
+      "note": "logical-marker"
+    },
+    {
+      "from": "s2",
+      "to": "s4",
+      "type": "covalent",
+      "confidence": 0.79,
+      "note": "thematic-support"
+    },
+    {
+      "from": "s4",
+      "to": "s5",
+      "type": "covalent",
+      "confidence": 0.8,
+      "note": "logical-marker"
+    },
+    {
+      "from": "s5",
+      "to": "s6",
+      "type": "vanderwaals",
+      "confidence": 0.6,
+      "note": "exploration-marker"
+    },
+    {
+      "from": "s2",
+      "to": "s8",
+      "type": "covalent",
+      "confidence": 0.84,
+      "note": "thematic-support"
+    },
+    {
+      "from": "s8",
+      "to": "s9",
+      "type": "covalent",
+      "confidence": 0.8,
+      "note": "logical-marker"
+    },
+    {
+      "from": "s2",
+      "to": "s11",
+      "type": "covalent",
+      "confidence": 0.84,
+      "note": "thematic-support"
+    },
+    {
+      "from": "s11",
+      "to": "s12",
+      "type": "vanderwaals",
+      "confidence": 0.6,
+      "note": "exploration-marker"
+    },
+    {
+      "from": "s2",
+      "to": "s12",
+      "type": "covalent",
+      "confidence": 0.84,
+      "note": "thematic-support"
+    },
+    {
+      "from": "s10",
+      "to": "s13",
+      "type": "covalent",
+      "confidence": 0.77,
+      "note": "thematic-support"
+    },
+    {
+      "from": "s13",
+      "to": "s14",
+      "type": "covalent",
+      "confidence": 0.8,
+      "note": "logical-marker"
+    },
+    {
+      "from": "s5",
+      "to": "s14",
+      "type": "covalent",
+      "confidence": 0.84,
+      "note": "thematic-support"
+    }
+  ],
+  "findings": [
+    {
+      "type": "dangling",
+      "steps_involved": [
+        "s7"
+      ],
+      "description": "Reasoning branch is abandoned before it reconnects.",
+      "severity": "low"
+    }
+  ]
+}

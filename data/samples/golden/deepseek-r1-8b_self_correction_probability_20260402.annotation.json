@@ -1,0 +1,214 @@
+{
+  "transcript_file": "deepseek-r1-8b_self_correction_probability_20260402.txt",
+  "annotator": "human-reviewed",
+  "annotation_date": "2026-04-03",
+  "notes": "Real probability trace. Clean conditional-probability derivation with an alternate sample-space confirmation and no structural failures.",
+  "steps": [
+    {
+      "id": "s1",
+      "start_char": 0,
+      "end_char": 126,
+      "summary": "The probability of getting exactly 2 heads given that at least one flip was heads is calculated using conditional pro...",
+      "step_type": "derivation"
+    },
+    {
+      "id": "s2",
+      "start_char": 128,
+      "end_char": 207,
+      "summary": "Let A be the event of exactly 2 heads, and B be the event of at least one head.",
+      "step_type": "claim"
+    },
+    {
+      "id": "s3",
+      "start_char": 209,
+      "end_char": 297,
+      "summary": "Since A implies B (exactly 2 heads means at least one head), A and B is equivalent to A.",
+      "step_type": "derivation"
+    },
+    {
+      "id": "s4",
+      "start_char": 299,
+      "end_char": 326,
+      "summary": "Thus, P(A|B) = P(A) / P(B).",
+      "step_type": "conclusion"
+    },
+    {
+      "id": "s5",
+      "start_char": 328,
+      "end_char": 434,
+      "summary": "The probability of exactly 2 heads in 4 flips of a fair coin is given by the binomial probability formula:",
+      "step_type": "derivation"
+    },
+    {
+      "id": "s6",
+      "start_char": 436,
+      "end_char": 495,
+      "summary": "P(A) = C(4,2) * (0.5)^2 * (0.5)^2 = 6 * 0.25 * 0.25 = 0.375",
+      "step_type": "derivation"
+    },
+    {
+      "id": "s7",
+      "start_char": 497,
+      "end_char": 544,
+      "summary": "Or, in fraction form: C(4,2) / 16 = 6/16 = 3/8.",
+      "step_type": "derivation"
+    },
+    {
+      "id": "s8",
+      "start_char": 546,
+      "end_char": 673,
+      "summary": "The probability of at least one head is the complement of all tails: P(B) = 1 - P(all tails) = 1 - (0.5)^4 = 1 - 1/16...",
+      "step_type": "derivation"
+    },
+    {
+      "id": "s9",
+      "start_char": 675,
+      "end_char": 744,
+      "summary": "Therefore, P(A|B) = (6/16) / (15/16) = (6/16) * (16/15) = 6/15 = 2/5.",
+      "step_type": "conclusion"
+    },
+    {
+      "id": "s10",
+      "start_char": 746,
+      "end_char": 910,
+      "summary": "Alternatively, in the conditional sample space with 15 outcomes (all except all tails), there are 6 outcomes with exa...",
+      "step_type": "derivation"
+    },
+    {
+      "id": "s11",
+      "start_char": 912,
+      "end_char": 959,
+      "summary": "Both approaches confirm the probability is 2/5.",
+      "step_type": "derivation"
+    },
+    {
+      "id": "s12",
+      "start_char": 961,
+      "end_char": 981,
+      "summary": "\\boxed{\\dfrac{2}{5}}",
+      "step_type": "conclusion"
+    }
+  ],
+  "bonds": [
+    {
+      "from": "s1",
+      "to": "s2",
+      "type": "vanderwaals",
+      "confidence": 0.82,
+      "note": "thematic-adjacency"
+    },
+    {
+      "from": "s2",
+      "to": "s3",
+      "type": "covalent",
+      "confidence": 0.8,
+      "note": "logical-marker"
+    },
+    {
+      "from": "s1",
+      "to": "s3",
+      "type": "covalent",
+      "confidence": 0.84,
+      "note": "thematic-support"
+    },
+    {
+      "from": "s3",
+      "to": "s4",
+      "type": "covalent",
+      "confidence": 0.8,
+      "note": "logical-marker"
+    },
+    {
+      "from": "s2",
+      "to": "s4",
+      "type": "covalent",
+      "confidence": 0.76,
+      "note": "local-conclusion-support"
+    },
+    {
+      "from": "s1",
+      "to": "s4",
+      "type": "covalent",
+      "confidence": 0.78,
+      "note": "result-support"
+    },
+    {
+      "from": "s4",
+      "to": "s5",
+      "type": "covalent",
+      "confidence": 0.8,
+      "note": "logical-marker"
+    },
+    {
+      "from": "s5",
+      "to": "s6",
+      "type": "covalent",
+      "confidence": 0.72,
+      "note": "structural-continuation"
+    },
+    {
+      "from": "s6",
+      "to": "s7",
+      "type": "covalent",
+      "confidence": 0.72,
+      "note": "structural-continuation"
+    },
+    {
+      "from": "s5",
+      "to": "s7",
+      "type": "covalent",
+      "confidence": 0.78,
+      "note": "result-support"
+    },
+    {
+      "from": "s7",
+      "to": "s8",
+      "type": "covalent",
+      "confidence": 0.74,
+      "note": "thematic-adjacency"
+    },
+    {
+      "from": "s6",
+      "to": "s8",
+      "type": "covalent",
+      "confidence": 0.76,
+      "note": "thematic-support"
+    },
+    {
+      "from": "s8",
+      "to": "s9",
+      "type": "covalent",
+      "confidence": 0.8,
+      "note": "logical-marker"
+    },
+    {
+      "from": "s6",
+      "to": "s9",
+      "type": "covalent",
+      "confidence": 0.76,
+      "note": "local-conclusion-support"
+    },
+    {
+      "from": "s9",
+      "to": "s10",
+      "type": "covalent",
+      "confidence": 0.8,
+      "note": "logical-marker"
+    },
+    {
+      "from": "s10",
+      "to": "s11",
+      "type": "covalent",
+      "confidence": 0.72,
+      "note": "structural-continuation"
+    },
+    {
+      "from": "s11",
+      "to": "s12",
+      "type": "covalent",
+      "confidence": 0.72,
+      "note": "structural-continuation"
+    }
+  ],
+  "findings": []
+}

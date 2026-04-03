@@ -217,7 +217,7 @@ raw transcript → parse into steps → build dependency graph → classify bond
 
 Each stage produces a JSON artifact. Stages can be run independently.
 
-## v0.1 Status
+## v0.2 Status
 
 ### What works
 
@@ -227,13 +227,16 @@ Each stage produces a JSON artifact. Stages can be run independently.
 - Real transcript harvesting works via Ollama (`llama3.1:8b`, `deepseek-r1:8b` used in calibration).
 - Cycle detection is confirmed on a real harvested closed-loop trace (`deepseek-r1-8b_circular_closed_loop_20260402.txt`).
 - Self-correction arithmetic traces are calibrated so the clean DeepSeek handshake trace produces no findings and the flawed Llama handshake trace collapses to a single unsupported-terminal finding.
+- Clean real probability traces are now in gold for both DeepSeek and Llama, expanding the no-finding control set beyond the handshake corpus.
 - Cycle calibration now covers repo-local implicit and explicit loops: `synthetic_cycle_trust_0001`, `deepseek-r1-8b_circular_closed_loop_20260402`, `deepseek-r1-8b_circular_trust_20260402`, and `llama3.1-8b_circular_trust_20260402`.
+- Real circular coverage now also includes `llama3.1-8b_circular_free_will_20260402` as a light pathological long-form case.
+- The last remaining real closed-loop Llama trace is now in gold as `llama3.1-8b_circular_closed_loop_20260402`.
 - The corpus path now includes a tested UQM import flow and curated pathological crack samples under `data/samples/`.
 - Golden-set regression harness is in place and run continuously during graph calibration.
 - Current golden baseline (`tt eval --annotations data/samples/golden --samples data/samples`) is:
-  - `count = 15`
-  - `avg_bond_precision = 0.944`
-  - `avg_bond_recall = 0.967`
+  - `count = 19`
+  - `avg_bond_precision = 0.956`
+  - `avg_bond_recall = 0.974`
   - `avg_finding_precision = 1.000`
   - `avg_finding_recall = 1.000`
 
@@ -241,6 +244,7 @@ Each stage produces a JSON artifact. Stages can be run independently.
 
 - **Detectors / findings:** Heuristic-based; behavior is regression-tested on golden fixtures, but long free-form traces can still produce false positives or false negatives.
 - **Graph / bonds:** Support edges are stronger on the current gold set, real arithmetic traces, and the calibrated cycle corpus, but a common failure mode is still **bad step boundaries**, not only missing links in linear prose. Format cues (headings, labels, discourse markers) still help.
+- The core is being treated as stable at `v0.2`; remaining backlog items are mostly parser granularity, packaging polish, library API, and future corpus growth.
 - The parser treats triple-backtick fenced code blocks, markdown headings, and `<think>` / `<thinking>` blocks as atomic regions to reduce over-segmentation.
 - ASCII rendering now adapts for large traces with phase summaries and finding-local hotspots, but it is still a compression layer rather than a full graph-layout system.
 - Optional backend-assisted bond judging is available for `tt graph` and `tt analyze` (`--backend none|ollama|anthropic`); it is not required for the local core pipeline.

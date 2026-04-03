@@ -65,6 +65,8 @@ tt eval --annotations data/samples/golden --samples data/samples \
 
 Exit codes: by default commands exit `0`. Use `--fail-on-findings` on `tt analyze` or `--min-avg-*` on `tt eval` to return `1` when gates fail (for CI).
 
+Rendering adapts automatically: traces under 15 steps keep the full step-by-step adjacency view, while larger traces switch to a compact phase summary with aggregated phase links. `tt analyze` adds finding-local hotspot neighborhoods in that compact mode.
+
 ## What it detects
 
 | Failure mode | What it means |
@@ -107,7 +109,7 @@ Each stage produces a JSON artifact. Stages can be run independently.
 - **Detectors / findings:** Heuristic-based; behavior is regression-tested on golden fixtures, but long free-form traces can still produce false positives or false negatives.
 - **Graph / bonds:** Support edges are stronger on the current gold set, real arithmetic traces, and the calibrated cycle corpus, but a common failure mode is still **bad step boundaries**, not only missing links in linear prose. Format cues (headings, labels, discourse markers) still help.
 - The parser treats triple-backtick fenced code blocks, markdown headings, and `<think>` / `<thinking>` blocks as atomic regions to reduce over-segmentation.
-- ASCII rendering is functional but not yet optimized for very large traces (layout compression and emphasis still basic).
+- ASCII rendering now adapts for large traces with phase summaries and finding-local hotspots, but it is still a compression layer rather than a full graph-layout system.
 - Optional backend-assisted bond judging is available for `tt graph` and `tt analyze` (`--backend none|ollama|anthropic`); it is not required for the local core pipeline.
 
 ### Repro for current milestone

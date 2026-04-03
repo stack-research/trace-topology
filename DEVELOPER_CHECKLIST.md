@@ -27,7 +27,7 @@ Use `- [ ]` for open work and `- [x]` for done when you edit this file.
 
 ## Rendering and CLI
 
-- [ ] **ASCII layout** for large traces: compression, grouping, or phase summaries so output stays readable in a normal terminal.
+- [x] **ASCII layout** for large traces: compression, grouping, or phase summaries so output stays readable in a normal terminal. — `render.py` now switches to adaptive compact mode at 15+ steps with phase summaries, aggregated phase links, and finding-local hotspots in `tt analyze`.
 - [ ] **Stable JSON schemas** across versions; document breaking changes in `README.md`.
 - [x] **Exit codes** (e.g. non-zero when structural failures exceed a threshold) for CI integration. — `tt analyze --fail-on-findings`; `tt eval --min-avg-bond-recall` (and related floors).
 - [x] Keep **CLI/docs/examples aligned**: when flags or commands change, update `README.md` and `AGENTS.md` in the same pass; keep smoke tests for documented CLI surfaces.

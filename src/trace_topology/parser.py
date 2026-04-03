@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 import re
-from dataclasses import asdict
 
+from trace_topology.artifacts import parse_artifact
 from trace_topology.models import Step
 
 STEP_SPLIT_RE = re.compile(
@@ -440,8 +440,4 @@ def parse_transcript(transcript: str) -> list[Step]:
 
 def parse_to_artifact(transcript: str, transcript_id: str = "stdin") -> dict:
     steps = parse_transcript(transcript)
-    return {
-        "transcript_id": transcript_id,
-        "steps": [asdict(step) for step in steps],
-        "stats": {"step_count": len(steps), "char_count": len(transcript)},
-    }
+    return parse_artifact(transcript_id, steps, len(transcript))

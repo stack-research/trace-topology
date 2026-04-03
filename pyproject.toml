@@ -6,11 +6,15 @@ readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
   "click>=8.1.7",
-  "requests>=2.32.3",
 ]
 
 [project.optional-dependencies]
+ollama = ["requests>=2.32.3"]
 anthropic = ["anthropic>=0.57.1"]
+all = [
+  "requests>=2.32.3",
+  "anthropic>=0.57.1",
+]
 dev = [
   "pytest>=8.3.2",
   "ruff>=0.6.9",

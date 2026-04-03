@@ -530,10 +530,13 @@ version = "0.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "click" },
-    { name = "requests" },
 ]
 
 [package.optional-dependencies]
+all = [
+    { name = "anthropic" },
+    { name = "requests" },
+]
 anthropic = [
     { name = "anthropic" },
 ]
@@ -541,16 +544,21 @@ dev = [
     { name = "pytest" },
     { name = "ruff" },
 ]
+ollama = [
+    { name = "requests" },
+]
 
 [package.metadata]
 requires-dist = [
+    { name = "anthropic", marker = "extra == 'all'", specifier = ">=0.57.1" },
     { name = "anthropic", marker = "extra == 'anthropic'", specifier = ">=0.57.1" },
     { name = "click", specifier = ">=8.1.7" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.3.2" },
-    { name = "requests", specifier = ">=2.32.3" },
+    { name = "requests", marker = "extra == 'all'", specifier = ">=2.32.3" },
+    { name = "requests", marker = "extra == 'ollama'", specifier = ">=2.32.3" },
     { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.6.9" },
 ]
-provides-extras = ["anthropic", "dev"]
+provides-extras = ["ollama", "anthropic", "all", "dev"]
 
 [[package]]
 name = "typing-extensions"

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass, field
+from dataclasses import dataclass, field
 from enum import StrEnum
 
 
@@ -46,21 +46,9 @@ class TraceGraph:
     metadata: dict = field(default_factory=dict)
 
     def to_dict(self) -> dict:
-        return {
-            "transcript_id": self.transcript_id,
-            "steps": [asdict(step) for step in self.steps],
-            "bonds": [
-                {
-                    "source": b.source,
-                    "target": b.target,
-                    "type": b.type.value,
-                    "confidence": b.confidence,
-                    "reason": b.reason,
-                }
-                for b in self.bonds
-            ],
-            "metadata": self.metadata,
-        }
+        from trace_topology.artifacts import graph_artifact
+
+        return graph_artifact(self)
 
 
 @dataclass(slots=True)
@@ -72,9 +60,13 @@ class Finding:
     score: float = 0.5
 
     def to_dict(self) -> dict:
-        data = asdict(self)
-        data["type"] = self.type.value
-        return data
+        return {
+            "type": self.type.value,
+            "steps_involved": self.steps_involved,
+            "description": self.description,
+            "severity": self.severity,
+            "score": self.score,
+        }
 
 
 @dataclass(slots=True)
@@ -84,8 +76,6 @@ class AnalysisReport:
     stats: dict = field(default_factory=dict)
 
     def to_dict(self) -> dict:
-        return {
-            "graph": self.graph.to_dict(),
-            "findings": [finding.to_dict() for finding in self.findings],
-            "stats": self.stats,
-        }
+        from trace_topology.artifacts import analysis_artifact
+
+        return analysis_artifact(self)

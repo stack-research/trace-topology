@@ -13,8 +13,8 @@ Read `DEVELOPER_CHECKLIST.md` for the living backlog of work needed to make the 
 - Python 3.11+. No other runtime.
 - Terminal-native. No web UI, no browser, no HTML output.
 - Core analysis requires zero API calls and zero network access. The tool works on local transcript files only.
-- Optional LLM-assisted classification (Ollama default, Anthropic optional) follows the same backend pattern as `../the-unaskable-question-machine/`.
-- All intermediate representations are JSON. Every analysis step writes a machine-readable artifact.
+- Optional LLM-assisted classification is extra-installed: Ollama via the `ollama` extra, Anthropic via the `anthropic` extra. The default path is `--backend none`.
+- All intermediate representations are JSON. Every top-level artifact now carries `artifact_type` and `schema_version` fields; see `docs/ARTIFACT_CONTRACT.md`.
 - ASCII rendering only. No image generation for graphs.
 
 ## Project Structure
@@ -55,6 +55,8 @@ raw transcript → parse → graph → analyze → render
 ```
 
 Each stage reads the previous stage's output and writes its own JSON artifact. The CLI orchestrates the pipeline but individual stages can be run independently.
+
+Breaking JSON contract changes require a schema version bump and doc updates in `docs/ARTIFACT_CONTRACT.md` and `README.md`.
 
 ## Bond Type Classification
 

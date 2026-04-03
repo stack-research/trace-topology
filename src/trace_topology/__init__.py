@@ -2,6 +2,7 @@
 
 __all__ = [
     "analysis",
+    "artifacts",
     "backends",
     "eval",
     "graph",

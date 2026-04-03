@@ -200,7 +200,14 @@ def query_ollama(
     Query Ollama and return (response_text, metadata).
     Uses requests directly — same pattern as UQM.
     """
-    import requests
+    try:
+        import requests
+    except ImportError:
+        print(
+            "ERROR: requests is not installed. Install Ollama support with `pip install trace-topology[ollama]`.",
+            file=sys.stderr,
+        )
+        return "", {"error": "missing_dependency"}
 
     payload = {
         "model": model,

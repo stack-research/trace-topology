@@ -184,14 +184,15 @@ def build_graph(
                 reason = "thematic-adjacency"
                 add_adjacency = True
         if backend is not None:
+            result = backend.classify(source.text, target.text)
             try:
-                result = backend.classify(source.text, target.text)
                 btype = BondType(result.bond_type)
+            except ValueError:
+                pass
+            else:
                 conf = max(conf, result.confidence)
                 reason = result.reason
                 add_adjacency = True
-            except Exception:
-                pass
         if _is_verification_step(target):
             last_conclusion = steps[last_conclusion_index] if last_conclusion_index >= 0 else None
             if last_conclusion is not None and source.id != last_conclusion.id:

@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from trace_topology.analysis import analyze_graph
+from trace_topology.artifacts import eval_artifact
 from trace_topology.graph import build_graph
 from trace_topology.parser import parse_transcript
 
@@ -121,7 +122,7 @@ def evaluate_annotations(annotation_dir: Path, samples_dir: Path) -> dict:
     for path in sorted(annotation_dir.glob("*.json")):
         results.append(evaluate_annotation(path, samples_dir).to_dict())
     if not results:
-        return {"results": [], "summary": {}}
+        return eval_artifact([], {})
 
     def avg(key: str) -> float:
         return sum(r[key] for r in results) / len(results)
@@ -134,4 +135,4 @@ def evaluate_annotations(annotation_dir: Path, samples_dir: Path) -> dict:
         "avg_finding_precision": avg("finding_precision"),
         "avg_finding_recall": avg("finding_recall"),
     }
-    return {"results": results, "summary": summary}
+    return eval_artifact(results, summary)

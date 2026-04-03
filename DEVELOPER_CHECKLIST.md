@@ -11,13 +11,13 @@ Use `- [ ]` for open work and `- [x]` for done when you edit this file.
 - [x] Reduce **over-segmentation** on terse, line-broken traces (e.g. some harvested Llama-style handshakes). — Heuristic: line-split only when structural list markers dominate or dense long-line prose blocks; see `data/samples/terse_linebreak_prose_0001.txt`.
 - [x] Solid coverage for **mixed formats**: numbered lists, markdown headings, thinking blocks, code-heavy traces.
 - [ ] Optional **configurable granularity** (sentence vs paragraph vs heuristic) for power users.
-- [ ] Document parser behavior and failure modes in `README.md` or a short `docs/` note.
+- [x] Document parser behavior and failure modes in `README.md` or a short `docs/` note. — `README.md` now explains segmentation rules, atomic regions, and known parser failure modes.
 
 ## Graph (support links and bond typing)
 
 - [x] Continue improving **support-link construction** on real traces where steps are right but edges were thin. — Cycle calibration now adds reciprocal restatement links on repo-local cycle traces and regresses them in `tests/test_analysis.py` / `tests/test_eval.py`.
 - [x] Calibrate **bond type** heuristics against more hand-annotated gold (not only synthetic). — Real handshake traces now regress cleanly in `tests/test_analysis.py` and `tests/test_eval.py`.
-- [ ] Clear rules for when **optional backends** (`--backend ollama|anthropic`) help vs add noise; document defaults.
+- [x] Clear rules for when **optional backends** (`--backend ollama|anthropic`) help vs add noise; document defaults. — `README.md` now recommends `--backend none` for CI/eval, positions Ollama as local exploratory judging, and Anthropic as explicit external judging.
 
 ## Analysis (detectors)
 
@@ -28,7 +28,7 @@ Use `- [ ]` for open work and `- [x]` for done when you edit this file.
 ## Rendering and CLI
 
 - [x] **ASCII layout** for large traces: compression, grouping, or phase summaries so output stays readable in a normal terminal. — `render.py` now switches to adaptive compact mode at 15+ steps with phase summaries, aggregated phase links, and finding-local hotspots in `tt analyze`.
-- [ ] **Stable JSON schemas** across versions; document breaking changes in `README.md`.
+- [x] **Stable JSON schemas** across versions; document breaking changes in `README.md`. — Top-level artifacts now carry `artifact_type` and `schema_version = 1`, with the compatibility rule documented in `docs/ARTIFACT_CONTRACT.md`.
 - [x] **Exit codes** (e.g. non-zero when structural failures exceed a threshold) for CI integration. — `tt analyze --fail-on-findings`; `tt eval --min-avg-bond-recall` (and related floors).
 - [x] Keep **CLI/docs/examples aligned**: when flags or commands change, update `README.md` and `AGENTS.md` in the same pass; keep smoke tests for documented CLI surfaces.
 
@@ -36,9 +36,9 @@ Use `- [ ]` for open work and `- [x]` for done when you edit this file.
 
 - [x] **CI** (lint + tests on push/PR) if the repo is public or multi-contributor. — `.github/workflows/ci.yml` (uv, ruff, pytest).
 - [x] **Pre-commit** or documented `make`/`uv` one-liners for format + test before commit. — README **Development** section + existing Makefile.
-- [ ] **Example sessions** in `README.md`: harvest → analyze → eval on a sample file.
+- [x] **Example sessions** in `README.md`: harvest → analyze → eval on a sample file. — README now includes sample-file and optional harvest walkthroughs with expected artifact outputs.
 - [ ] Optional **packaging** polish: `pip install`/Homebrew story if adoption matters.
-- [ ] Preserve the **zero-network core path**: parse/graph/analyze should still work when optional backend dependencies are not installed.
+- [x] Preserve the **zero-network core path**: parse/graph/analyze should still work when optional backend dependencies are not installed. — `requests` moved out of the base install into the `ollama` extra, and missing backend deps now fail with explicit install hints.
 
 ## Data and evaluation
 

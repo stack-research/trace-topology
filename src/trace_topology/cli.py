@@ -7,6 +7,7 @@ from pathlib import Path
 import click
 
 from trace_topology.analysis import analyze_graph
+from trace_topology.artifacts import graph_artifact
 from trace_topology.eval import evaluate_annotations, summary_meets_minimums
 from trace_topology.graph import build_graph
 from trace_topology.parser import parse_to_artifact, parse_transcript
@@ -87,9 +88,12 @@ def graph(
 ) -> None:
     transcript = _read_input(transcript_path)
     steps = parse_transcript(transcript)
-    backend = _build_backend(backend_name, model=model, base_url=base_url)
-    trace_graph = build_graph(steps, transcript_id=transcript_path, backend=backend)
-    payload = trace_graph.to_dict()
+    try:
+        backend = _build_backend(backend_name, model=model, base_url=base_url)
+        trace_graph = build_graph(steps, transcript_id=transcript_path, backend=backend)
+        payload = graph_artifact(trace_graph)
+    except RuntimeError as exc:
+        raise click.ClickException(str(exc)) from exc
     _write_json(out_path, payload)
     click.echo(render_graph_ascii(trace_graph))
 
@@ -128,10 +132,13 @@ def analyze(
 ) -> None:
     transcript = _read_input(transcript_path)
     steps = parse_transcript(transcript)
-    backend = _build_backend(backend_name, model=model, base_url=base_url)
-    trace_graph = build_graph(steps, transcript_id=transcript_path, backend=backend)
-    report = analyze_graph(trace_graph)
-    payload = report.to_dict()
+    try:
+        backend = _build_backend(backend_name, model=model, base_url=base_url)
+        trace_graph = build_graph(steps, transcript_id=transcript_path, backend=backend)
+        report = analyze_graph(trace_graph)
+        payload = report.to_dict()
+    except RuntimeError as exc:
+        raise click.ClickException(str(exc)) from exc
     _write_json(out_path, payload)
     click.echo(render_report_ascii(report))
     if fail_on_findings and report.findings:

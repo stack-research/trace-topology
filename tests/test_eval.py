@@ -84,6 +84,34 @@ def test_eval_cycle_regressions(golden_dir, samples_dir) -> None:
     assert llama_trust.finding_recall > 0.0
 
 
+def test_eval_pathological_regressions(golden_dir, samples_dir) -> None:
+    recursive_mess = evaluate_annotation(
+        Path(golden_dir / "break_lab_recursive_mess_0001.annotation.json"),
+        samples_dir,
+    )
+    free_will = evaluate_annotation(
+        Path(golden_dir / "deepseek-r1-8b_circular_free_will_20260402.annotation.json"),
+        samples_dir,
+    )
+    uqm_absence = evaluate_annotation(
+        Path(golden_dir / "llama3.1-8b_uqm_absence_mapping_fa2ef95f.annotation.json"),
+        samples_dir,
+    )
+    uqm_loop = evaluate_annotation(
+        Path(golden_dir / "llama3.1-8b_uqm_strange_loop_28913ff7.annotation.json"),
+        samples_dir,
+    )
+
+    assert recursive_mess.step_count_delta == 0
+    assert recursive_mess.finding_recall > 0.0
+    assert free_will.step_count_delta == 0
+    assert free_will.finding_recall > 0.0
+    assert uqm_absence.step_count_delta == 0
+    assert uqm_absence.finding_recall > 0.0
+    assert uqm_loop.step_count_delta == 0
+    assert uqm_loop.finding_recall > 0.0
+
+
 def test_eval_summary_meets_accuracy_floors(golden_dir, samples_dir) -> None:
     payload = evaluate_annotations(golden_dir, samples_dir)
     summary = payload["summary"]

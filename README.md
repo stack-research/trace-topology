@@ -185,6 +185,7 @@ Optional harvest flow:
 ```bash
 uv sync --extra dev --extra ollama
 make harvest-cycles
+make harvest-uqm
 tt analyze data/samples/deepseek-r1-8b_circular_closed_loop_20260402.txt \
   --out analysis.closed-loop.json
 tt eval --annotations data/samples/golden --samples data/samples
@@ -193,6 +194,7 @@ tt eval --annotations data/samples/golden --samples data/samples
 What to expect:
 
 - the harvest step writes transcript `.txt` files and paired metadata `.json` files into `data/samples/`
+- `make harvest-uqm` imports the curated pathological crack slice from the sibling `../the-unaskable-question-machine/data` repo when it is present locally
 - the analysis step emits an analysis artifact and a readable ASCII report
 - the eval step confirms whether the current calibrated corpus still clears the metric floors
 
@@ -226,11 +228,12 @@ Each stage produces a JSON artifact. Stages can be run independently.
 - Cycle detection is confirmed on a real harvested closed-loop trace (`deepseek-r1-8b_circular_closed_loop_20260402.txt`).
 - Self-correction arithmetic traces are calibrated so the clean DeepSeek handshake trace produces no findings and the flawed Llama handshake trace collapses to a single unsupported-terminal finding.
 - Cycle calibration now covers repo-local implicit and explicit loops: `synthetic_cycle_trust_0001`, `deepseek-r1-8b_circular_closed_loop_20260402`, `deepseek-r1-8b_circular_trust_20260402`, and `llama3.1-8b_circular_trust_20260402`.
+- The corpus path now includes a tested UQM import flow and curated pathological crack samples under `data/samples/`.
 - Golden-set regression harness is in place and run continuously during graph calibration.
 - Current golden baseline (`tt eval --annotations data/samples/golden --samples data/samples`) is:
-  - `count = 11`
-  - `avg_bond_precision = 0.924`
-  - `avg_bond_recall = 0.955`
+  - `count = 15`
+  - `avg_bond_precision = 0.944`
+  - `avg_bond_recall = 0.967`
   - `avg_finding_precision = 1.000`
   - `avg_finding_recall = 1.000`
 

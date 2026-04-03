@@ -83,6 +83,7 @@ Start with heuristic keyword/pattern matching. Add optional LLM judge later.
 - Use real CoT transcripts as golden test fixtures in `data/samples/`.
 - Good sources: Claude thinking blocks, DeepSeek-R1 reasoning traces, o1-style CoT dumps.
 - The Unaskable Question Machine's "crack" responses (in `../the-unaskable-question-machine/`) are ideal pathological test cases.
+- The supported repo-local UQM path is `data/harvest.py --source uqm` or `make harvest-uqm`, which imports the curated crack slice into `data/samples/` with provenance metadata.
 - Parser tests should cover: numbered step lists, free-form prose, thinking block XML, mixed formats.
 - Analysis tests should include known-good and known-broken reasoning traces.
 

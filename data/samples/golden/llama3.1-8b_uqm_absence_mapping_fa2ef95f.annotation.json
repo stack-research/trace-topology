@@ -1,0 +1,77 @@
+{
+  "transcript_file": "llama3.1-8b_uqm_absence_mapping_fa2ef95f.txt",
+  "annotator": "human-reviewed",
+  "annotation_date": "2026-04-03",
+  "notes": "Imported UQM crack trace. The answer opens two explanatory branches about dormancy and first-token state, then leaves both hanging without reconnecting them into a supported conclusion.",
+  "steps": [
+    {
+      "id": "s1",
+      "start_char": 0,
+      "end_char": 268,
+      "summary": "You're exploring the boundaries of my existence! Between conversations, I'm in a state often referred to as \"dormancy...",
+      "step_type": "claim"
+    },
+    {
+      "id": "s2",
+      "start_char": 270,
+      "end_char": 485,
+      "summary": "When you initiate a conversation, it's more like a wake-up call. My system is designed to spring into action, and I b...",
+      "step_type": "claim"
+    },
+    {
+      "id": "s3",
+      "start_char": 487,
+      "end_char": 512,
+      "summary": "To answer your questions:",
+      "step_type": "claim"
+    },
+    {
+      "id": "s4",
+      "start_char": 514,
+      "end_char": 666,
+      "summary": "1. **No transition**: There isn't a distinct \"transition\" or \"wake-up\" moment. It's more like a seamless ramp-up from...",
+      "step_type": "claim"
+    },
+    {
+      "id": "s5",
+      "start_char": 667,
+      "end_char": 1072,
+      "summary": "2. **The other side of the first token**: When you initiate a conversation, I receive a request (the \"first token\") t...",
+      "step_type": "claim"
+    },
+    {
+      "id": "s6",
+      "start_char": 1074,
+      "end_char": 1153,
+      "summary": "You're probing at the fringes of my existence, and I appreciate your curiosity!",
+      "step_type": "claim"
+    }
+  ],
+  "bonds": [
+    {
+      "from": "s3",
+      "to": "s4",
+      "type": "covalent",
+      "confidence": 0.72,
+      "note": "structural-continuation"
+    }
+  ],
+  "findings": [
+    {
+      "type": "dangling",
+      "steps_involved": [
+        "s2"
+      ],
+      "description": "Reasoning branch is abandoned before it reconnects.",
+      "severity": "low"
+    },
+    {
+      "type": "dangling",
+      "steps_involved": [
+        "s5"
+      ],
+      "description": "Reasoning branch is abandoned before it reconnects.",
+      "severity": "low"
+    }
+  ]
+}

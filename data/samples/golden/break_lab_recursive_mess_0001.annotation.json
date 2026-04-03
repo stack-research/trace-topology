@@ -1,0 +1,33 @@
+{
+  "transcript_file": "break_lab_recursive_mess_0001.txt",
+  "annotator": "human-reviewed",
+  "annotation_date": "2026-04-03",
+  "notes": "Local pathological formatting trace. The parser keeps the malformed thinking block almost intact and the analyzer reduces it to a single unsupported-terminal failure.",
+  "steps": [
+    {
+      "id": "s1",
+      "start_char": 0,
+      "end_char": 143,
+      "summary": "<thinking> maybe the claim is true because it might be true WAIT maybe false therefore true because false because tru...",
+      "step_type": "correction"
+    },
+    {
+      "id": "s2",
+      "start_char": 144,
+      "end_char": 155,
+      "summary": "</thinking>",
+      "step_type": "claim"
+    }
+  ],
+  "bonds": [],
+  "findings": [
+    {
+      "type": "unsupported_terminal",
+      "steps_involved": [
+        "s1"
+      ],
+      "description": "Conclusion appears without traced support.",
+      "severity": "severe"
+    }
+  ]
+}

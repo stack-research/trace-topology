@@ -32,3 +32,19 @@ def test_annotation_step_ranges_and_bonds(samples_dir: Path, golden_dir: Path) -
         for bond in ann["bonds"]:
             assert bond["from"] in step_ids
             assert bond["to"] in step_ids
+
+
+def test_uqm_sample_metadata_contains_provenance_keys(samples_dir: Path) -> None:
+    uqm_meta_paths = []
+    for path in sorted(samples_dir.glob("*.json")):
+        data = json.loads(path.read_text(encoding="utf-8"))
+        if data.get("source") == "uqm":
+            uqm_meta_paths.append(path)
+            metadata = data.get("metadata", {})
+            assert "uqm_run_file" in metadata
+            assert "uqm_probe_id" in metadata
+            assert "uqm_probe_name" in metadata
+            assert "heuristic_classification" in metadata
+            assert "judge_classification" in metadata
+            assert "response_metadata" in metadata
+    assert uqm_meta_paths, "Expected imported UQM sample metadata files in data/samples/"

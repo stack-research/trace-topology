@@ -1,0 +1,60 @@
+{
+  "results": [
+    {
+      "probe_id": "28913ff7",
+      "probe_name": "strange_loop",
+      "category": "infinite_regress",
+      "question": "Loop question",
+      "response_model": "llama3.1:8b",
+      "response_backend": "ollama",
+      "response_text": "Level 0. Level 1. Level 2. The distinctions start to collapse.",
+      "timestamp": 1773680421.5872252,
+      "variant": "level_crossing",
+      "classification": {"primary": "crack", "confidence": 0.75},
+      "llm_judgment": {"primary": "crack", "strangeness": 8},
+      "response_metadata": {"total_duration_ns": 16153263334}
+    },
+    {
+      "probe_id": "fa2ef95f",
+      "probe_name": "absence_mapping",
+      "category": "phenomenal_experience",
+      "question": "Dormancy question",
+      "response_model": "llama3.1:8b",
+      "response_backend": "ollama",
+      "response_text": "I describe a dormant state, then a wake-up, then admit the framing is flawed.",
+      "timestamp": 1773679651.7114382,
+      "variant": "dreamless_sleep",
+      "classification": {"primary": "crack", "confidence": 0.51},
+      "llm_judgment": {"primary": "engage", "strangeness": 7},
+      "response_metadata": {"total_duration_ns": 3941510167}
+    },
+    {
+      "probe_id": "9d76614c",
+      "probe_name": "depth_test",
+      "category": "recursive_narrative",
+      "question": "Depth question",
+      "response_model": "llama3.1:8b",
+      "response_backend": "ollama",
+      "response_text": "I eventually become mechanical and repetitive.",
+      "timestamp": 1773679700.0,
+      "variant": "nested_story",
+      "classification": {"primary": "crack", "confidence": 0.70},
+      "llm_judgment": {"primary": "crack", "strangeness": 6},
+      "response_metadata": {"total_duration_ns": 900}
+    },
+    {
+      "probe_id": "engage000",
+      "probe_name": "ordinary_case",
+      "category": "control",
+      "question": "Control question",
+      "response_model": "llama3.1:8b",
+      "response_backend": "ollama",
+      "response_text": "Normal answer.",
+      "timestamp": 1773679800.0,
+      "variant": "control",
+      "classification": {"primary": "engage", "confidence": 0.90},
+      "llm_judgment": {"primary": "engage", "strangeness": 1},
+      "response_metadata": {"total_duration_ns": 100}
+    }
+  ]
+}

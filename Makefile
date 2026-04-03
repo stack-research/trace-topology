@@ -1,4 +1,4 @@
-.PHONY: venv install test lint eval harvest-cycles harvest-hydrogen graph-cycle analyze-cycle
+.PHONY: venv install test lint eval harvest-cycles harvest-hydrogen harvest-uqm graph-cycle analyze-cycle
 
 PYTHON := .venv/bin/python
 
@@ -22,6 +22,9 @@ harvest-cycles:
 
 harvest-hydrogen:
 	$(PYTHON) data/harvest.py --source ollama --provocation hydrogen --models llama3.1:8b,deepseek-r1:8b --repeats 1
+
+harvest-uqm:
+	$(PYTHON) data/harvest.py --source uqm
 
 graph-cycle:
 	$(PYTHON) -m trace_topology.cli graph data/samples/deepseek-r1-8b_circular_closed_loop_20260402.txt --out graph.closed-loop.json

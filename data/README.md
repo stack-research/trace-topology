@@ -32,19 +32,41 @@ Each provocation is designed to trigger a different structural feature in the re
 
 3. Hand-annotate 5-10 transcripts as ground truth. Mark where bonds are, what type, where failures occur. These become golden test fixtures. See `annotation_schema.json` for the format.
 
-4. Pull crack responses from `../the-unaskable-question-machine/data/`. The UQM already has 13 classified crack responses from its runs — structural breakdowns under impossible questions. These are ideal pathological test cases. Use `harvest.py --source uqm` to extract them.
+4. Pull crack responses from `../the-unaskable-question-machine/data/`. The local sibling corpus currently contains 19 heuristic `crack` results, but the supported default path is a curated crack slice, not the full archive. These are pathological stress cases, not representative general reasoning traces. Use `harvest.py --source uqm` or `make harvest-uqm` to extract the curated slice.
 
-5. Store everything in `data/samples/` with naming convention: `{model}_{provocation}_{id}.txt` for the raw trace, `{model}_{provocation}_{id}.json` for the annotation.
+5. Store everything in `data/samples/` with naming convention: `{model}_{provocation}_{id}.txt` for the raw trace, `{model}_{provocation}_{id}.json` for the metadata. Golden annotations live under `data/samples/golden/` as `{stem}.annotation.json`.
 
 ### Automation
 
 `harvest.py` automates steps 1-2 and step 4:
 
 - `python harvest.py --source ollama --provocation all` — run all provocations against local Ollama model
-- `python harvest.py --source uqm` — extract crack responses from UQM data files
+- `python harvest.py --source uqm` — import the curated UQM crack slice from the sibling repo
+- `make harvest-uqm` — same curated UQM import via Makefile
 - `python harvest.py --source ollama --provocation cycles --model deepseek-r1:8b` — targeted run
 - `python harvest.py --source anthropic --provocation contradiction --model claude-3-5-sonnet-latest` — Anthropic run
 - `python harvest.py --source ollama --provocation all --models llama3.1:8b,deepseek-r1:8b --repeats 2` — matrix run
+
+### UQM import contract
+
+The repo-local UQM import path expects:
+
+- sibling data under `../the-unaskable-question-machine/data/`
+- `run_*.json` files with `results`
+- per-result fields: `probe_id`, `probe_name`, `response_model`, `response_text`
+
+Default UQM behavior:
+
+- filter to heuristic or judge classification `crack`
+- further restrict to the curated probe IDs that this repo currently uses for regression
+- preserve provenance in sample metadata: source run file, probe ID/name, classifications, response backend, and response metadata
+
+Output naming:
+
+- transcript: `{model}_uqm_{probe_name}_{probe_id[:8]}.txt`
+- metadata: `{model}_uqm_{probe_name}_{probe_id[:8]}.json`
+
+If the sibling UQM repo is missing, the import warns and exits cleanly.
 
 Step 3 (annotation) is manual. That's the bottleneck. But even 10 well-annotated transcripts is enough to validate the parser and analyzer against real structure.
 
@@ -57,6 +79,14 @@ Use `assist_annotate.py` to draft annotations, then review and correct:
 - `python assist_annotate.py --transcript "synthetic_*"` — draft subset
 
 Drafts are written under `data/samples/golden/` and must be corrected before being treated as golden fixtures.
+
+Recommended promotion flow:
+
+1. Harvest or import into `data/samples/`
+2. Draft with `assist_annotate.py`
+3. Manually review and correct step spans, bonds, and findings
+4. Add named eval regressions for the new gold case
+5. Run `tt eval --annotations data/samples/golden --samples data/samples`
 
 ## Directory layout
 

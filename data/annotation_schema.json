@@ -107,7 +107,7 @@
           },
           "severity": {
             "type": "string",
-            "enum": ["minor", "moderate", "severe"],
+            "enum": ["low", "moderate", "severe"],
             "description": "How much this problem undermines the reasoning."
           }
         }

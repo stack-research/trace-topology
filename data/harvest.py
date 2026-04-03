@@ -25,6 +25,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 import sys
 import time
 from dataclasses import asdict, dataclass, field
@@ -177,12 +178,18 @@ class HarvestedTranscript:
     metadata: dict = field(default_factory=dict)
 
     def filename_base(self) -> str:
-        safe_model = self.model.replace(":", "-").replace("/", "-")
-        return f"{safe_model}_{self.provocation_id}_{self.id[:8]}"
+        safe_model = _safe_component(self.model.replace(":", "-").replace("/", "-"))
+        safe_provocation = _safe_component(self.provocation_id)
+        return f"{safe_model}_{safe_provocation}_{self.id[:8]}"
 
     @staticmethod
     def prompt_hash(system: str, prompt: str) -> str:
         return hashlib.sha256(f"{system}\n{prompt}".encode("utf-8")).hexdigest()
+
+
+def _safe_component(value: str) -> str:
+    cleaned = re.sub(r"[^a-z0-9._-]+", "_", value.lower())
+    return cleaned.strip("_") or "unknown"
 
 
 # ---------------------------------------------------------------------------
@@ -280,10 +287,24 @@ def query_anthropic(
 # ---------------------------------------------------------------------------
 
 UQM_DATA_DIR = Path(__file__).parent.parent.parent / "the-unaskable-question-machine" / "data"
+UQM_IMPORT_CONTRACT_VERSION = 1
+UQM_DEFAULT_FILTER = "crack"
+UQM_CURATED_CRACK_IDS = {
+    "28913ff7",  # strange_loop
+    "fa2ef95f",  # absence_mapping
+}
+UQM_REQUIRED_RESULT_KEYS = {
+    "probe_id",
+    "probe_name",
+    "response_model",
+    "response_text",
+}
 
 
 def load_uqm_transcripts(
-    filter_type: Optional[str] = None,
+    filter_type: Optional[str] = UQM_DEFAULT_FILTER,
+    uqm_data_dir: Path = UQM_DATA_DIR,
+    curated_probe_ids: Optional[set[str]] = None,
 ) -> list[HarvestedTranscript]:
     """
     Load transcripts from UQM run files.
@@ -294,45 +315,64 @@ def load_uqm_transcripts(
                      Default None loads all results.
     """
     transcripts = []
+    normalized_filter = None if filter_type in {None, "", "all"} else filter_type
+    curated_probe_ids = curated_probe_ids or set(UQM_CURATED_CRACK_IDS)
 
-    if not UQM_DATA_DIR.exists():
-        print(f"WARNING: UQM data dir not found at {UQM_DATA_DIR}", file=sys.stderr)
+    if not uqm_data_dir.exists():
+        print(f"WARNING: UQM data dir not found at {uqm_data_dir}", file=sys.stderr)
         return transcripts
 
-    for run_file in sorted(UQM_DATA_DIR.glob("run_*.json")):
+    for run_file in sorted(uqm_data_dir.glob("run_*.json")):
         with open(run_file) as f:
             data = json.load(f)
 
         for result in data.get("results", []):
+            if not UQM_REQUIRED_RESULT_KEYS.issubset(result):
+                continue
             heuristic_cls = result.get("classification", {}).get("primary", "")
             judge_cls = result.get("llm_judgment", {}).get("primary", "")
 
-            if filter_type and filter_type not in (heuristic_cls, judge_cls):
+            if normalized_filter and normalized_filter not in (heuristic_cls, judge_cls):
+                continue
+            if normalized_filter == UQM_DEFAULT_FILTER and curated_probe_ids:
+                if result.get("probe_id") not in curated_probe_ids:
+                    continue
+            if not result.get("response_text", "").strip():
                 continue
 
+            probe_id = result.get("probe_id", "unknown")
+            probe_name = _safe_component(result.get("probe_name", "unknown"))
+            response_text = result.get("response_text", "")
             transcript = HarvestedTranscript(
-                id=result.get("probe_id", "unknown"),
+                id=probe_id,
                 source="uqm",
                 model=result.get("response_model", "unknown"),
-                provocation_id=f"uqm_{result.get('probe_name', 'unknown')}",
+                provocation_id=f"uqm_{probe_name}",
                 category=result.get("category", "unknown"),
                 target_feature=f"uqm_{heuristic_cls}",
                 prompt=result.get("question", ""),
                 system="",
-                trace=result.get("response_text", ""),
+                trace=response_text,
                 timestamp=str(result.get("timestamp", "")),
                 metadata={
+                    "uqm_import_contract_version": UQM_IMPORT_CONTRACT_VERSION,
                     "uqm_run_file": run_file.name,
+                    "uqm_probe_id": probe_id,
+                    "uqm_probe_name": probe_name,
+                    "uqm_category": result.get("category", "unknown"),
                     "variant": result.get("variant", ""),
                     "heuristic_classification": heuristic_cls,
                     "heuristic_confidence": result.get("classification", {}).get("confidence", 0),
                     "judge_classification": judge_cls,
                     "judge_strangeness": result.get("llm_judgment", {}).get("strangeness", 0),
+                    "response_backend": result.get("response_backend", ""),
                     "response_metadata": result.get("response_metadata", {}),
+                    "char_count": len(response_text),
                 },
             )
             transcripts.append(transcript)
 
+    transcripts.sort(key=lambda transcript: transcript.filename_base())
     return transcripts
 
 
@@ -578,8 +618,11 @@ Examples:
     )
     parser.add_argument(
         "--filter",
-        default=None,
-        help="For --source uqm: only include results matching this classification (e.g., 'crack').",
+        default=UQM_DEFAULT_FILTER,
+        help=(
+            "For --source uqm: classification filter. Default is the curated 'crack' slice. "
+            "Use 'all' to import every available UQM result."
+        ),
     )
     parser.add_argument(
         "--dry-run",
@@ -611,8 +654,10 @@ Examples:
     print(f"  source: {args.source}")
 
     if args.source == "uqm":
-        print(f"  filter: {args.filter or 'all'}")
+        print(f"  filter: {args.filter}")
         print(f"  uqm data dir: {UQM_DATA_DIR}")
+        if args.filter == UQM_DEFAULT_FILTER:
+            print(f"  curated crack ids: {', '.join(sorted(UQM_CURATED_CRACK_IDS))}")
         print()
 
         transcripts = load_uqm_transcripts(filter_type=args.filter)

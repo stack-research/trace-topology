@@ -105,7 +105,7 @@ def _is_thinking_tag_match(matched_text: str) -> bool:
     low = matched_text.lower()
     return "<think>" in low or "</think>" in low or "<thinking>" in low or "</thinking>" in low
 CONCLUSION_RE = re.compile(
-    r"\b(therefore|thus|in conclusion|ultimately|final answer|the answer is|the result is|given everything above)\b|^\s*so,?\s+there\s+(?:are|is)\b",
+    r"\b(therefore|thus|in conclusion|in summary|ultimately|final answer|the answer is|the result is|given everything above)\b|^\s*so,?\s+there\s+(?:are|is)\b",
     re.IGNORECASE,
 )
 CORRECTION_RE = re.compile(

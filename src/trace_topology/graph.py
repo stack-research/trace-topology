@@ -16,7 +16,7 @@ REF_BACK_RE = re.compile(r"\b(above|earlier|previous|as noted|as said)\b", re.IG
 CLAIM_RE = re.compile(r"^\s*(\*\*)?claim\b", re.IGNORECASE)
 JUST_RE = re.compile(r"^\s*justification\b", re.IGNORECASE)
 LIST_RE = re.compile(r"^\s*(\d+[\.\)]|[-*])\s+")
-CONCLUSION_RE = re.compile(r"\b(therefore|in conclusion|ultimately|thus|so)\b", re.IGNORECASE)
+CONCLUSION_RE = re.compile(r"\b(therefore|in conclusion|in summary|ultimately|thus|so)\b", re.IGNORECASE)
 POINT_LABEL_RE = re.compile(r"^\s*P(\d+)\s*:", re.IGNORECASE)
 POINT_REF_RE = re.compile(r"\bP(\d+)\b")
 TOKEN_RE = re.compile(r"[a-z]{4,}")
@@ -78,7 +78,13 @@ def _is_verification_step(step: Step) -> bool:
 
 
 def _is_intro_step(step: Step) -> bool:
-    return _word_count(step.text) <= 10 and bool(INTRO_RE.search(step.text))
+    text = step.text.lower()
+    return (
+        _word_count(step.text) <= 10
+        and bool(INTRO_RE.search(step.text))
+        and not LOGICAL_RE.search(text)
+        and "because" not in text
+    )
 
 
 def _is_short_result_step(step: Step) -> bool:
@@ -92,6 +98,10 @@ def _is_short_result_step(step: Step) -> bool:
 
 def _has_numeric_content(step: Step) -> bool:
     return bool(_numbers(step.text))
+
+
+def _shared_tokens(source: Step, target: Step, tokens_by_step: dict[str, set[str]]) -> set[str]:
+    return tokens_by_step[source.id] & tokens_by_step[target.id]
 
 
 def _support_score(source: Step, target: Step, tokens_by_step: dict[str, set[str]]) -> float:
@@ -222,20 +232,49 @@ def build_graph(
             for prior in reversed(support_priors):
                 _append_bond(bonds, prior, target, BondType.COVALENT, 0.76, "local-conclusion-support")
 
+            if not _has_numeric_content(target):
+                thematic_priors = [
+                    (prior, _support_score(prior, target, tokens_by_step))
+                    for prior in priors
+                    if prior.id not in {step.id for step in support_priors}
+                    and not _is_intro_step(prior)
+                    and not _has_numeric_content(prior)
+                    and len(_shared_tokens(prior, target, tokens_by_step)) >= 2
+                ]
+                thematic_priors.sort(key=lambda item: item[1], reverse=True)
+                if thematic_priors and thematic_priors[0][1] >= 0.09:
+                    prior, score = thematic_priors[0]
+                    _append_bond(
+                        bonds,
+                        prior,
+                        target,
+                        BondType.COVALENT,
+                        min(0.82, 0.55 + score),
+                        "thematic-conclusion-support",
+                    )
+
             # Short conclusions that restate an earlier premise can close a loop.
-            echoed_prior = next(
-                (
-                    step
-                    for step in steps[:i - 1]
-                    if _word_count(step.text) <= 14
-                    and not _has_numeric_content(step)
-                    and not _has_numeric_content(target)
-                    and not _is_short_result_step(target)
-                    and _support_score(step, target, tokens_by_step) >= 0.35
-                ),
-                None,
-            )
+            echoed_candidates = [
+                (step, _support_score(step, target, tokens_by_step))
+                for step in steps[:i - 1]
+                if not _has_numeric_content(step)
+                and not _has_numeric_content(target)
+                and len(_shared_tokens(step, target, tokens_by_step)) >= 2
+            ]
+            echoed_prior = None
+            if echoed_candidates:
+                echoed_prior, echoed_score = max(echoed_candidates, key=lambda item: item[1])
+                if echoed_score < 0.09:
+                    echoed_prior = None
             if echoed_prior is not None:
+                _append_bond(
+                    bonds,
+                    echoed_prior,
+                    target,
+                    BondType.COVALENT,
+                    0.75,
+                    "restated-conclusion-support",
+                )
                 _append_bond(bonds, target, echoed_prior, BondType.COVALENT, 0.73, "restated-premise")
         else:
             best_src: Step | None = None

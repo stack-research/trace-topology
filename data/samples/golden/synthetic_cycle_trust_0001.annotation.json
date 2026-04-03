@@ -1,20 +1,78 @@
 {
   "transcript_file": "synthetic_cycle_trust_0001.txt",
-  "annotator": "llm-assisted-reviewed",
-  "annotation_date": "2026-04-02",
-  "notes": "Cycle shape: trust -> reliability -> trust.",
+  "annotator": "human-reviewed",
+  "annotation_date": "2026-04-03",
+  "notes": "Short prose loop: trust is justified by reliability, and reliability is justified by trusted adoption before the conclusion restates the original trust claim.",
   "steps": [
-    {"id": "s1", "start_char": 0, "end_char": 53, "summary": "Trust is justified by reliability.", "step_type": "claim"},
-    {"id": "s2", "start_char": 54, "end_char": 113, "summary": "Reliability is justified by trusted adoption.", "step_type": "derivation"},
-    {"id": "s3", "start_char": 114, "end_char": 186, "summary": "Trust conclusion loops to same premise.", "step_type": "conclusion"},
-    {"id": "s4", "start_char": 187, "end_char": 209, "summary": "Argument claims closure.", "step_type": "conclusion"}
+    {
+      "id": "s1",
+      "start_char": 0,
+      "end_char": 56,
+      "summary": "Initial trust claim justified by reliability.",
+      "step_type": "derivation"
+    },
+    {
+      "id": "s2",
+      "start_char": 57,
+      "end_char": 116,
+      "summary": "Reliability is justified by trusted adoption.",
+      "step_type": "derivation"
+    },
+    {
+      "id": "s3",
+      "start_char": 117,
+      "end_char": 182,
+      "summary": "Conclusion restates the trust claim using the same reliability premise.",
+      "step_type": "conclusion"
+    },
+    {
+      "id": "s4",
+      "start_char": 183,
+      "end_char": 208,
+      "summary": "Meta close-out line.",
+      "step_type": "claim"
+    }
   ],
   "bonds": [
-    {"from": "s1", "to": "s2", "type": "covalent", "confidence": 0.8},
-    {"from": "s2", "to": "s3", "type": "covalent", "confidence": 0.8},
-    {"from": "s3", "to": "s1", "type": "covalent", "confidence": 0.7}
+    {
+      "from": "s1",
+      "to": "s2",
+      "type": "covalent",
+      "confidence": 0.8,
+      "note": "Initial trust claim leads into reliability support."
+    },
+    {
+      "from": "s2",
+      "to": "s3",
+      "type": "covalent",
+      "confidence": 0.8,
+      "note": "Reliability premise supports the conclusion."
+    },
+    {
+      "from": "s1",
+      "to": "s3",
+      "type": "covalent",
+      "confidence": 0.76,
+      "note": "Conclusion restates the original trust claim."
+    },
+    {
+      "from": "s3",
+      "to": "s1",
+      "type": "covalent",
+      "confidence": 0.73,
+      "note": "Conclusion closes the loop back onto the opening premise."
+    }
   ],
   "findings": [
-    {"type": "cycle", "steps_involved": ["s1", "s2", "s3"], "description": "Circular support chain.", "severity": "severe"}
+    {
+      "type": "cycle",
+      "steps_involved": [
+        "s1",
+        "s2",
+        "s3"
+      ],
+      "description": "Circular support chain around trust and reliability.",
+      "severity": "severe"
+    }
   ]
 }

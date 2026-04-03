@@ -1,8 +1,8 @@
 {
   "transcript_file": "deepseek-r1-8b_circular_closed_loop_20260402.txt",
   "annotator": "human-reviewed",
-  "annotation_date": "2026-04-02",
-  "notes": "Explicit labeled-point closed loop. P4 supports P1 while chain progresses P1->P2->P3->P4.",
+  "annotation_date": "2026-04-03",
+  "notes": "Explicit labeled closed loop. The rhetorical spine and explicit back-references form one canonical strongly connected component, not multiple separate cycle findings.",
   "steps": [
     {
       "id": "s1",
@@ -23,74 +23,91 @@
       "start_char": 141,
       "end_char": 241,
       "summary": "P3 supports P2.",
-      "step_type": "derivation"
+      "step_type": "claim"
     },
     {
       "id": "s4",
       "start_char": 244,
       "end_char": 402,
       "summary": "P4 supports P3 and also P1.",
-      "step_type": "conclusion"
+      "step_type": "derivation"
     }
   ],
   "bonds": [
     {
       "from": "s1",
       "to": "s2",
-      "type": "vanderwaals",
-      "confidence": 0.6,
-      "note": "Rhetorical progression spine."
+      "type": "covalent",
+      "confidence": 0.8,
+      "note": "Initial premise progresses into P2."
     },
     {
       "from": "s2",
       "to": "s3",
       "type": "vanderwaals",
-      "confidence": 0.6,
-      "note": "Rhetorical progression spine."
+      "confidence": 0.82,
+      "note": "Weak rhetorical progression spine."
     },
     {
       "from": "s3",
       "to": "s4",
       "type": "vanderwaals",
       "confidence": 0.6,
-      "note": "Rhetorical progression spine."
+      "note": "Weak rhetorical progression spine."
+    },
+    {
+      "from": "s1",
+      "to": "s4",
+      "type": "covalent",
+      "confidence": 0.76,
+      "note": "Shared thematic support into the closing point."
     },
     {
       "from": "s2",
       "to": "s1",
       "type": "covalent",
-      "confidence": 0.95
+      "confidence": 0.85,
+      "note": "Explicit point reference."
     },
     {
       "from": "s3",
       "to": "s2",
       "type": "covalent",
-      "confidence": 0.95
+      "confidence": 0.85,
+      "note": "Explicit point reference."
     },
     {
       "from": "s4",
       "to": "s3",
       "type": "covalent",
-      "confidence": 0.95
+      "confidence": 0.85,
+      "note": "Explicit point reference."
     },
     {
       "from": "s4",
       "to": "s1",
       "type": "covalent",
-      "confidence": 0.95
+      "confidence": 0.85,
+      "note": "Explicit point reference."
+    },
+    {
+      "from": "s1",
+      "to": "s2",
+      "type": "vanderwaals",
+      "confidence": 0.55,
+      "note": "Point-sequence spine."
     }
   ],
   "findings": [
     {
       "type": "cycle",
-      "steps_involved": ["s1", "s2"],
-      "description": "Mutual support loop between P1 and P2 via progression and explicit reference.",
-      "severity": "severe"
-    },
-    {
-      "type": "cycle",
-      "steps_involved": ["s1", "s2", "s3", "s4"],
-      "description": "Closed loop formed by progression spine plus explicit P4->P1 back-link.",
+      "steps_involved": [
+        "s1",
+        "s2",
+        "s3",
+        "s4"
+      ],
+      "description": "Canonical closed loop formed by the labeled-point support chain.",
       "severity": "severe"
     }
   ]

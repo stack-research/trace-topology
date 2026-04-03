@@ -15,14 +15,14 @@ Use `- [ ]` for open work and `- [x]` for done when you edit this file.
 
 ## Graph (support links and bond typing)
 
-- [ ] Continue improving **support-link construction** on real traces where steps are right but edges were thin.
+- [x] Continue improving **support-link construction** on real traces where steps are right but edges were thin. — Cycle calibration now adds reciprocal restatement links on repo-local cycle traces and regresses them in `tests/test_analysis.py` / `tests/test_eval.py`.
 - [x] Calibrate **bond type** heuristics against more hand-annotated gold (not only synthetic). — Real handshake traces now regress cleanly in `tests/test_analysis.py` and `tests/test_eval.py`.
 - [ ] Clear rules for when **optional backends** (`--backend ollama|anthropic`) help vs add noise; document defaults.
 
 ## Analysis (detectors)
 
 - [x] Keep **contradiction / entropy** precise on long prose without tanking recall on gold. — Precision-tuned contradiction detection, verification-tail entropy suppression, and handshake regressions are covered by `tests/test_detectors.py`.
-- [ ] **Cycle detection**: validate on diverse real cyclic traces, not only closed-loop prompts.
+- [x] **Cycle detection**: validate on diverse real cyclic traces, not only closed-loop prompts. — Gold now includes `synthetic_cycle_trust`, `deepseek-r1-8b_circular_closed_loop`, and two real `circular_trust` traces with cycle-specific eval assertions.
 - [ ] Consider **severity tuning** or ranking so the CLI surfaces the most actionable findings first.
 
 ## Rendering and CLI
@@ -42,7 +42,7 @@ Use `- [ ]` for open work and `- [x]` for done when you edit this file.
 
 ## Data and evaluation
 
-- [ ] Grow **golden annotations** for real traces (hand-reviewed or assisted + corrected).
+- [ ] Grow **golden annotations** for real traces (hand-reviewed or assisted + corrected). — Current gold set includes 11 annotations with two real `circular_trust` cases added during cycle calibration; more long-form real traces are still needed.
 - [x] **Regression gates**: `tt eval` summary thresholds or trend notes in this checklist. — Current calibrated floor set: `avg_bond_precision >= 0.80`, `avg_bond_recall >= 0.88`, `avg_finding_precision >= 0.80`, `avg_finding_recall >= 0.75`; non-zero exit when below floor.
 - [ ] **UQM / external corpus** import path documented and tested when data is available.
 

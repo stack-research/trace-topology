@@ -93,17 +93,19 @@ Each stage produces a JSON artifact. Stages can be run independently.
 - Real transcript harvesting works via Ollama (`llama3.1:8b`, `deepseek-r1:8b` used in calibration).
 - Cycle detection is confirmed on a real harvested closed-loop trace (`deepseek-r1-8b_circular_closed_loop_20260402.txt`).
 - Self-correction arithmetic traces are calibrated so the clean DeepSeek handshake trace produces no findings and the flawed Llama handshake trace collapses to a single unsupported-terminal finding.
+- Cycle calibration now covers repo-local implicit and explicit loops: `synthetic_cycle_trust_0001`, `deepseek-r1-8b_circular_closed_loop_20260402`, `deepseek-r1-8b_circular_trust_20260402`, and `llama3.1-8b_circular_trust_20260402`.
 - Golden-set regression harness is in place and run continuously during graph calibration.
 - Current golden baseline (`tt eval --annotations data/samples/golden --samples data/samples`) is:
-  - `avg_bond_precision = 0.883`
-  - `avg_bond_recall = 0.907`
-  - `avg_finding_precision = 0.822`
-  - `avg_finding_recall = 0.889`
+  - `count = 11`
+  - `avg_bond_precision = 0.924`
+  - `avg_bond_recall = 0.955`
+  - `avg_finding_precision = 1.000`
+  - `avg_finding_recall = 1.000`
 
 ### Known limitations
 
 - **Detectors / findings:** Heuristic-based; behavior is regression-tested on golden fixtures, but long free-form traces can still produce false positives or false negatives.
-- **Graph / bonds:** Support edges are stronger on the current gold set and key real arithmetic traces, but a common failure mode is still **bad step boundaries**, not only missing links in linear prose. Format cues (headings, labels, discourse markers) still help.
+- **Graph / bonds:** Support edges are stronger on the current gold set, real arithmetic traces, and the calibrated cycle corpus, but a common failure mode is still **bad step boundaries**, not only missing links in linear prose. Format cues (headings, labels, discourse markers) still help.
 - The parser treats triple-backtick fenced code blocks, markdown headings, and `<think>` / `<thinking>` blocks as atomic regions to reduce over-segmentation.
 - ASCII rendering is functional but not yet optimized for very large traces (layout compression and emphasis still basic).
 - Optional backend-assisted bond judging is available for `tt graph` and `tt analyze` (`--backend none|ollama|anthropic`); it is not required for the local core pipeline.

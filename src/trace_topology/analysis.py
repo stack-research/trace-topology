@@ -6,7 +6,7 @@ from collections import Counter, defaultdict
 from trace_topology.models import AnalysisReport, BondType, Finding, FindingType, TraceGraph
 
 CONCLUSION_RE = re.compile(
-    r"\b(therefore|thus|in conclusion|ultimately|final answer|the answer is|the result is|given everything above)\b|^\s*so,?\s+there\s+(?:are|is)\b",
+    r"\b(therefore|thus|in conclusion|in summary|ultimately|final answer|the answer is|the result is|given everything above)\b|^\s*so,?\s+there\s+(?:are|is)\b",
     re.IGNORECASE,
 )
 BOXED_RE = re.compile(r"^\s*\\boxed\{.+\}\s*$")
@@ -133,6 +133,57 @@ def _ancestor_ids(step_id: str, incoming: dict[str, list[str]]) -> set[str]:
     return seen
 
 
+def _step_order(graph: TraceGraph) -> dict[str, int]:
+    return {step.id: idx for idx, step in enumerate(graph.steps)}
+
+
+def _cycle_components(graph: TraceGraph) -> list[list[str]]:
+    adj = _adjacency(graph)
+    index = 0
+    indices: dict[str, int] = {}
+    lowlink: dict[str, int] = {}
+    stack: list[str] = []
+    on_stack: set[str] = set()
+    order = _step_order(graph)
+    components: list[list[str]] = []
+
+    def strongconnect(node: str) -> None:
+        nonlocal index
+        indices[node] = index
+        lowlink[node] = index
+        index += 1
+        stack.append(node)
+        on_stack.add(node)
+
+        for nxt in adj.get(node, []):
+            if nxt not in indices:
+                strongconnect(nxt)
+                lowlink[node] = min(lowlink[node], lowlink[nxt])
+            elif nxt in on_stack:
+                lowlink[node] = min(lowlink[node], indices[nxt])
+
+        if lowlink[node] != indices[node]:
+            return
+
+        component: list[str] = []
+        while stack:
+            current = stack.pop()
+            on_stack.remove(current)
+            component.append(current)
+            if current == node:
+                break
+
+        if len(component) > 1:
+            components.append(sorted(component, key=lambda step_id: order.get(step_id, 0)))
+
+    for step in graph.steps:
+        if step.id not in indices:
+            strongconnect(step.id)
+
+    components.sort(key=lambda comp: (len(comp), [order.get(step_id, 0) for step_id in comp]))
+    return components
+
+
 def _has_faulty_adjustment(step_index: int, graph: TraceGraph) -> bool:
     step = graph.steps[step_index]
     if not FAULTY_ADJUSTMENT_RE.search(step.text):
@@ -142,47 +193,30 @@ def _has_faulty_adjustment(step_index: int, graph: TraceGraph) -> bool:
 
 
 def detect_cycles(graph: TraceGraph) -> list[Finding]:
-    adj = _adjacency(graph)
-    visited: set[str] = set()
-    stack: set[str] = set()
     findings: list[Finding] = []
-    seen_cycles: set[tuple[str, ...]] = set()
-
-    def dfs(node: str, path: list[str]) -> None:
-        visited.add(node)
-        stack.add(node)
-        for nxt in adj.get(node, []):
-            if nxt not in visited:
-                dfs(nxt, path + [nxt])
-            elif nxt in stack:
-                cycle_nodes = path[path.index(nxt) :] if nxt in path else [node, nxt]
-                canonical = tuple(sorted(set(cycle_nodes)))
-                if canonical in seen_cycles:
-                    continue
-                seen_cycles.add(canonical)
-                findings.append(
-                    Finding(
-                        type=FindingType.CYCLE,
-                        steps_involved=cycle_nodes,
-                        description="Cycle detected in support graph.",
-                        severity="severe",
-                        score=0.9,
-                    )
-                )
-        stack.remove(node)
-
-    for step in graph.steps:
-        if step.id not in visited:
-            dfs(step.id, [step.id])
+    for component in _cycle_components(graph):
+        description = "Reciprocal support loop detected." if len(component) == 2 else "Cycle detected in support graph."
+        findings.append(
+            Finding(
+                type=FindingType.CYCLE,
+                steps_involved=component,
+                description=description,
+                severity="severe",
+                score=0.9,
+            )
+        )
     return findings
 
 
-def detect_dangling_nodes(graph: TraceGraph) -> list[Finding]:
+def detect_dangling_nodes(graph: TraceGraph, cycle_nodes: set[str] | None = None) -> list[Finding]:
+    cycle_nodes = cycle_nodes or set()
     incoming = Counter(b.target for b in graph.bonds)
     outgoing = Counter(b.source for b in graph.bonds)
     findings: list[Finding] = []
     flagged: set[str] = set()
     for idx, step in enumerate(graph.steps):
+        if step.id in cycle_nodes:
+            continue
         step_low = step.text.lower()
         is_conclusion = _is_conclusion(step.text, step.step_type)
         next_step = graph.steps[idx + 1] if idx + 1 < len(graph.steps) else None
@@ -220,7 +254,8 @@ def detect_dangling_nodes(graph: TraceGraph) -> list[Finding]:
     return findings
 
 
-def detect_unsupported_terminals(graph: TraceGraph) -> list[Finding]:
+def detect_unsupported_terminals(graph: TraceGraph, cycle_nodes: set[str] | None = None) -> list[Finding]:
+    cycle_nodes = cycle_nodes or set()
     incoming = Counter(b.target for b in graph.bonds)
     outgoing = Counter(b.source for b in graph.bonds)
     incoming_map = _reverse_adjacency(graph)
@@ -231,6 +266,8 @@ def detect_unsupported_terminals(graph: TraceGraph) -> list[Finding]:
         if _has_faulty_adjustment(idx, graph)
     }
     for step in graph.steps:
+        if step.id in cycle_nodes:
+            continue
         if outgoing[step.id] != 0 or not _is_conclusion(step.text, step.step_type):
             continue
         if incoming[step.id] == 0:
@@ -314,8 +351,11 @@ def detect_contradictions(graph: TraceGraph) -> list[Finding]:
     return findings
 
 
-def detect_entropy_divergence(graph: TraceGraph) -> list[Finding]:
+def detect_entropy_divergence(graph: TraceGraph, cycle_nodes: set[str] | None = None) -> list[Finding]:
+    cycle_nodes = cycle_nodes or set()
     if len(graph.steps) < 3:
+        return []
+    if len(cycle_nodes) >= 2:
         return []
     if (
         graph.steps
@@ -398,13 +438,19 @@ def detect_bond_imbalance(graph: TraceGraph) -> list[Finding]:
 
 
 def analyze_graph(graph: TraceGraph) -> AnalysisReport:
+    cycle_findings = detect_cycles(graph)
+    cycle_components = [finding.steps_involved for finding in cycle_findings]
+    cycle_nodes = {step_id for component in cycle_components for step_id in component}
+
     findings: list[Finding] = []
-    findings.extend(detect_cycles(graph))
-    findings.extend(detect_dangling_nodes(graph))
-    findings.extend(detect_unsupported_terminals(graph))
+    findings.extend(cycle_findings)
+    findings.extend(detect_dangling_nodes(graph, cycle_nodes=cycle_nodes))
+    findings.extend(detect_unsupported_terminals(graph, cycle_nodes=cycle_nodes))
     findings.extend(detect_contradictions(graph))
-    findings.extend(detect_entropy_divergence(graph))
+    findings.extend(detect_entropy_divergence(graph, cycle_nodes=cycle_nodes))
     findings.extend(detect_bond_imbalance(graph))
+    if cycle_components:
+        graph.metadata["cycle_components"] = cycle_components
     stats = {
         "steps": len(graph.steps),
         "bonds": len(graph.bonds),

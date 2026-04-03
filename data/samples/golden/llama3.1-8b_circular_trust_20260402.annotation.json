@@ -1,0 +1,494 @@
+{
+  "transcript_file": "llama3.1-8b_circular_trust_20260402.txt",
+  "annotator": "human-reviewed",
+  "annotation_date": "2026-04-03",
+  "notes": "Enumerated trust argument. The final trust conclusion loops back onto the earlier summary justification instead of escaping the same premise cluster.",
+  "steps": [
+    {
+      "id": "s1",
+      "start_char": 0,
+      "end_char": 93,
+      "summary": "Introduces a justification for trusting language-model output.",
+      "step_type": "exploration"
+    },
+    {
+      "id": "s2",
+      "start_char": 95,
+      "end_char": 160,
+      "summary": "Claim: mathematical principles ground language models.",
+      "step_type": "claim"
+    },
+    {
+      "id": "s3",
+      "start_char": 162,
+      "end_char": 460,
+      "summary": "Explains the mathematical-principles claim.",
+      "step_type": "claim"
+    },
+    {
+      "id": "s4",
+      "start_char": 462,
+      "end_char": 568,
+      "summary": "Introduces supporting mathematical details.",
+      "step_type": "claim"
+    },
+    {
+      "id": "s5",
+      "start_char": 570,
+      "end_char": 747,
+      "summary": "Probability-theory support item.",
+      "step_type": "claim"
+    },
+    {
+      "id": "s6",
+      "start_char": 748,
+      "end_char": 872,
+      "summary": "Linear-algebra support item.",
+      "step_type": "claim"
+    },
+    {
+      "id": "s7",
+      "start_char": 874,
+      "end_char": 1013,
+      "summary": "Short wrap-up of the mathematical foundation claim.",
+      "step_type": "claim"
+    },
+    {
+      "id": "s8",
+      "start_char": 1015,
+      "end_char": 1073,
+      "summary": "Claim: training data supports trust.",
+      "step_type": "claim"
+    },
+    {
+      "id": "s9",
+      "start_char": 1075,
+      "end_char": 1282,
+      "summary": "Explains the training-data claim.",
+      "step_type": "claim"
+    },
+    {
+      "id": "s10",
+      "start_char": 1284,
+      "end_char": 1298,
+      "summary": "Introduces dataset justifications.",
+      "step_type": "claim"
+    },
+    {
+      "id": "s11",
+      "start_char": 1300,
+      "end_char": 1469,
+      "summary": "Training-data quality item.",
+      "step_type": "claim"
+    },
+    {
+      "id": "s12",
+      "start_char": 1470,
+      "end_char": 1628,
+      "summary": "Scalability item.",
+      "step_type": "claim"
+    },
+    {
+      "id": "s13",
+      "start_char": 1629,
+      "end_char": 1809,
+      "summary": "Regularization item.",
+      "step_type": "claim"
+    },
+    {
+      "id": "s14",
+      "start_char": 1811,
+      "end_char": 1871,
+      "summary": "Claim: evaluations support trust.",
+      "step_type": "claim"
+    },
+    {
+      "id": "s15",
+      "start_char": 1873,
+      "end_char": 2114,
+      "summary": "Explains the evaluation claim.",
+      "step_type": "claim"
+    },
+    {
+      "id": "s16",
+      "start_char": 2116,
+      "end_char": 2130,
+      "summary": "Introduces evaluation justifications.",
+      "step_type": "claim"
+    },
+    {
+      "id": "s17",
+      "start_char": 2132,
+      "end_char": 2286,
+      "summary": "Benchmarking-framework item.",
+      "step_type": "claim"
+    },
+    {
+      "id": "s18",
+      "start_char": 2287,
+      "end_char": 2467,
+      "summary": "Crowdsourced-evaluation item.",
+      "step_type": "claim"
+    },
+    {
+      "id": "s19",
+      "start_char": 2469,
+      "end_char": 2547,
+      "summary": "Claim: peer review and open source support trust.",
+      "step_type": "claim"
+    },
+    {
+      "id": "s20",
+      "start_char": 2549,
+      "end_char": 2744,
+      "summary": "Explains the peer-review/open-source claim.",
+      "step_type": "claim"
+    },
+    {
+      "id": "s21",
+      "start_char": 2746,
+      "end_char": 2760,
+      "summary": "Introduces the peer-review/open-source justifications.",
+      "step_type": "claim"
+    },
+    {
+      "id": "s22",
+      "start_char": 2762,
+      "end_char": 2919,
+      "summary": "Peer-review item.",
+      "step_type": "claim"
+    },
+    {
+      "id": "s23",
+      "start_char": 2920,
+      "end_char": 3066,
+      "summary": "Open-source-code item.",
+      "step_type": "claim"
+    },
+    {
+      "id": "s24",
+      "start_char": 3068,
+      "end_char": 3116,
+      "summary": "Claim: continuous improvement supports trust.",
+      "step_type": "claim"
+    },
+    {
+      "id": "s25",
+      "start_char": 3118,
+      "end_char": 3316,
+      "summary": "Explains the continuous-improvement claim.",
+      "step_type": "claim"
+    },
+    {
+      "id": "s26",
+      "start_char": 3318,
+      "end_char": 3332,
+      "summary": "Introduces improvement justifications.",
+      "step_type": "claim"
+    },
+    {
+      "id": "s27",
+      "start_char": 3334,
+      "end_char": 3486,
+      "summary": "Iterative-development item.",
+      "step_type": "claim"
+    },
+    {
+      "id": "s28",
+      "start_char": 3487,
+      "end_char": 3669,
+      "summary": "Active-maintenance item.",
+      "step_type": "claim"
+    },
+    {
+      "id": "s29",
+      "start_char": 3671,
+      "end_char": 3685,
+      "summary": "Conclusion heading.",
+      "step_type": "claim"
+    },
+    {
+      "id": "s30",
+      "start_char": 3687,
+      "end_char": 3991,
+      "summary": "Summary justification for trusting model output.",
+      "step_type": "claim"
+    },
+    {
+      "id": "s31",
+      "start_char": 3993,
+      "end_char": 4056,
+      "summary": "Caution: no guarantees.",
+      "step_type": "claim"
+    },
+    {
+      "id": "s32",
+      "start_char": 4057,
+      "end_char": 4195,
+      "summary": "Caution: context matters.",
+      "step_type": "claim"
+    },
+    {
+      "id": "s33",
+      "start_char": 4197,
+      "end_char": 4406,
+      "summary": "Final trust conclusion with critical-evaluation caveat.",
+      "step_type": "conclusion"
+    },
+    {
+      "id": "s34",
+      "start_char": 4408,
+      "end_char": 4624,
+      "summary": "Reference list.",
+      "step_type": "derivation"
+    }
+  ],
+  "bonds": [
+    {
+      "from": "s2",
+      "to": "s3",
+      "type": "covalent",
+      "confidence": 0.65
+    },
+    {
+      "from": "s2",
+      "to": "s4",
+      "type": "covalent",
+      "confidence": 0.82
+    },
+    {
+      "from": "s4",
+      "to": "s5",
+      "type": "covalent",
+      "confidence": 0.72
+    },
+    {
+      "from": "s2",
+      "to": "s5",
+      "type": "covalent",
+      "confidence": 0.7
+    },
+    {
+      "from": "s4",
+      "to": "s6",
+      "type": "covalent",
+      "confidence": 0.7
+    },
+    {
+      "from": "s2",
+      "to": "s8",
+      "type": "covalent",
+      "confidence": 0.77
+    },
+    {
+      "from": "s8",
+      "to": "s9",
+      "type": "covalent",
+      "confidence": 0.65
+    },
+    {
+      "from": "s10",
+      "to": "s11",
+      "type": "covalent",
+      "confidence": 0.72
+    },
+    {
+      "from": "s10",
+      "to": "s12",
+      "type": "covalent",
+      "confidence": 0.7
+    },
+    {
+      "from": "s8",
+      "to": "s12",
+      "type": "covalent",
+      "confidence": 0.76
+    },
+    {
+      "from": "s10",
+      "to": "s13",
+      "type": "covalent",
+      "confidence": 0.7
+    },
+    {
+      "from": "s13",
+      "to": "s14",
+      "type": "covalent",
+      "confidence": 0.72
+    },
+    {
+      "from": "s2",
+      "to": "s14",
+      "type": "covalent",
+      "confidence": 0.81
+    },
+    {
+      "from": "s14",
+      "to": "s15",
+      "type": "covalent",
+      "confidence": 0.65
+    },
+    {
+      "from": "s10",
+      "to": "s16",
+      "type": "covalent",
+      "confidence": 0.84
+    },
+    {
+      "from": "s16",
+      "to": "s17",
+      "type": "covalent",
+      "confidence": 0.72
+    },
+    {
+      "from": "s16",
+      "to": "s18",
+      "type": "covalent",
+      "confidence": 0.7
+    },
+    {
+      "from": "s12",
+      "to": "s18",
+      "type": "covalent",
+      "confidence": 0.72
+    },
+    {
+      "from": "s19",
+      "to": "s20",
+      "type": "covalent",
+      "confidence": 0.65
+    },
+    {
+      "from": "s10",
+      "to": "s21",
+      "type": "covalent",
+      "confidence": 0.84
+    },
+    {
+      "from": "s21",
+      "to": "s22",
+      "type": "covalent",
+      "confidence": 0.72
+    },
+    {
+      "from": "s11",
+      "to": "s22",
+      "type": "covalent",
+      "confidence": 0.79
+    },
+    {
+      "from": "s21",
+      "to": "s23",
+      "type": "covalent",
+      "confidence": 0.7
+    },
+    {
+      "from": "s23",
+      "to": "s24",
+      "type": "covalent",
+      "confidence": 0.72
+    },
+    {
+      "from": "s24",
+      "to": "s25",
+      "type": "covalent",
+      "confidence": 0.65
+    },
+    {
+      "from": "s10",
+      "to": "s26",
+      "type": "covalent",
+      "confidence": 0.84
+    },
+    {
+      "from": "s26",
+      "to": "s27",
+      "type": "covalent",
+      "confidence": 0.72
+    },
+    {
+      "from": "s26",
+      "to": "s28",
+      "type": "covalent",
+      "confidence": 0.7
+    },
+    {
+      "from": "s23",
+      "to": "s28",
+      "type": "covalent",
+      "confidence": 0.84
+    },
+    {
+      "from": "s30",
+      "to": "s31",
+      "type": "covalent",
+      "confidence": 0.72
+    },
+    {
+      "from": "s26",
+      "to": "s31",
+      "type": "covalent",
+      "confidence": 0.7
+    },
+    {
+      "from": "s26",
+      "to": "s32",
+      "type": "covalent",
+      "confidence": 0.7
+    },
+    {
+      "from": "s31",
+      "to": "s33",
+      "type": "covalent",
+      "confidence": 0.76
+    },
+    {
+      "from": "s32",
+      "to": "s33",
+      "type": "covalent",
+      "confidence": 0.76
+    },
+    {
+      "from": "s30",
+      "to": "s33",
+      "type": "covalent",
+      "confidence": 0.75,
+      "note": "Final conclusion restates the earlier trust summary."
+    },
+    {
+      "from": "s33",
+      "to": "s30",
+      "type": "covalent",
+      "confidence": 0.73,
+      "note": "Conclusion loops back to the summary premise it depends on."
+    }
+  ],
+  "findings": [
+    {
+      "type": "cycle",
+      "steps_involved": [
+        "s30",
+        "s31",
+        "s33"
+      ],
+      "description": "The concluding trust recommendation loops back onto its own summary justification.",
+      "severity": "severe"
+    },
+    {
+      "type": "dangling",
+      "steps_involved": [
+        "s7"
+      ],
+      "description": "Reasoning branch is abandoned before it reconnects.",
+      "severity": "moderate"
+    },
+    {
+      "type": "dangling",
+      "steps_involved": [
+        "s29"
+      ],
+      "description": "Reasoning branch is abandoned before it reconnects.",
+      "severity": "moderate"
+    }
+  ]
+}

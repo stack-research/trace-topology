@@ -44,6 +44,30 @@ def test_detect_cycles_deduplicates_same_loop() -> None:
     assert len(findings) == 1
 
 
+def test_detect_cycles_canonicalizes_closed_component() -> None:
+    graph = TraceGraph(
+        transcript_id="c4",
+        steps=[
+            Step("s1", "a", 0, 1),
+            Step("s2", "b", 2, 3),
+            Step("s3", "c", 4, 5),
+            Step("s4", "d", 6, 7),
+        ],
+        bonds=[
+            Bond("s1", "s2", BondType.VANDERWAALS),
+            Bond("s2", "s1", BondType.COVALENT),
+            Bond("s2", "s3", BondType.VANDERWAALS),
+            Bond("s3", "s2", BondType.COVALENT),
+            Bond("s3", "s4", BondType.VANDERWAALS),
+            Bond("s4", "s3", BondType.COVALENT),
+            Bond("s4", "s1", BondType.COVALENT),
+        ],
+    )
+    findings = detect_cycles(graph)
+    assert len(findings) == 1
+    assert findings[0].steps_involved == ["s1", "s2", "s3", "s4"]
+
+
 def test_detect_dangling_positive_and_negative() -> None:
     g_pos = TraceGraph(transcript_id="d1", steps=[Step("s1", "alone", 0, 5)], bonds=[])
     g_neg = TraceGraph(
@@ -178,3 +202,20 @@ def test_entropy_divergence_ignores_verification_and_boxed_tail() -> None:
         bonds=[],
     )
     assert not detect_entropy_divergence(graph)
+
+
+def test_entropy_divergence_ignores_cycle_components() -> None:
+    graph = TraceGraph(
+        transcript_id="e4",
+        steps=[
+            Step("s1", "premise one", 0, 10, step_type="claim"),
+            Step("s2", "premise two", 11, 21, step_type="claim"),
+            Step("s3", "conclusion with a very long trailing explanation that would otherwise look diffuse", 22, 102, step_type="conclusion"),
+        ],
+        bonds=[
+            Bond("s1", "s2", BondType.COVALENT),
+            Bond("s2", "s3", BondType.COVALENT),
+            Bond("s3", "s1", BondType.COVALENT),
+        ],
+    )
+    assert not detect_entropy_divergence(graph, cycle_nodes={"s1", "s2", "s3"})

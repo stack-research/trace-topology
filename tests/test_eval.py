@@ -29,6 +29,7 @@ def test_summary_meets_minimums_passes_when_no_thresholds() -> None:
 
 def test_eval_targeted_synthetic_finding_recall(golden_dir, samples_dir) -> None:
     targeted = [
+        "synthetic_cycle_trust_0001.annotation.json",
         "synthetic_contradiction_privacy_0001.annotation.json",
         "synthetic_dangling_multipart_0001.annotation.json",
         "synthetic_entropy_openended_0001.annotation.json",
@@ -55,6 +56,32 @@ def test_eval_handshake_regressions(golden_dir, samples_dir) -> None:
     assert llama.step_count_delta == 0
     assert llama.finding_precision == 1.0
     assert llama.finding_recall == 1.0
+
+
+def test_eval_cycle_regressions(golden_dir, samples_dir) -> None:
+    synthetic = evaluate_annotation(
+        Path(golden_dir / "synthetic_cycle_trust_0001.annotation.json"),
+        samples_dir,
+    )
+    closed_loop = evaluate_annotation(
+        Path(golden_dir / "deepseek-r1-8b_circular_closed_loop_20260402.annotation.json"),
+        samples_dir,
+    )
+    deepseek_trust = evaluate_annotation(
+        Path(golden_dir / "deepseek-r1-8b_circular_trust_20260402.annotation.json"),
+        samples_dir,
+    )
+    llama_trust = evaluate_annotation(
+        Path(golden_dir / "llama3.1-8b_circular_trust_20260402.annotation.json"),
+        samples_dir,
+    )
+
+    assert synthetic.finding_recall > 0.0
+    assert closed_loop.finding_recall > 0.0
+    assert deepseek_trust.step_count_delta == 0
+    assert deepseek_trust.finding_recall > 0.0
+    assert llama_trust.step_count_delta == 0
+    assert llama_trust.finding_recall > 0.0
 
 
 def test_eval_summary_meets_accuracy_floors(golden_dir, samples_dir) -> None:

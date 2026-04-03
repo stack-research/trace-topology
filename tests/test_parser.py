@@ -48,3 +48,55 @@ def test_parse_marks_unsupported_terminal_as_conclusion(samples_dir) -> None:
     steps = parse_transcript(transcript)
     assert len(steps) == 1
     assert steps[0].step_type == "conclusion"
+
+
+def test_parse_code_fence_mixed_not_oversegmented(samples_dir) -> None:
+    transcript = (samples_dir / "parser_code_fence_mixed_0001.txt").read_text(encoding="utf-8")
+    steps = parse_transcript(transcript)
+
+    # Expected segmentation under the list-marker heuristic:
+    # 1) setup line, code fence as one atomic step, 2) conclusion line.
+    assert len(steps) == 3
+
+    fence_steps = [step for step in steps if "```python" in step.text]
+    assert len(fence_steps) == 1
+    assert "- bullet inside code" in fence_steps[0].text
+    assert "P2: internal point reference" in fence_steps[0].text
+
+    bullet_steps = [step for step in steps if "- bullet inside code" in step.text]
+    assert len(bullet_steps) == 1
+
+    assert steps[-1].step_type == "conclusion"
+
+
+def test_parse_headings_mixed_sections(samples_dir) -> None:
+    transcript = (samples_dir / "parser_headings_mixed_0001.txt").read_text(encoding="utf-8")
+    steps = parse_transcript(transcript)
+
+    # Expected: one step per structural line (list marker or markdown headings).
+    assert len(steps) == 3
+
+    joined = "\n".join(step.text for step in steps)
+    assert "# Section A" in joined
+    assert "# Section B" in joined
+
+
+def test_parse_mixed_fence_thinking_combination(samples_dir) -> None:
+    transcript = (samples_dir / "parser_mixed_fence_thinking_0001.txt").read_text(encoding="utf-8")
+    steps = parse_transcript(transcript)
+
+    # Expected segmentation:
+    # 1) setup line, code fence atomic step, thinking atomic step, 2) conclusion line.
+    assert len(steps) == 4
+
+    fence_steps = [step for step in steps if "```text" in step.text]
+    assert len(fence_steps) == 1
+    assert "P2: internal point reference" in fence_steps[0].text
+
+    thinking_steps = [step for step in steps if "<thinking>" in step.text]
+    assert len(thinking_steps) == 1
+    assert "wait actually P1 implies P2" in thinking_steps[0].text
+    assert "# inner heading inside thinking" in thinking_steps[0].text
+
+    assert steps[-1].step_type == "conclusion"
+    assert thinking_steps[0].step_type in {"correction", "derivation"}

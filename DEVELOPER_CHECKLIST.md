@@ -9,7 +9,7 @@ Use `- [ ]` for open work and `- [x]` for done when you edit this file.
 ## Parser (step segmentation)
 
 - [x] Reduce **over-segmentation** on terse, line-broken traces (e.g. some harvested Llama-style handshakes). — Heuristic: line-split only when structural list markers dominate or dense long-line prose blocks; see `data/samples/terse_linebreak_prose_0001.txt`.
-- [ ] Solid coverage for **mixed formats**: numbered lists, markdown headings, thinking blocks, code-heavy traces.
+- [x] Solid coverage for **mixed formats**: numbered lists, markdown headings, thinking blocks, code-heavy traces.
 - [ ] Optional **configurable granularity** (sentence vs paragraph vs heuristic) for power users.
 - [ ] Document parser behavior and failure modes in `README.md` or a short `docs/` note.
 

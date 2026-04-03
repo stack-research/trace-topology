@@ -1,0 +1,4 @@
+1) Intro sentence.
+# Section A: Because the premises hold, we proceed. Therefore we conclude A.
+# Section B: So the remaining argument follows.
+

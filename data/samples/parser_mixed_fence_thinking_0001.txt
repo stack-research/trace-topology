@@ -1,0 +1,11 @@
+1) Setup: define P1.
+```text
+- bullet inside code (should not become its own step)
+P2: internal point reference
+```
+<thinking>
+wait actually P1 implies P2
+# inner heading inside thinking (should not create a new step)
+</thinking>
+2) Therefore the chain ends with P2.
+

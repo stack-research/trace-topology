@@ -1,0 +1,8 @@
+1) Compute the value.
+```python
+- bullet inside code (should not become its own step)
+therefore this should not split the transcript
+P2: internal point reference
+```
+2) Therefore the result is 7.
+

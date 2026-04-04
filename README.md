@@ -4,6 +4,81 @@ A post-hoc debugger for LLM reasoning traces. Takes a raw chain-of-thought trans
 
 Existing tools treat reasoning as a process to steer. This treats it as a program to debug.
 
+## What this does for you
+
+When an LLM or coding agent gives you a long reasoning transcript and the final answer feels wrong, `trace-topology` helps you answer a simpler question: where did the reasoning break?
+
+Instead of rereading the whole trace by hand, you get a structural readout:
+
+- loops where the model uses its own conclusion as support
+- abandoned branches that never reconnect
+- conclusions that appear without traced support
+- contradictions and drift
+
+The tool works on local transcript files. Output stays in the terminal as ASCII plus JSON artifacts underneath.
+
+For a runnable developer-first example, see [docs/FIRST_DEBUG_SESSION.md](docs/FIRST_DEBUG_SESSION.md).
+
+## Simple Use Cases
+
+Reach for `trace-topology` when:
+
+- an agent proposes a patch, revert, or root-cause claim, but the reasoning feels off
+- the reasoning stream flashed by too fast to read, and now you only remember the final answer
+- a long agent run kept revising its plan and you want to see where it started looping
+- you suspect stale memory, prompt poisoning, or policy drift shaped the final move
+- you want a post-mortem artifact for an agent failure, not just the final diff
+
+Do not use it when:
+
+- you only need the model's final answer, not its reasoning trace
+- the transcript is too short to contain meaningful structure
+- you need semantic truth guarantees; this tool is a debugger for trace shape, not an oracle
+
+## Quickstart
+
+Install the local core path:
+
+```bash
+uv sync --extra dev
+```
+
+If you already have a transcript file, run:
+
+```bash
+tt analyze transcript.txt
+```
+
+If your agent prints its reasoning too fast to read live, save the stream first and inspect it after the run.
+
+Examples:
+
+```bash
+# If the agent writes to stdout/stderr in your terminal
+your-agent-command 2>&1 | tee transcript.txt
+
+# On macOS/Linux, capture the whole terminal session
+script -q transcript.txt your-agent-command
+```
+
+Then point `trace-topology` at the saved plaintext file:
+
+```bash
+tt analyze transcript.txt
+```
+
+Read the findings like this:
+
+- `cycle`: the trace starts using its own conclusion as evidence
+- `unsupported_terminal`: the final answer appears without enough traced support
+- `dangling`: the model opened a branch and never brought it back
+
+If you want one concrete session you can run right now, use:
+
+```bash
+tt analyze data/samples/synthetic_agent_cycle_debug_0001.txt
+```
+
 ## The idea
 
 The ByteDance paper "The Molecular Structure of Thought" (arXiv 2601.06002) showed that effective long chain-of-thought reasoning forms stable molecular-like structures with three bond types: covalent (deep reasoning), hydrogen (self-reflection), and van der Waals (exploration). Structural anomalies correlate with reasoning failures.
@@ -165,6 +240,10 @@ If an optional backend dependency is missing, the CLI now fails with an install 
 
 ## Example Sessions
 
+Start here if you want a plain-English developer walkthrough:
+
+- [docs/FIRST_DEBUG_SESSION.md](docs/FIRST_DEBUG_SESSION.md)
+
 Sample-file flow:
 
 ```bash
@@ -187,6 +266,7 @@ What to expect:
 - `tt graph` prints either the full adjacency view or the compact phase view, depending on trace size
 - `tt analyze` prints findings or `hotspots: none` for a clean trace
 - `tt eval` prints the summary block used for regression gates
+- the walkthrough sample at `data/samples/synthetic_agent_cycle_debug_0001.txt` produces a real `cycle` finding and is explained in `docs/FIRST_DEBUG_SESSION.md`
 
 Optional harvest flow:
 

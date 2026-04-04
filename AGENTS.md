@@ -8,6 +8,8 @@ Read `DESIGN_NOTES.md` before writing any code. It contains the full design conv
 
 Read `DEVELOPER_CHECKLIST.md` for the living backlog of work needed to make the project genuinely useful to developers (parser, graph, detectors, DX, data). **Keep it updated** when you complete items, change priorities, or discover new gaps—same as `README.md` and this file (`AGENTS.md`): if your change affects what users or agents should expect, update the relevant doc.
 
+For the plain-English, developer-first onboarding path, see `docs/FIRST_DEBUG_SESSION.md`.
+
 ## Hard Rules
 
 - Python 3.11+. No other runtime.

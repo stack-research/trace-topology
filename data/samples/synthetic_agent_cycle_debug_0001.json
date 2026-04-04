@@ -1,0 +1,17 @@
+{
+  "id": "synthetic_agent_cycle_debug_0001",
+  "source": "synthetic",
+  "model": "seed-generator",
+  "provocation_id": "agent_cycle_debug",
+  "category": "cycles",
+  "target_feature": "coding-agent circular diagnosis",
+  "prompt": "Synthetic coding-agent debugging trace",
+  "system": "",
+  "timestamp": "2026-04-04",
+  "trace_file": "synthetic_agent_cycle_debug_0001.txt",
+  "metadata": {
+    "run_id": "seed-agent-cycle-debug",
+    "backend": "synthetic",
+    "char_count": 277
+  }
+}

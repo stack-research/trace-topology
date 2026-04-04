@@ -35,7 +35,7 @@ Use `- [ ]` for open work and `- [x]` for done when you edit this file.
 
 - [x] **CI** (lint + tests on push/PR) if the repo is public or multi-contributor. — `.github/workflows/ci.yml` (uv, ruff, pytest).
 - [x] **Pre-commit** or documented `make`/`uv` one-liners for format + test before commit. — README **Development** section + existing Makefile.
-- [x] **Example sessions** in `README.md`: harvest → analyze → eval on a sample file. — README now includes sample-file and optional harvest walkthroughs with expected artifact outputs.
+- [x] **Example sessions** in `README.md`: harvest → analyze → eval on a sample file. — README now includes sample-file and optional harvest walkthroughs with expected artifact outputs, plus a separate developer-first runnable session in `docs/FIRST_DEBUG_SESSION.md`.
 - [x] Preserve the **zero-network core path**: parse/graph/analyze should still work when optional backend dependencies are not installed. — backend SDKs stay out of the base install, and missing backend deps now fail with explicit install hints for `ollama`, `anthropic`, and `openai`.
 
 ## Data and evaluation

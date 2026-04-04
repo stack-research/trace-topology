@@ -1,0 +1,5 @@
+The agent says the null pointer started after the cache refactor.
+Maybe the queue worker is involved, but I cannot finish that branch.
+I will move on for now.
+The cache refactor must be the cause because the bug appeared after it.
+Therefore I should revert the cache refactor.

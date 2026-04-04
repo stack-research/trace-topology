@@ -16,7 +16,7 @@ Output is an ASCII directed graph in the terminal with a JSON artifact underneat
 
 - Python 3.11+
 - No API calls needed for core analysis
-- Optional: [Ollama](https://ollama.com) for LLM-assisted bond classification
+- Optional: [Ollama](https://ollama.com), [Anthropic](https://www.anthropic.com/api), or [OpenAI](https://platform.openai.com/docs/overview) for LLM-assisted bond classification
 
 ## Install
 
@@ -38,6 +38,12 @@ Core plus Anthropic support:
 uv sync --extra dev --extra anthropic
 ```
 
+Core plus OpenAI support:
+
+```bash
+uv sync --extra dev --extra openai
+```
+
 Everything optional:
 
 ```bash
@@ -57,7 +63,7 @@ uv run ruff format .   # optional
 uv run pytest -q
 ```
 
-The Makefile targets (`make install`, `make test`, `make lint`) still work if you prefer a local `.venv` and `pip install -e ".[dev]"`. Add backend extras explicitly when needed, for example `pip install -e ".[dev,ollama]"` or `pip install -e ".[dev,anthropic]"`.
+The Makefile targets (`make install`, `make test`, `make lint`) still work if you prefer a local `.venv` and `pip install -e ".[dev]"`. Add backend extras explicitly when needed, for example `pip install -e ".[dev,ollama]"`, `pip install -e ".[dev,anthropic]"`, or `pip install -e ".[dev,openai]"`.
 
 ## Usage
 
@@ -73,6 +79,7 @@ tt graph transcript.txt --out graph.json
 
 # Use LLM-assisted bond classification
 tt analyze transcript.txt --backend ollama --model llama3.1:8b
+tt analyze transcript.txt --backend openai --model gpt-5-mini
 
 # Pipe from stdin
 cat thinking_block.txt | tt analyze -
@@ -152,6 +159,7 @@ Recommended default: `--backend none`.
 - Use `--backend none` for CI, eval, regression work, and reproducible local analysis.
 - Use `--backend ollama` when bond typing on ambiguous prose is worth an extra local judge.
 - Use `--backend anthropic` only when you explicitly want an external higher-cost judge; it is not the default path.
+- Use `--backend openai` when you want an external judge through the official OpenAI SDK; it is optional, credentialed, and not the default path.
 
 If an optional backend dependency is missing, the CLI now fails with an install hint instead of silently falling back.
 
@@ -247,7 +255,7 @@ Each stage produces a JSON artifact. Stages can be run independently.
 - The core is being treated as stable at `v0.2`; remaining backlog items are mostly parser granularity, packaging polish, library API, and future corpus growth.
 - The parser treats triple-backtick fenced code blocks, markdown headings, and `<think>` / `<thinking>` blocks as atomic regions to reduce over-segmentation.
 - ASCII rendering now adapts for large traces with phase summaries and finding-local hotspots, but it is still a compression layer rather than a full graph-layout system.
-- Optional backend-assisted bond judging is available for `tt graph` and `tt analyze` (`--backend none|ollama|anthropic`); it is not required for the local core pipeline.
+- Optional backend-assisted bond judging is available for `tt graph` and `tt analyze` (`--backend none|ollama|anthropic|openai`); it is not required for the local core pipeline.
 - The base install is core-only; backend packages are optional extras.
 
 ### Repro for current milestone

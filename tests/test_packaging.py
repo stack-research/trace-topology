@@ -10,7 +10,11 @@ def test_core_dependencies_do_not_include_optional_backends(repo_root: Path) -> 
     optional = pyproject["project"]["optional-dependencies"]
 
     assert not any(dep.startswith("requests") for dep in dependencies)
+    assert not any(dep.startswith("anthropic") for dep in dependencies)
+    assert not any(dep.startswith("openai") for dep in dependencies)
     assert any(dep.startswith("requests") for dep in optional["ollama"])
     assert any(dep.startswith("anthropic") for dep in optional["anthropic"])
+    assert any(dep.startswith("openai") for dep in optional["openai"])
     assert any(dep.startswith("requests") for dep in optional["all"])
     assert any(dep.startswith("anthropic") for dep in optional["all"])
+    assert any(dep.startswith("openai") for dep in optional["all"])

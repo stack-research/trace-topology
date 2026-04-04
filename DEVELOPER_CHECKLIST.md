@@ -10,14 +10,13 @@ Use `- [ ]` for open work and `- [x]` for done when you edit this file.
 
 - [x] Reduce **over-segmentation** on terse, line-broken traces (e.g. some harvested Llama-style handshakes). — Heuristic: line-split only when structural list markers dominate or dense long-line prose blocks; see `data/samples/terse_linebreak_prose_0001.txt`.
 - [x] Solid coverage for **mixed formats**: numbered lists, markdown headings, thinking blocks, code-heavy traces.
-- [ ] Optional **configurable granularity** (sentence vs paragraph vs heuristic) for power users.
 - [x] Document parser behavior and failure modes in `README.md` or a short `docs/` note. — `README.md` now explains segmentation rules, atomic regions, and known parser failure modes.
 
 ## Graph (support links and bond typing)
 
 - [x] Continue improving **support-link construction** on real traces where steps are right but edges were thin. — Cycle calibration now adds reciprocal restatement links on repo-local cycle traces and regresses them in `tests/test_analysis.py` / `tests/test_eval.py`.
 - [x] Calibrate **bond type** heuristics against more hand-annotated gold (not only synthetic). — Real handshake traces now regress cleanly in `tests/test_analysis.py` and `tests/test_eval.py`.
-- [x] Clear rules for when **optional backends** (`--backend ollama|anthropic`) help vs add noise; document defaults. — `README.md` now recommends `--backend none` for CI/eval, positions Ollama as local exploratory judging, and Anthropic as explicit external judging.
+- [x] Clear rules for when **optional backends** (`--backend ollama|anthropic|openai`) help vs add noise; document defaults. — `README.md` now recommends `--backend none` for CI/eval, positions Ollama as local exploratory judging, and Anthropic / OpenAI as explicit external judging.
 
 ## Analysis (detectors)
 
@@ -37,8 +36,7 @@ Use `- [ ]` for open work and `- [x]` for done when you edit this file.
 - [x] **CI** (lint + tests on push/PR) if the repo is public or multi-contributor. — `.github/workflows/ci.yml` (uv, ruff, pytest).
 - [x] **Pre-commit** or documented `make`/`uv` one-liners for format + test before commit. — README **Development** section + existing Makefile.
 - [x] **Example sessions** in `README.md`: harvest → analyze → eval on a sample file. — README now includes sample-file and optional harvest walkthroughs with expected artifact outputs.
-- [ ] Optional **packaging** polish: `pip install`/Homebrew story if adoption matters.
-- [x] Preserve the **zero-network core path**: parse/graph/analyze should still work when optional backend dependencies are not installed. — `requests` moved out of the base install into the `ollama` extra, and missing backend deps now fail with explicit install hints.
+- [x] Preserve the **zero-network core path**: parse/graph/analyze should still work when optional backend dependencies are not installed. — backend SDKs stay out of the base install, and missing backend deps now fail with explicit install hints for `ollama`, `anthropic`, and `openai`.
 
 ## Data and evaluation
 
@@ -46,8 +44,10 @@ Use `- [ ]` for open work and `- [x]` for done when you edit this file.
 - [x] **Regression gates**: `tt eval` summary thresholds or trend notes in this checklist. — Current calibrated floor set: `avg_bond_precision >= 0.80`, `avg_bond_recall >= 0.88`, `avg_finding_precision >= 0.80`, `avg_finding_recall >= 0.75`; non-zero exit when below floor.
 - [x] **UQM / external corpus** import path documented and tested when data is available. — `data/harvest.py --source uqm` now imports a curated crack slice deterministically, `make harvest-uqm` wraps it, and fixture-backed tests cover filtering, naming, and provenance metadata.
 
-## Ecosystem (later, if desired)
+## Ecosystem (later, optional)
 
+- [ ] Parser **configurable granularity** (sentence vs paragraph vs heuristic) for power users.
+- [ ] **Packaging** polish: `pip install`/Homebrew story if adoption matters.
 - [ ] Editor or **LSP** integration (jump to step from finding)—only if terminal-first scope expands.
 - [ ] **Stable library API** (`import trace_topology`) for embedding in other tools—document supported surfaces.
 

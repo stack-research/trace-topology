@@ -41,6 +41,17 @@ def _import_anthropic():
     return Anthropic
 
 
+def _import_openai():
+    try:
+        from openai import OpenAI
+    except ImportError as exc:
+        raise RuntimeError(
+            "OpenAI backend requires optional dependency `openai`. "
+            "Install it with: pip install trace-topology[openai]"
+        ) from exc
+    return OpenAI
+
+
 class OllamaBackend(BondBackend):
     name = "ollama"
 
@@ -113,6 +124,37 @@ class AnthropicBackend(BondBackend):
             if label in content:
                 return BondBackendResult(label, 0.7, f"anthropic:{self.model}")
         return BondBackendResult("vanderwaals", 0.2, f"anthropic:{self.model}:fallback")
+
+
+class OpenAIBackend(BondBackend):
+    name = "openai"
+
+    def __init__(self, model: str = "gpt-5-mini", api_key: str | None = None):
+        self.model = model
+        self.api_key = api_key or os.getenv("OPENAI_API_KEY", "")
+
+    def classify(self, source_text: str, target_text: str) -> BondBackendResult:
+        if not self.api_key:
+            raise RuntimeError(
+                "OpenAI backend requires OPENAI_API_KEY. "
+                "Set it or use `--backend none`."
+            )
+        OpenAI = _import_openai()
+        client = OpenAI(api_key=self.api_key)
+        response = client.responses.create(
+            model=self.model,
+            instructions=(
+                "Classify relation between reasoning steps as one of: "
+                "covalent, hydrogen, vanderwaals. "
+                "Reply with a short lowercase answer that includes the label."
+            ),
+            input=f"SOURCE:\n{source_text}\n\nTARGET:\n{target_text}",
+        )
+        content = str(getattr(response, "output_text", "")).lower()
+        for label in ("covalent", "hydrogen", "vanderwaals"):
+            if label in content:
+                return BondBackendResult(label, 0.7, f"openai:{self.model}")
+        return BondBackendResult("vanderwaals", 0.2, f"openai:{self.model}:fallback")
 
 
 def prompt_hash(system: str, prompt: str) -> str:

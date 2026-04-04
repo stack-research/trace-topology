@@ -8,6 +8,19 @@ from click.testing import CliRunner
 from trace_topology.cli import _build_backend, cli
 
 
+def test_build_backend_openai_defaults() -> None:
+    backend = _build_backend("openai")
+
+    assert backend.name == "openai"
+    assert backend.model == "gpt-5-mini"
+
+
+def test_build_backend_openai_respects_model_override() -> None:
+    backend = _build_backend("openai", model="gpt-5.2")
+
+    assert backend.model == "gpt-5.2"
+
+
 def test_analyze_accepts_backend_flag(tmp_path) -> None:
     transcript_path = tmp_path / "trace.txt"
     transcript_path.write_text("Therefore the answer is 42.", encoding="utf-8")
@@ -19,12 +32,36 @@ def test_analyze_accepts_backend_flag(tmp_path) -> None:
     assert "unsupported_terminal" in result.output
 
 
+def test_analyze_accepts_openai_backend_flag(tmp_path, monkeypatch) -> None:
+    transcript_path = tmp_path / "trace.txt"
+    transcript_path.write_text("Therefore the answer is 42.", encoding="utf-8")
+
+    monkeypatch.setattr("trace_topology.cli._build_backend", lambda *args, **kwargs: None)
+    runner = CliRunner()
+    result = runner.invoke(cli, ["analyze", str(transcript_path), "--backend", "openai"])
+
+    assert result.exit_code == 0
+    assert "unsupported_terminal" in result.output
+
+
 def test_graph_accepts_backend_flag(tmp_path) -> None:
     transcript_path = tmp_path / "trace.txt"
     transcript_path.write_text("A because B.\nTherefore C.", encoding="utf-8")
 
     runner = CliRunner()
     result = runner.invoke(cli, ["graph", str(transcript_path), "--backend", "none"])
+
+    assert result.exit_code == 0
+    assert "legend:" in result.output
+
+
+def test_graph_accepts_openai_backend_flag(tmp_path, monkeypatch) -> None:
+    transcript_path = tmp_path / "trace.txt"
+    transcript_path.write_text("A because B.\nTherefore C.", encoding="utf-8")
+
+    monkeypatch.setattr("trace_topology.cli._build_backend", lambda *args, **kwargs: None)
+    runner = CliRunner()
+    result = runner.invoke(cli, ["graph", str(transcript_path), "--backend", "openai"])
 
     assert result.exit_code == 0
     assert "legend:" in result.output
@@ -231,3 +268,34 @@ def test_analyze_anthropic_missing_api_key_has_clear_error(tmp_path, monkeypatch
 
     assert result.exit_code == 1
     assert "ANTHROPIC_API_KEY" in result.output
+
+
+def test_graph_openai_missing_dependency_has_install_hint(tmp_path, monkeypatch) -> None:
+    transcript_path = tmp_path / "trace.txt"
+    transcript_path.write_text("Claim.\nTherefore conclusion.", encoding="utf-8")
+
+    import trace_topology.backends as backends
+
+    monkeypatch.setenv("OPENAI_API_KEY", "test-key")
+
+    def fail_import():
+        raise RuntimeError("Install optional dependency: pip install trace-topology[openai]")
+
+    monkeypatch.setattr(backends, "_import_openai", fail_import)
+    runner = CliRunner()
+    result = runner.invoke(cli, ["graph", str(transcript_path), "--backend", "openai"])
+
+    assert result.exit_code == 1
+    assert "trace-topology[openai]" in result.output
+
+
+def test_analyze_openai_missing_api_key_has_clear_error(tmp_path, monkeypatch) -> None:
+    transcript_path = tmp_path / "trace.txt"
+    transcript_path.write_text("Claim.\nTherefore conclusion.", encoding="utf-8")
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+
+    runner = CliRunner()
+    result = runner.invoke(cli, ["analyze", str(transcript_path), "--backend", "openai"])
+
+    assert result.exit_code == 1
+    assert "OPENAI_API_KEY" in result.output

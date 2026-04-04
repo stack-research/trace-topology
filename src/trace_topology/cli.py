@@ -32,6 +32,11 @@ def _build_backend(
 
         return AnthropicBackend(model=model or "claude-3-5-sonnet-latest")
 
+    if backend_name == "openai":
+        from trace_topology.backends import OpenAIBackend
+
+        return OpenAIBackend(model=model or "gpt-5-mini")
+
     raise click.BadParameter(f"Unsupported backend: {backend_name}")
 
 
@@ -67,7 +72,7 @@ def parse(transcript_path: str, out_path: str | None) -> None:
 @click.option(
     "--backend",
     "backend_name",
-    type=click.Choice(["none", "ollama", "anthropic"]),
+    type=click.Choice(["none", "ollama", "anthropic", "openai"]),
     default="none",
     show_default=True,
     help="Optional bond-classification backend.",
@@ -104,7 +109,7 @@ def graph(
 @click.option(
     "--backend",
     "backend_name",
-    type=click.Choice(["none", "ollama", "anthropic"]),
+    type=click.Choice(["none", "ollama", "anthropic", "openai"]),
     default="none",
     show_default=True,
     help="Optional bond-classification backend.",

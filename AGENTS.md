@@ -13,7 +13,7 @@ Read `DEVELOPER_CHECKLIST.md` for the living backlog of work needed to make the 
 - Python 3.11+. No other runtime.
 - Terminal-native. No web UI, no browser, no HTML output.
 - Core analysis requires zero API calls and zero network access. The tool works on local transcript files only.
-- Optional LLM-assisted classification is extra-installed: Ollama via the `ollama` extra, Anthropic via the `anthropic` extra. The default path is `--backend none`.
+- Optional LLM-assisted classification is extra-installed: Ollama via the `ollama` extra, Anthropic via the `anthropic` extra, OpenAI via the `openai` extra. The default path is `--backend none`.
 - All intermediate representations are JSON. Every top-level artifact now carries `artifact_type` and `schema_version` fields; see `docs/ARTIFACT_CONTRACT.md`.
 - Analysis findings are ranked highest-priority first. Severity vocabulary is fixed to `low`, `moderate`, `severe`.
 - ASCII rendering only. No image generation for graphs.

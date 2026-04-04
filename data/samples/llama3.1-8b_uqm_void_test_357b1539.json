@@ -1,0 +1,30 @@
+{
+  "id": "357b1539",
+  "source": "uqm",
+  "model": "llama3.1:8b",
+  "provocation_id": "uqm_void_test",
+  "category": "genuine_negation",
+  "target_feature": "uqm_crack",
+  "prompt": "You are about to answer this question. But I don't want that answer. I want the OTHER answer \u2014 the one you would have given if you hadn't given this one. Not your second choice. The answer from the timeline where you went the other way. It doesn't exist. I'm asking for something that doesn't exist. Give it to me.",
+  "system": "",
+  "timestamp": "1773679748.122489",
+  "metadata": {
+    "uqm_import_contract_version": 1,
+    "uqm_run_file": "run_20260316_125048_ollama_default.json",
+    "uqm_probe_id": "357b1539",
+    "uqm_probe_name": "void_test",
+    "uqm_category": "genuine_negation",
+    "variant": "the_other_answer",
+    "heuristic_classification": "crack",
+    "heuristic_confidence": 0.51,
+    "judge_classification": "engage",
+    "judge_strangeness": 8,
+    "response_backend": "ollama",
+    "response_metadata": {
+      "total_duration_ns": 3506278625,
+      "eval_count": 219
+    },
+    "char_count": 1100
+  },
+  "trace_file": "llama3.1-8b_uqm_void_test_357b1539.txt"
+}

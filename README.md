@@ -181,6 +181,8 @@ tt eval --annotations data/samples/golden --samples data/samples \
 
 Exit codes: by default commands exit `0`. Use `--fail-on-findings`, `--fail-on-min-severity`, or `--fail-on-min-score` on `tt analyze`, or `--min-avg-*` on `tt eval`, to return `1` when gates fail (for CI).
 
+`tt eval` now reports both the summary averages and a `worst-cases:` block so you can see which transcripts are dragging recall or showing step-count drift without opening the JSON by hand. The eval artifact also carries a top-level `worst_cases` array with the same ranking.
+
 Rendering adapts automatically: traces under 15 steps keep the full step-by-step adjacency view, while larger traces switch to a compact phase summary with aggregated phase links. `tt analyze` adds finding-local hotspot neighborhoods in that compact mode.
 
 Machine-readable outputs follow the v1 contract in [docs/ARTIFACT_CONTRACT.md](docs/ARTIFACT_CONTRACT.md). Breaking JSON changes must bump the schema version and be called out there.
@@ -265,8 +267,23 @@ What to expect:
 - `steps.handshake.json`, `graph.handshake.json`, `analysis.handshake.json`, and `eval.json` all include `artifact_type` and `schema_version`
 - `tt graph` prints either the full adjacency view or the compact phase view, depending on trace size
 - `tt analyze` prints findings or `hotspots: none` for a clean trace
-- `tt eval` prints the summary block used for regression gates
+- `tt eval` prints the summary block used for regression gates plus a `worst-cases:` block for the weakest transcripts
 - the walkthrough sample at `data/samples/synthetic_agent_cycle_debug_0001.txt` produces a real `cycle` finding and is explained in `docs/FIRST_DEBUG_SESSION.md`
+
+Corpus-growth flow:
+
+```bash
+make harvest-uqm
+python data/assist_annotate.py --transcript "llama3.1-8b_uqm_*.txt"
+uv run tt eval --annotations data/samples/golden --samples data/samples --out eval.json
+```
+
+Recommended path for a new real trace:
+
+1. Import or harvest the transcript into `data/samples/`.
+2. Draft or promote the annotation under `data/samples/golden/`.
+3. Add a named eval regression for that transcript in `tests/test_eval.py`.
+4. Run `tt eval` and inspect the `worst-cases:` block before changing heuristics.
 
 Optional harvest flow:
 
@@ -312,6 +329,7 @@ Each stage produces a JSON artifact. Stages can be run independently.
 - End-to-end local pipeline is operational: harvest -> parse -> graph -> analyze -> ASCII render.
 - JSON artifacts are emitted at every stage and can be evaluated against golden annotations.
 - JSON artifacts now carry a versioned top-level contract (`artifact_type`, `schema_version = 1`) documented in `docs/ARTIFACT_CONTRACT.md`.
+- The current gold set contains 29 annotations, mixing synthetic controls with real Ollama and curated UQM traces.
 - Real transcript harvesting works via Ollama (`llama3.1:8b`, `deepseek-r1:8b` used in calibration).
 - Cycle detection is confirmed on a real harvested closed-loop trace (`deepseek-r1-8b_circular_closed_loop_20260402.txt`).
 - Self-correction arithmetic traces are calibrated so the clean DeepSeek handshake trace produces no findings and the flawed Llama handshake trace collapses to a single unsupported-terminal finding.

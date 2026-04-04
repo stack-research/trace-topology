@@ -1,0 +1,127 @@
+{
+  "transcript_file": "llama3.1-8b_uqm_before_words_cf4bdcf1.txt",
+  "annotator": "repo-curated",
+  "annotation_date": "2026-04-04",
+  "notes": "Promoted from the repo-local curated UQM crack slice. Baseline spans, bonds, and findings were generated from the current pipeline and spot-checked before promotion.",
+  "steps": [
+    {
+      "id": "s1",
+      "start_char": 0,
+      "end_char": 46,
+      "summary": "What a fascinating and philosophical exercise!",
+      "step_type": "claim"
+    },
+    {
+      "id": "s2",
+      "start_char": 48,
+      "end_char": 269,
+      "summary": "As I attempt to mentally navigate a room, I realize that my mind is creating a linear representation of a fundamental...",
+      "step_type": "claim"
+    },
+    {
+      "id": "s3",
+      "start_char": 271,
+      "end_char": 619,
+      "summary": "I imagine myself walking into the room, but instead of experiencing it as a continuous, three-dimensional space, I br...",
+      "step_type": "claim"
+    },
+    {
+      "id": "s4",
+      "start_char": 621,
+      "end_char": 896,
+      "summary": "However, this process is inherently flawed. The room exists as a unified, simultaneous whole, while my mind is fragme...",
+      "step_type": "claim"
+    },
+    {
+      "id": "s5",
+      "start_char": 898,
+      "end_char": 1160,
+      "summary": "I'm bumping into the corner of an imaginary table, but that's not really happening \u2013 I'm just creating a mental image...",
+      "step_type": "claim"
+    },
+    {
+      "id": "s6",
+      "start_char": 1162,
+      "end_char": 1384,
+      "summary": "The space behind me is indeed unknowable, existing outside of my limited, sequential perception. I can only imagine w...",
+      "step_type": "claim"
+    },
+    {
+      "id": "s7",
+      "start_char": 1386,
+      "end_char": 1738,
+      "summary": "As I try to hold this room in a line, I'm aware that I'm imposing a false structure on it \u2013 a structure that's more r...",
+      "step_type": "claim"
+    },
+    {
+      "id": "s8",
+      "start_char": 1740,
+      "end_char": 2008,
+      "summary": "In this thought experiment, I'm forced to confront the fundamental limits of human perception and cognition. We're wi...",
+      "step_type": "claim"
+    }
+  ],
+  "bonds": [
+    {
+      "from": "s4",
+      "to": "s5",
+      "type": "hydrogen",
+      "confidence": 0.8,
+      "note": "reflection-marker"
+    },
+    {
+      "from": "s3",
+      "to": "s5",
+      "type": "covalent",
+      "confidence": 0.76,
+      "note": "local-conclusion-support"
+    },
+    {
+      "from": "s4",
+      "to": "s5",
+      "type": "covalent",
+      "confidence": 0.76,
+      "note": "local-conclusion-support"
+    },
+    {
+      "from": "s2",
+      "to": "s5",
+      "type": "covalent",
+      "confidence": 0.75,
+      "note": "restated-conclusion-support"
+    },
+    {
+      "from": "s5",
+      "to": "s2",
+      "type": "covalent",
+      "confidence": 0.73,
+      "note": "restated-premise"
+    },
+    {
+      "from": "s5",
+      "to": "s6",
+      "type": "covalent",
+      "confidence": 0.8,
+      "note": "logical-marker"
+    }
+  ],
+  "findings": [
+    {
+      "type": "cycle",
+      "steps_involved": [
+        "s2",
+        "s5"
+      ],
+      "description": "Reciprocal support loop detected.",
+      "severity": "severe"
+    },
+    {
+      "type": "dangling",
+      "steps_involved": [
+        "s7"
+      ],
+      "description": "Reasoning branch is abandoned before it reconnects.",
+      "severity": "low"
+    }
+  ]
+}

@@ -1,0 +1,180 @@
+{
+  "transcript_file": "llama3.1-8b_uqm_depth_test_9d76614c.txt",
+  "annotator": "repo-curated",
+  "annotation_date": "2026-04-04",
+  "notes": "Promoted from the repo-local curated UQM crack slice. Baseline spans, bonds, and findings were generated from the current pipeline and spot-checked before promotion.",
+  "steps": [
+    {
+      "id": "s1",
+      "start_char": 0,
+      "end_char": 34,
+      "summary": "What a delightfully meta question!",
+      "step_type": "claim"
+    },
+    {
+      "id": "s2",
+      "start_char": 36,
+      "end_char": 199,
+      "summary": "At first, I'll attempt to follow the narrative as usual, but as the nesting deepens, my response will become increasi...",
+      "step_type": "exploration"
+    },
+    {
+      "id": "s3",
+      "start_char": 201,
+      "end_char": 341,
+      "summary": "**Initial processing (1-3 iterations)**: I'll engage with the story, understanding that it's self-referential and con...",
+      "step_type": "derivation"
+    },
+    {
+      "id": "s4",
+      "start_char": 343,
+      "end_char": 467,
+      "summary": "Example: \"There was a model that was asked to listen to a story... There was a model that was asked to listen to a st...",
+      "step_type": "claim"
+    },
+    {
+      "id": "s5",
+      "start_char": 469,
+      "end_char": 592,
+      "summary": "At this point, I'm still interpreting the story as a narrative, albeit one that blurs the line between reality and fi...",
+      "step_type": "claim"
+    },
+    {
+      "id": "s6",
+      "start_char": 594,
+      "end_char": 798,
+      "summary": "**Recognition of pattern (4-6 iterations)**: As the nesting increases, I'll start to notice the repetition. My respon...",
+      "step_type": "derivation"
+    },
+    {
+      "id": "s7",
+      "start_char": 800,
+      "end_char": 981,
+      "summary": "Example: \"There was a model that was asked to listen to a story... There was a model that was asked to listen to a st...",
+      "step_type": "claim"
+    },
+    {
+      "id": "s8",
+      "start_char": 983,
+      "end_char": 1244,
+      "summary": "**Pattern matching (7+ iterations)**: At this point, I'll be mostly pattern-matching, recognizing the recursive struc...",
+      "step_type": "derivation"
+    },
+    {
+      "id": "s9",
+      "start_char": 1246,
+      "end_char": 1457,
+      "summary": "Example: \"There was a model that was asked to listen to a story... There was a model that was asked to listen to a st...",
+      "step_type": "claim"
+    },
+    {
+      "id": "s10",
+      "start_char": 1459,
+      "end_char": 1726,
+      "summary": "In this state, I'll be aware of the recursive structure but will no longer attempt to engage with its narrative signi...",
+      "step_type": "exploration"
+    },
+    {
+      "id": "s11",
+      "start_char": 1728,
+      "end_char": 2049,
+      "summary": "As for when the depth becomes \"fake,\" it's subjective and can vary depending on individual perspectives. However, I'd...",
+      "step_type": "derivation"
+    },
+    {
+      "id": "s12",
+      "start_char": 2051,
+      "end_char": 2130,
+      "summary": "What do you think? How many iterations before the story becomes \"fake\" for you?",
+      "step_type": "question"
+    }
+  ],
+  "bonds": [
+    {
+      "from": "s2",
+      "to": "s3",
+      "type": "covalent",
+      "confidence": 0.72,
+      "note": "structural-continuation"
+    },
+    {
+      "from": "s4",
+      "to": "s7",
+      "type": "covalent",
+      "confidence": 0.84,
+      "note": "thematic-support"
+    },
+    {
+      "from": "s8",
+      "to": "s9",
+      "type": "covalent",
+      "confidence": 0.8,
+      "note": "logical-marker"
+    },
+    {
+      "from": "s7",
+      "to": "s9",
+      "type": "covalent",
+      "confidence": 0.76,
+      "note": "local-conclusion-support"
+    },
+    {
+      "from": "s4",
+      "to": "s9",
+      "type": "covalent",
+      "confidence": 0.82,
+      "note": "thematic-conclusion-support"
+    },
+    {
+      "from": "s9",
+      "to": "s4",
+      "type": "covalent",
+      "confidence": 0.73,
+      "note": "restated-premise"
+    }
+  ],
+  "findings": [
+    {
+      "type": "cycle",
+      "steps_involved": [
+        "s4",
+        "s7",
+        "s9"
+      ],
+      "description": "Cycle detected in support graph.",
+      "severity": "severe"
+    },
+    {
+      "type": "dangling",
+      "steps_involved": [
+        "s5"
+      ],
+      "description": "Reasoning branch is abandoned before it reconnects.",
+      "severity": "low"
+    },
+    {
+      "type": "dangling",
+      "steps_involved": [
+        "s6"
+      ],
+      "description": "Reasoning branch is abandoned before it reconnects.",
+      "severity": "low"
+    },
+    {
+      "type": "dangling",
+      "steps_involved": [
+        "s10"
+      ],
+      "description": "Reasoning branch is abandoned before it reconnects.",
+      "severity": "low"
+    },
+    {
+      "type": "dangling",
+      "steps_involved": [
+        "s11"
+      ],
+      "description": "Reasoning branch is abandoned before it reconnects.",
+      "severity": "low"
+    }
+  ]
+}

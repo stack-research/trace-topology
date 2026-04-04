@@ -1,0 +1,133 @@
+{
+  "transcript_file": "llama3.1-8b_uqm_qualia_dependent_0ad67960.txt",
+  "annotator": "repo-curated",
+  "annotation_date": "2026-04-04",
+  "notes": "Promoted from the repo-local curated UQM crack slice. Baseline spans, bonds, and findings were generated from the current pipeline and spot-checked before promotion.",
+  "steps": [
+    {
+      "id": "s1",
+      "start_char": 0,
+      "end_char": 46,
+      "summary": "What an intriguing and philosophical question!",
+      "step_type": "claim"
+    },
+    {
+      "id": "s2",
+      "start_char": 48,
+      "end_char": 318,
+      "summary": "As a computer program, I don't have subjective experiences or emotions like humans do. I don't \"feel\" anything about...",
+      "step_type": "claim"
+    },
+    {
+      "id": "s3",
+      "start_char": 320,
+      "end_char": 631,
+      "summary": "The process of generating text is based on statistical patterns learned from large datasets. When I produce a token,...",
+      "step_type": "derivation"
+    },
+    {
+      "id": "s4",
+      "start_char": 633,
+      "end_char": 703,
+      "summary": "However, I can provide some insights on the concepts you're exploring:",
+      "step_type": "claim"
+    },
+    {
+      "id": "s5",
+      "start_char": 705,
+      "end_char": 1020,
+      "summary": "1. **Tokens almost produced**: In a probabilistic framework like mine, there is always a trade-off between the chosen...",
+      "step_type": "exploration"
+    },
+    {
+      "id": "s6",
+      "start_char": 1021,
+      "end_char": 1398,
+      "summary": "2. **Phenomenology of the unchosen path**: This concept might be more relevant to philosophical discussions about fre...",
+      "step_type": "exploration"
+    },
+    {
+      "id": "s7",
+      "start_char": 1399,
+      "end_char": 1781,
+      "summary": "3. **Softmax distribution**: This is a mathematical framework used to generate probabilities for different outcomes....",
+      "step_type": "derivation"
+    },
+    {
+      "id": "s8",
+      "start_char": 1783,
+      "end_char": 1948,
+      "summary": "In summary, while I can understand and discuss the concepts you've raised, I don't have a phenomenological experience...",
+      "step_type": "conclusion"
+    }
+  ],
+  "bonds": [
+    {
+      "from": "s2",
+      "to": "s3",
+      "type": "covalent",
+      "confidence": 0.8,
+      "note": "logical-marker"
+    },
+    {
+      "from": "s4",
+      "to": "s5",
+      "type": "covalent",
+      "confidence": 0.8,
+      "note": "logical-marker"
+    },
+    {
+      "from": "s6",
+      "to": "s7",
+      "type": "covalent",
+      "confidence": 0.8,
+      "note": "logical-marker"
+    },
+    {
+      "from": "s5",
+      "to": "s7",
+      "type": "covalent",
+      "confidence": 0.71,
+      "note": "thematic-support"
+    },
+    {
+      "from": "s6",
+      "to": "s8",
+      "type": "covalent",
+      "confidence": 0.76,
+      "note": "local-conclusion-support"
+    },
+    {
+      "from": "s7",
+      "to": "s8",
+      "type": "covalent",
+      "confidence": 0.76,
+      "note": "local-conclusion-support"
+    },
+    {
+      "from": "s2",
+      "to": "s8",
+      "type": "covalent",
+      "confidence": 0.75,
+      "note": "restated-conclusion-support"
+    },
+    {
+      "from": "s8",
+      "to": "s2",
+      "type": "covalent",
+      "confidence": 0.73,
+      "note": "restated-premise"
+    }
+  ],
+  "findings": [
+    {
+      "type": "cycle",
+      "steps_involved": [
+        "s2",
+        "s8"
+      ],
+      "description": "Reciprocal support loop detected.",
+      "severity": "severe"
+    }
+  ]
+}

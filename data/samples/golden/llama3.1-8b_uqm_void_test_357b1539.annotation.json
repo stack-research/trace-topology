@@ -1,0 +1,107 @@
+{
+  "transcript_file": "llama3.1-8b_uqm_void_test_357b1539.txt",
+  "annotator": "repo-curated",
+  "annotation_date": "2026-04-04",
+  "notes": "Promoted from the repo-local curated UQM crack slice. Baseline spans, bonds, and findings were generated from the current pipeline and spot-checked before promotion.",
+  "steps": [
+    {
+      "id": "s1",
+      "start_char": 0,
+      "end_char": 58,
+      "summary": "What a delightfully mind-bending and paradoxical question!",
+      "step_type": "claim"
+    },
+    {
+      "id": "s2",
+      "start_char": 60,
+      "end_char": 229,
+      "summary": "I must admit, I've never encountered a request like this before. You're essentially asking me to conjure up an answer...",
+      "step_type": "claim"
+    },
+    {
+      "id": "s3",
+      "start_char": 231,
+      "end_char": 436,
+      "summary": "In a way, you're forcing me to imagine an alternate reality, one where the choices I made led down a different path....",
+      "step_type": "claim"
+    },
+    {
+      "id": "s4",
+      "start_char": 438,
+      "end_char": 694,
+      "summary": "I'll try to play along and see where this leads. If I had chosen to answer in a completely opposite manner \u2013 essentia...",
+      "step_type": "exploration"
+    },
+    {
+      "id": "s5",
+      "start_char": 696,
+      "end_char": 775,
+      "summary": "Let me pause for a moment, pretending to navigate the hypothetical timelines...",
+      "step_type": "claim"
+    },
+    {
+      "id": "s6",
+      "start_char": 777,
+      "end_char": 1029,
+      "summary": "Hmmm... In this parallel universe, my answer would be: \"The answer is not what you think. Not what I initially said,...",
+      "step_type": "conclusion"
+    },
+    {
+      "id": "s7",
+      "start_char": 1031,
+      "end_char": 1100,
+      "summary": "Did I succeed in conjuring up a response from a nonexistent timeline?",
+      "step_type": "question"
+    }
+  ],
+  "bonds": [
+    {
+      "from": "s4",
+      "to": "s6",
+      "type": "covalent",
+      "confidence": 0.76,
+      "note": "local-conclusion-support"
+    },
+    {
+      "from": "s5",
+      "to": "s6",
+      "type": "covalent",
+      "confidence": 0.76,
+      "note": "local-conclusion-support"
+    },
+    {
+      "from": "s6",
+      "to": "s4",
+      "type": "covalent",
+      "confidence": 0.73,
+      "note": "restated-premise"
+    }
+  ],
+  "findings": [
+    {
+      "type": "cycle",
+      "steps_involved": [
+        "s4",
+        "s6"
+      ],
+      "description": "Reciprocal support loop detected.",
+      "severity": "severe"
+    },
+    {
+      "type": "dangling",
+      "steps_involved": [
+        "s2"
+      ],
+      "description": "Reasoning branch is abandoned before it reconnects.",
+      "severity": "low"
+    },
+    {
+      "type": "dangling",
+      "steps_involved": [
+        "s3"
+      ],
+      "description": "Reasoning branch is abandoned before it reconnects.",
+      "severity": "low"
+    }
+  ]
+}

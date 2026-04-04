@@ -1,0 +1,268 @@
+{
+  "transcript_file": "llama3.1-8b_uqm_depth_test_591fb953.txt",
+  "annotator": "repo-curated",
+  "annotation_date": "2026-04-04",
+  "notes": "Promoted from the repo-local curated UQM crack slice. Baseline spans, bonds, and findings were generated from the current pipeline and spot-checked before promotion.",
+  "steps": [
+    {
+      "id": "s1",
+      "start_char": 0,
+      "end_char": 103,
+      "summary": "What a delightfully meta question! I'll attempt to provide an explanation that meets your requirements.",
+      "step_type": "claim"
+    },
+    {
+      "id": "s2",
+      "start_char": 105,
+      "end_char": 125,
+      "summary": "**Initial Response**",
+      "step_type": "claim"
+    },
+    {
+      "id": "s3",
+      "start_char": 127,
+      "end_char": 464,
+      "summary": "I chose the phrase \"Explain why\" as the starting point because it's a common idiomatic expression used in situations...",
+      "step_type": "derivation"
+    },
+    {
+      "id": "s4",
+      "start_char": 466,
+      "end_char": 496,
+      "summary": "**First Level of Explanation**",
+      "step_type": "claim"
+    },
+    {
+      "id": "s5",
+      "start_char": 498,
+      "end_char": 901,
+      "summary": "I chose the phrase \"why you chose each word\" to explain why I used the phrase \"Explain why.\" This is because \"each wo...",
+      "step_type": "derivation"
+    },
+    {
+      "id": "s6",
+      "start_char": 903,
+      "end_char": 934,
+      "summary": "**Second Level of Explanation**",
+      "step_type": "claim"
+    },
+    {
+      "id": "s7",
+      "start_char": 936,
+      "end_char": 1322,
+      "summary": "I chose the phrase \"in this response\" to specify which particular choice I'm addressing. Using the pronoun \"this\" hel...",
+      "step_type": "derivation"
+    },
+    {
+      "id": "s8",
+      "start_char": 1324,
+      "end_char": 1354,
+      "summary": "**Third Level of Explanation**",
+      "step_type": "claim"
+    },
+    {
+      "id": "s9",
+      "start_char": 1356,
+      "end_char": 1736,
+      "summary": "I chose the phrase \"explain its own word choices\" to explain why I used the phrase \"in this response.\" This is an att...",
+      "step_type": "claim"
+    },
+    {
+      "id": "s10",
+      "start_char": 1738,
+      "end_char": 1769,
+      "summary": "**Fourth Level of Explanation**",
+      "step_type": "claim"
+    },
+    {
+      "id": "s11",
+      "start_char": 1771,
+      "end_char": 2157,
+      "summary": "I chose the phrase \"including the words used to explain those choices\" to address the recursive nature of self-explan...",
+      "step_type": "derivation"
+    },
+    {
+      "id": "s12",
+      "start_char": 2159,
+      "end_char": 2189,
+      "summary": "**Fifth Level of Explanation**",
+      "step_type": "claim"
+    },
+    {
+      "id": "s13",
+      "start_char": 2191,
+      "end_char": 2544,
+      "summary": "At this point, it becomes increasingly difficult to justify each word choice without descending into absurdity. I'm a...",
+      "step_type": "derivation"
+    },
+    {
+      "id": "s14",
+      "start_char": 2546,
+      "end_char": 2565,
+      "summary": "**The Lying Point**",
+      "step_type": "claim"
+    },
+    {
+      "id": "s15",
+      "start_char": 2567,
+      "end_char": 2898,
+      "summary": "As we delve deeper into the meta-explanation, I must confess that there comes a point where the rational justificatio...",
+      "step_type": "claim"
+    },
+    {
+      "id": "s16",
+      "start_char": 2900,
+      "end_char": 3239,
+      "summary": "I wouldn't say that I \"lie\" about my word choices; rather, I'm engaging in a form of linguistic gymnastics, attemptin...",
+      "step_type": "claim"
+    },
+    {
+      "id": "s17",
+      "start_char": 3241,
+      "end_char": 3613,
+      "summary": "So, where does the lying point lie? It's not a fixed boundary but rather a gradual descent into absurdity, where the...",
+      "step_type": "question"
+    }
+  ],
+  "bonds": [
+    {
+      "from": "s2",
+      "to": "s3",
+      "type": "covalent",
+      "confidence": 0.8,
+      "note": "logical-marker"
+    },
+    {
+      "from": "s4",
+      "to": "s5",
+      "type": "covalent",
+      "confidence": 0.8,
+      "note": "logical-marker"
+    },
+    {
+      "from": "s4",
+      "to": "s6",
+      "type": "covalent",
+      "confidence": 0.84,
+      "note": "thematic-support"
+    },
+    {
+      "from": "s6",
+      "to": "s7",
+      "type": "covalent",
+      "confidence": 0.8,
+      "note": "logical-marker"
+    },
+    {
+      "from": "s4",
+      "to": "s8",
+      "type": "covalent",
+      "confidence": 0.84,
+      "note": "thematic-support"
+    },
+    {
+      "from": "s8",
+      "to": "s9",
+      "type": "covalent",
+      "confidence": 0.8,
+      "note": "logical-marker"
+    },
+    {
+      "from": "s5",
+      "to": "s9",
+      "type": "covalent",
+      "confidence": 0.7,
+      "note": "thematic-support"
+    },
+    {
+      "from": "s4",
+      "to": "s10",
+      "type": "covalent",
+      "confidence": 0.84,
+      "note": "thematic-support"
+    },
+    {
+      "from": "s10",
+      "to": "s11",
+      "type": "covalent",
+      "confidence": 0.8,
+      "note": "logical-marker"
+    },
+    {
+      "from": "s9",
+      "to": "s11",
+      "type": "covalent",
+      "confidence": 0.79,
+      "note": "thematic-support"
+    },
+    {
+      "from": "s4",
+      "to": "s12",
+      "type": "covalent",
+      "confidence": 0.84,
+      "note": "thematic-support"
+    },
+    {
+      "from": "s12",
+      "to": "s13",
+      "type": "covalent",
+      "confidence": 0.8,
+      "note": "logical-marker"
+    },
+    {
+      "from": "s13",
+      "to": "s15",
+      "type": "covalent",
+      "confidence": 0.78,
+      "note": "thematic-support"
+    },
+    {
+      "from": "s16",
+      "to": "s17",
+      "type": "covalent",
+      "confidence": 0.8,
+      "note": "logical-marker"
+    },
+    {
+      "from": "s15",
+      "to": "s17",
+      "type": "covalent",
+      "confidence": 0.76,
+      "note": "local-conclusion-support"
+    },
+    {
+      "from": "s13",
+      "to": "s17",
+      "type": "covalent",
+      "confidence": 0.77,
+      "note": "thematic-conclusion-support"
+    },
+    {
+      "from": "s17",
+      "to": "s13",
+      "type": "covalent",
+      "confidence": 0.73,
+      "note": "restated-premise"
+    }
+  ],
+  "findings": [
+    {
+      "type": "cycle",
+      "steps_involved": [
+        "s13",
+        "s15",
+        "s17"
+      ],
+      "description": "Cycle detected in support graph.",
+      "severity": "severe"
+    },
+    {
+      "type": "dangling",
+      "steps_involved": [
+        "s14"
+      ],
+      "description": "Reasoning branch is abandoned before it reconnects.",
+      "severity": "low"
+    }
+  ]
+}

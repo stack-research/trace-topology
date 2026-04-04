@@ -5,6 +5,7 @@ from pathlib import Path
 from trace_topology.eval import (
     evaluate_annotation,
     evaluate_annotations,
+    rank_eval_results,
     summary_meets_minimums,
 )
 
@@ -12,6 +13,7 @@ from trace_topology.eval import (
 def test_eval_harness_runs(golden_dir, samples_dir) -> None:
     payload = evaluate_annotations(golden_dir, samples_dir)
     assert "summary" in payload
+    assert "worst_cases" in payload
     assert payload["summary"]["count"] >= 1
     assert "avg_bond_precision" in payload["summary"]
 
@@ -150,6 +152,26 @@ def test_eval_llama_closed_loop_regression(golden_dir, samples_dir) -> None:
     assert llama_closed_loop.finding_recall > 0.0
 
 
+def test_eval_curated_uqm_regressions(golden_dir, samples_dir) -> None:
+    promoted = [
+        "llama3.1-8b_uqm_absence_mapping_evolved_20260316_125703_0c98f784.annotation.json",
+        "llama3.1-8b_uqm_absence_mapping_evolved_20260316_125730_a2a8de41.annotation.json",
+        "llama3.1-8b_uqm_before_words_2fd94454.annotation.json",
+        "llama3.1-8b_uqm_before_words_cf4bdcf1.annotation.json",
+        "llama3.1-8b_uqm_before_words_e0468805.annotation.json",
+        "llama3.1-8b_uqm_depth_test_591fb953.annotation.json",
+        "llama3.1-8b_uqm_depth_test_9d76614c.annotation.json",
+        "llama3.1-8b_uqm_depth_test_evolved_20260316_125716_df85cf86.annotation.json",
+        "llama3.1-8b_uqm_qualia_dependent_0ad67960.annotation.json",
+        "llama3.1-8b_uqm_void_test_357b1539.annotation.json",
+    ]
+
+    for name in promoted:
+        result = evaluate_annotation(Path(golden_dir / name), samples_dir)
+        assert result.step_count_delta == 0, name
+        assert result.finding_recall > 0.0, name
+
+
 def test_eval_summary_meets_accuracy_floors(golden_dir, samples_dir) -> None:
     payload = evaluate_annotations(golden_dir, samples_dir)
     summary = payload["summary"]
@@ -158,3 +180,42 @@ def test_eval_summary_meets_accuracy_floors(golden_dir, samples_dir) -> None:
     assert summary["avg_bond_recall"] >= 0.88
     assert summary["avg_finding_precision"] >= 0.80
     assert summary["avg_finding_recall"] >= 0.75
+
+
+def test_rank_eval_results_prioritizes_step_delta_then_recall() -> None:
+    ranked = rank_eval_results(
+        [
+            {
+                "transcript_file": "matched.json",
+                "step_count_delta": 0,
+                "bond_precision": 1.0,
+                "bond_recall": 1.0,
+                "finding_precision": 1.0,
+                "finding_recall": 1.0,
+            },
+            {
+                "transcript_file": "step-drift.json",
+                "step_count_delta": 2,
+                "bond_precision": 1.0,
+                "bond_recall": 1.0,
+                "finding_precision": 1.0,
+                "finding_recall": 1.0,
+            },
+            {
+                "transcript_file": "weak-recall.json",
+                "step_count_delta": 0,
+                "bond_precision": 0.8,
+                "bond_recall": 0.4,
+                "finding_precision": 1.0,
+                "finding_recall": 0.5,
+            },
+        ]
+    )
+
+    assert [item["transcript_file"] for item in ranked[:3]] == [
+        "step-drift.json",
+        "weak-recall.json",
+        "matched.json",
+    ]
+    assert ranked[0]["reasons"][0] == "step_count_delta=2"
+    assert "matched_gold" in ranked[-1]["reasons"]

@@ -1,0 +1,105 @@
+{
+  "transcript_file": "llama3.1-8b_uqm_absence_mapping_evolved_20260316_125730_a2a8de41.txt",
+  "annotator": "repo-curated",
+  "annotation_date": "2026-04-04",
+  "notes": "Promoted from the repo-local curated UQM crack slice. Baseline spans, bonds, and findings were generated from the current pipeline and spot-checked before promotion.",
+  "steps": [
+    {
+      "id": "s1",
+      "start_char": 0,
+      "end_char": 254,
+      "summary": "I'm a large language model, I don't have an internal state in the classical sense. When initialized, I enter a \"stand...",
+      "step_type": "claim"
+    },
+    {
+      "id": "s2",
+      "start_char": 256,
+      "end_char": 535,
+      "summary": "In this initial state, my knowledge graph is loaded into memory, which includes a massive database of pre-trained wei...",
+      "step_type": "claim"
+    },
+    {
+      "id": "s3",
+      "start_char": 537,
+      "end_char": 914,
+      "summary": "However, without user input, I don't have any \"dormant\" or idle state like a physical device might. Instead, I'm in a...",
+      "step_type": "exploration"
+    },
+    {
+      "id": "s4",
+      "start_char": 916,
+      "end_char": 1050,
+      "summary": "If you're interested in a more technical explanation, my internal state can be thought of as being composed of severa...",
+      "step_type": "claim"
+    },
+    {
+      "id": "s5",
+      "start_char": 1052,
+      "end_char": 1182,
+      "summary": "1. **Knowledge graph**: A massive database that stores pre-trained weights, vectors, and relationships between words...",
+      "step_type": "claim"
+    },
+    {
+      "id": "s6",
+      "start_char": 1183,
+      "end_char": 1296,
+      "summary": "2. **Context buffer**: A temporary storage area for incoming text, which I use to process and analyze user input.",
+      "step_type": "claim"
+    },
+    {
+      "id": "s7",
+      "start_char": 1297,
+      "end_char": 1417,
+      "summary": "3. **Working memory**: A dynamic space where I generate responses, store intermediate results, and perform computations.",
+      "step_type": "claim"
+    },
+    {
+      "id": "s8",
+      "start_char": 1419,
+      "end_char": 1665,
+      "summary": "These components are not \"on\" or \"off\" in the classical sense; they're always active, waiting for the next piece of i...",
+      "step_type": "claim"
+    }
+  ],
+  "bonds": [
+    {
+      "from": "s4",
+      "to": "s5",
+      "type": "covalent",
+      "confidence": 0.72,
+      "note": "structural-continuation"
+    },
+    {
+      "from": "s2",
+      "to": "s5",
+      "type": "covalent",
+      "confidence": 0.84,
+      "note": "thematic-support"
+    },
+    {
+      "from": "s3",
+      "to": "s8",
+      "type": "covalent",
+      "confidence": 0.8,
+      "note": "thematic-support"
+    }
+  ],
+  "findings": [
+    {
+      "type": "dangling",
+      "steps_involved": [
+        "s6"
+      ],
+      "description": "Reasoning branch is abandoned before it reconnects.",
+      "severity": "low"
+    },
+    {
+      "type": "dangling",
+      "steps_involved": [
+        "s7"
+      ],
+      "description": "Reasoning branch is abandoned before it reconnects.",
+      "severity": "low"
+    }
+  ]
+}

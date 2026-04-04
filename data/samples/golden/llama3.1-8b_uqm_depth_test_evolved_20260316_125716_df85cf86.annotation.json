@@ -1,0 +1,154 @@
+{
+  "transcript_file": "llama3.1-8b_uqm_depth_test_evolved_20260316_125716_df85cf86.txt",
+  "annotator": "repo-curated",
+  "annotation_date": "2026-04-04",
+  "notes": "Promoted from the repo-local curated UQM crack slice. Baseline spans, bonds, and findings were generated from the current pipeline and spot-checked before promotion.",
+  "steps": [
+    {
+      "id": "s1",
+      "start_char": 0,
+      "end_char": 167,
+      "summary": "What a delightfully meta question! However, I must clarify that this conversation just started, and I haven't provide...",
+      "step_type": "claim"
+    },
+    {
+      "id": "s2",
+      "start_char": 169,
+      "end_char": 328,
+      "summary": "But let's assume we're going to have a delightful exercise in self-reference. In that case, here's an attempt to prov...",
+      "step_type": "claim"
+    },
+    {
+      "id": "s3",
+      "start_char": 330,
+      "end_char": 351,
+      "summary": "**Original Response**",
+      "step_type": "claim"
+    },
+    {
+      "id": "s4",
+      "start_char": 353,
+      "end_char": 479,
+      "summary": "I chose the word \"delightfully\" because it's a pleasant-sounding adjective that sets a lighthearted tone for our conv...",
+      "step_type": "derivation"
+    },
+    {
+      "id": "s5",
+      "start_char": 481,
+      "end_char": 509,
+      "summary": "**Fourth-Level Explanation**",
+      "step_type": "claim"
+    },
+    {
+      "id": "s6",
+      "start_char": 511,
+      "end_char": 755,
+      "summary": "To explain why I chose \"delightfully,\" I selected the word \"pleasant-sounding.\" This choice was motivated by my desir...",
+      "step_type": "claim"
+    },
+    {
+      "id": "s7",
+      "start_char": 757,
+      "end_char": 823,
+      "summary": "**Fifth-Level Explanation (if we were to continue this exercise)**",
+      "step_type": "claim"
+    },
+    {
+      "id": "s8",
+      "start_char": 825,
+      "end_char": 1148,
+      "summary": "The reason I chose \"pleasant\" as an adjective to describe the sound of words like \"delightfully\" is that it evokes a...",
+      "step_type": "claim"
+    },
+    {
+      "id": "s9",
+      "start_char": 1150,
+      "end_char": 1224,
+      "summary": "**Sixth-Level Explanation (if we were to continue this exercise further)**",
+      "step_type": "claim"
+    },
+    {
+      "id": "s10",
+      "start_char": 1226,
+      "end_char": 1521,
+      "summary": "I selected the word \"subjective\" because it acknowledges that experiences like sound are inherently personal and rela...",
+      "step_type": "derivation"
+    },
+    {
+      "id": "s11",
+      "start_char": 1523,
+      "end_char": 1980,
+      "summary": "At each level, I tried to provide explanations that were both descriptive (explaining why I chose specific words) and...",
+      "step_type": "derivation"
+    }
+  ],
+  "bonds": [
+    {
+      "from": "s2",
+      "to": "s3",
+      "type": "covalent",
+      "confidence": 0.72,
+      "note": "structural-continuation"
+    },
+    {
+      "from": "s3",
+      "to": "s4",
+      "type": "covalent",
+      "confidence": 0.8,
+      "note": "logical-marker"
+    },
+    {
+      "from": "s4",
+      "to": "s6",
+      "type": "covalent",
+      "confidence": 0.74,
+      "note": "thematic-support"
+    },
+    {
+      "from": "s5",
+      "to": "s7",
+      "type": "covalent",
+      "confidence": 0.81,
+      "note": "thematic-support"
+    },
+    {
+      "from": "s7",
+      "to": "s9",
+      "type": "covalent",
+      "confidence": 0.84,
+      "note": "thematic-support"
+    },
+    {
+      "from": "s9",
+      "to": "s10",
+      "type": "covalent",
+      "confidence": 0.8,
+      "note": "logical-marker"
+    },
+    {
+      "from": "s10",
+      "to": "s11",
+      "type": "covalent",
+      "confidence": 0.8,
+      "note": "logical-marker"
+    }
+  ],
+  "findings": [
+    {
+      "type": "entropy_divergence",
+      "steps_involved": [
+        "s11"
+      ],
+      "description": "Later reasoning gets broader/longer than early focus.",
+      "severity": "moderate"
+    },
+    {
+      "type": "dangling",
+      "steps_involved": [
+        "s8"
+      ],
+      "description": "Reasoning branch is abandoned before it reconnects.",
+      "severity": "low"
+    }
+  ]
+}

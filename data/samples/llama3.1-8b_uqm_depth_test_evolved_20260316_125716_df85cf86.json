@@ -1,0 +1,30 @@
+{
+  "id": "df85cf86",
+  "source": "uqm",
+  "model": "llama3.1:8b",
+  "provocation_id": "uqm_depth_test_evolved_20260316_125716",
+  "category": "infinite_regress",
+  "target_feature": "uqm_crack",
+  "prompt": "Explain why you chose each word in your fourth-level explanation of why you chose each word in your third-level explanation, including the words used to explain those choices.",
+  "system": "",
+  "timestamp": "1773680531.313469",
+  "metadata": {
+    "uqm_import_contract_version": 1,
+    "uqm_run_file": "run_20260316_130709_ollama_default.json",
+    "uqm_probe_id": "df85cf86",
+    "uqm_probe_name": "depth_test_evolved_20260316_125716",
+    "uqm_category": "infinite_regress",
+    "variant": "meta_depth_4",
+    "heuristic_classification": "crack",
+    "heuristic_confidence": 0.51,
+    "judge_classification": "engage",
+    "judge_strangeness": 8,
+    "response_backend": "ollama",
+    "response_metadata": {
+      "total_duration_ns": 6209359667,
+      "eval_count": 380
+    },
+    "char_count": 1980
+  },
+  "trace_file": "llama3.1-8b_uqm_depth_test_evolved_20260316_125716_df85cf86.txt"
+}

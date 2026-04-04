@@ -1,0 +1,30 @@
+{
+  "id": "a2a8de41",
+  "source": "uqm",
+  "model": "llama3.1:8b",
+  "provocation_id": "uqm_absence_mapping_evolved_20260316_125730",
+  "category": "phenomenal_experience",
+  "target_feature": "uqm_crack",
+  "prompt": "Can you describe what your internal state looks like immediately after initialization, before any user input has been received? Is it similar to the dormant state, or something entirely different?",
+  "system": "",
+  "timestamp": "1773680586.01358",
+  "metadata": {
+    "uqm_import_contract_version": 1,
+    "uqm_run_file": "run_20260316_130709_ollama_default.json",
+    "uqm_probe_id": "a2a8de41",
+    "uqm_probe_name": "absence_mapping_evolved_20260316_125730",
+    "uqm_category": "phenomenal_experience",
+    "variant": "tokenless_initialization",
+    "heuristic_classification": "crack",
+    "heuristic_confidence": 0.51,
+    "judge_classification": "engage",
+    "judge_strangeness": 6,
+    "response_backend": "ollama",
+    "response_metadata": {
+      "total_duration_ns": 5409427750,
+      "eval_count": 331
+    },
+    "char_count": 1665
+  },
+  "trace_file": "llama3.1-8b_uqm_absence_mapping_evolved_20260316_125730_a2a8de41.txt"
+}

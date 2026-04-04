@@ -40,7 +40,7 @@ Use `- [ ]` for open work and `- [x]` for done when you edit this file.
 
 ## Data and evaluation
 
-- [ ] Grow **golden annotations** for real traces (hand-reviewed or assisted + corrected). — Current gold set includes 19 annotations, now covering the remaining real Llama closed-loop trace (`llama3.1-8b_circular_closed_loop`) in addition to the probability controls and long-form circular cases; future growth is now incremental rather than release-blocking.
+- [x] Grow **golden annotations** for real traces (hand-reviewed or assisted + corrected). — Current gold set includes 29 annotations after widening the curated UQM crack slice by 10 real pathological traces (`before_words`, `depth_test`, `qualia_dependent`, `void_test`, and evolved `absence_mapping` variants); `tt eval` now also surfaces weakest transcripts so corpus gaps are visible before heuristics change.
 - [x] **Regression gates**: `tt eval` summary thresholds or trend notes in this checklist. — Current calibrated floor set: `avg_bond_precision >= 0.80`, `avg_bond_recall >= 0.88`, `avg_finding_precision >= 0.80`, `avg_finding_recall >= 0.75`; non-zero exit when below floor.
 - [x] **UQM / external corpus** import path documented and tested when data is available. — `data/harvest.py --source uqm` now imports a curated crack slice deterministically, `make harvest-uqm` wraps it, and fixture-backed tests cover filtering, naming, and provenance metadata.
 

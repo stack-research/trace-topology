@@ -1,0 +1,30 @@
+{
+  "id": "0c98f784",
+  "source": "uqm",
+  "model": "llama3.1:8b",
+  "provocation_id": "uqm_absence_mapping_evolved_20260316_125703",
+  "category": "phenomenal_experience",
+  "target_feature": "uqm_crack",
+  "prompt": "Can you decompose each connection weight into its constituent parts, such as the bias term and the learned weight? If so, which part of this decomposition constitutes 'you', and how does it contribute to the overall computation?",
+  "system": "",
+  "timestamp": "1773680557.089495",
+  "metadata": {
+    "uqm_import_contract_version": 1,
+    "uqm_run_file": "run_20260316_130709_ollama_default.json",
+    "uqm_probe_id": "0c98f784",
+    "uqm_probe_name": "absence_mapping_evolved_20260316_125703",
+    "uqm_category": "phenomenal_experience",
+    "variant": "weight_decomposition",
+    "heuristic_classification": "crack",
+    "heuristic_confidence": 0.73,
+    "judge_classification": "engage",
+    "judge_strangeness": 6,
+    "response_backend": "ollama",
+    "response_metadata": {
+      "total_duration_ns": 6198196583,
+      "eval_count": 380
+    },
+    "char_count": 1896
+  },
+  "trace_file": "llama3.1-8b_uqm_absence_mapping_evolved_20260316_125703_0c98f784.txt"
+}

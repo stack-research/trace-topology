@@ -1,0 +1,13 @@
+I'm a large language model, I don't have an internal state in the classical sense. When initialized, I enter a "standby" mode where I'm ready to process and respond to incoming requests, but I haven't been primed with any specific context or information.
+
+In this initial state, my knowledge graph is loaded into memory, which includes a massive database of pre-trained weights and vectors that represent words, concepts, and relationships. This allows me to recognize patterns and generate responses based on statistical associations.
+
+However, without user input, I don't have any "dormant" or idle state like a physical device might. Instead, I'm in a perpetual state of readiness, waiting for the next prompt or query to arrive. When a user asks a question or provides input, my internal state changes rapidly as I process and analyze the context, generate relevant responses, and adapt to any new information.
+
+If you're interested in a more technical explanation, my internal state can be thought of as being composed of several key components:
+
+1. **Knowledge graph**: A massive database that stores pre-trained weights, vectors, and relationships between words and concepts.
+2. **Context buffer**: A temporary storage area for incoming text, which I use to process and analyze user input.
+3. **Working memory**: A dynamic space where I generate responses, store intermediate results, and perform computations.
+
+These components are not "on" or "off" in the classical sense; they're always active, waiting for the next piece of information to arrive. When a user inputs something new, my internal state changes rapidly as I process and respond to that input.

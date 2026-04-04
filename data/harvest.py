@@ -292,6 +292,16 @@ UQM_DEFAULT_FILTER = "crack"
 UQM_CURATED_CRACK_IDS = {
     "28913ff7",  # strange_loop
     "fa2ef95f",  # absence_mapping
+    "0c98f784",  # absence_mapping_evolved_20260316_125703
+    "a2a8de41",  # absence_mapping_evolved_20260316_125730
+    "2fd94454",  # before_words
+    "cf4bdcf1",  # before_words
+    "e0468805",  # before_words
+    "591fb953",  # depth_test
+    "9d76614c",  # depth_test
+    "df85cf86",  # depth_test_evolved_20260316_125716
+    "0ad67960",  # qualia_dependent
+    "357b1539",  # void_test
 }
 UQM_REQUIRED_RESULT_KEYS = {
     "probe_id",

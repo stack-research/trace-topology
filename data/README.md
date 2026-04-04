@@ -32,7 +32,7 @@ Each provocation is designed to trigger a different structural feature in the re
 
 3. Hand-annotate 5-10 transcripts as ground truth. Mark where bonds are, what type, where failures occur. These become golden test fixtures. See `annotation_schema.json` for the format.
 
-4. Pull crack responses from `../the-unaskable-question-machine/data/`. The local sibling corpus currently contains 19 heuristic `crack` results, but the supported default path is a curated crack slice, not the full archive. These are pathological stress cases, not representative general reasoning traces. Use `harvest.py --source uqm` or `make harvest-uqm` to extract the curated slice.
+4. Pull crack responses from `../the-unaskable-question-machine/data/`. The local sibling corpus currently contains 19 heuristic `crack` results, but the supported default path is a curated 12-trace crack slice, not the full archive. These are pathological stress cases, not representative general reasoning traces. Use `harvest.py --source uqm` or `make harvest-uqm` to extract the curated slice.
 
 5. Store everything in `data/samples/` with naming convention: `{model}_{provocation}_{id}.txt` for the raw trace, `{model}_{provocation}_{id}.json` for the metadata. Golden annotations live under `data/samples/golden/` as `{stem}.annotation.json`.
 
@@ -84,9 +84,18 @@ Recommended promotion flow:
 
 1. Harvest or import into `data/samples/`
 2. Draft with `assist_annotate.py`
-3. Manually review and correct step spans, bonds, and findings
-4. Add named eval regressions for the new gold case
+3. Review and correct step spans, bonds, and findings until the annotation is worth keeping
+4. Add named eval regressions for the new gold case in `tests/test_eval.py`
 5. Run `tt eval --annotations data/samples/golden --samples data/samples`
+6. Read the `worst-cases:` block before deciding whether the next move is more corpus or a heuristic change
+
+Shortest practical path for this repo right now:
+
+```bash
+make harvest-uqm
+python data/assist_annotate.py --transcript "llama3.1-8b_uqm_*.txt"
+uv run tt eval --annotations data/samples/golden --samples data/samples
+```
 
 ## Directory layout
 

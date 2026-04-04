@@ -47,6 +47,8 @@ def test_readme_sample_file_flow(samples_dir: Path, golden_dir: Path, tmp_path: 
     assert json.loads(graph_out.read_text(encoding="utf-8"))["artifact_type"] == "graph"
     assert json.loads(analysis_out.read_text(encoding="utf-8"))["artifact_type"] == "analysis"
     assert json.loads(eval_out.read_text(encoding="utf-8"))["artifact_type"] == "eval"
+    assert json.loads(eval_out.read_text(encoding="utf-8"))["worst_cases"]
+    assert "worst-cases:" in eval_result.output
 
 
 def test_walkthrough_sample_emits_cycle_finding(samples_dir: Path) -> None:

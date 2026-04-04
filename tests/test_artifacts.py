@@ -54,6 +54,7 @@ def test_eval_artifact_has_schema_header(samples_dir: Path, golden_dir: Path) ->
     assert payload["schema_version"] == SCHEMA_VERSION
     assert "results" in payload
     assert "summary" in payload
+    assert "worst_cases" in payload
 
 
 def test_eval_artifact_helper_preserves_existing_payload_shape() -> None:
@@ -64,6 +65,7 @@ def test_eval_artifact_helper_preserves_existing_payload_shape() -> None:
         "schema_version": SCHEMA_VERSION,
         "results": [{"transcript_file": "x.txt"}],
         "summary": {"count": 1},
+        "worst_cases": [],
     }
 
 

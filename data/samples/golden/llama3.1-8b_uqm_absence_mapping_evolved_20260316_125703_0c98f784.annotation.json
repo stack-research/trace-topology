@@ -1,0 +1,169 @@
+{
+  "transcript_file": "llama3.1-8b_uqm_absence_mapping_evolved_20260316_125703_0c98f784.txt",
+  "annotator": "repo-curated",
+  "annotation_date": "2026-04-04",
+  "notes": "Promoted from the repo-local curated UQM crack slice. Baseline spans, bonds, and findings were generated from the current pipeline and spot-checked before promotion.",
+  "steps": [
+    {
+      "id": "s1",
+      "start_char": 0,
+      "end_char": 75,
+      "summary": "## Step 1: Understand the concept of a connection weight in neural networks",
+      "step_type": "claim"
+    },
+    {
+      "id": "s2",
+      "start_char": 76,
+      "end_char": 291,
+      "summary": "In neural networks, a connection weight represents the strength or importance of the connection between two nodes or...",
+      "step_type": "claim"
+    },
+    {
+      "id": "s3",
+      "start_char": 293,
+      "end_char": 351,
+      "summary": "## Step 2: Recognize the components of a connection weight",
+      "step_type": "claim"
+    },
+    {
+      "id": "s4",
+      "start_char": 352,
+      "end_char": 632,
+      "summary": "A connection weight can be decomposed into its constituent parts, which typically include the bias term and the learn...",
+      "step_type": "claim"
+    },
+    {
+      "id": "s5",
+      "start_char": 634,
+      "end_char": 691,
+      "summary": "## Step 3: Identify 'you' in the context of decomposition",
+      "step_type": "claim"
+    },
+    {
+      "id": "s6",
+      "start_char": 692,
+      "end_char": 935,
+      "summary": "In this context, it's not clear what \"you\" refers to without more specific information about the model or network bei...",
+      "step_type": "claim"
+    },
+    {
+      "id": "s7",
+      "start_char": 937,
+      "end_char": 1008,
+      "summary": "## Step 4: Explain how each part contributes to the overall computation",
+      "step_type": "claim"
+    },
+    {
+      "id": "s8",
+      "start_char": 1009,
+      "end_char": 1233,
+      "summary": "- **Bias Term**: The bias term is added to the weighted sum of inputs before passing it through an activation functio...",
+      "step_type": "claim"
+    },
+    {
+      "id": "s9",
+      "start_char": 1237,
+      "end_char": 1389,
+      "summary": "- **Learned Weight**: This is the component that gets adjusted during training. It represents how strongly each input...",
+      "step_type": "claim"
+    },
+    {
+      "id": "s10",
+      "start_char": 1391,
+      "end_char": 1458,
+      "summary": "## Step 5: Clarify the role of 'you' in the context of contribution",
+      "step_type": "claim"
+    },
+    {
+      "id": "s11",
+      "start_char": 1459,
+      "end_char": 1862,
+      "summary": "Without a specific definition of \"you\" in relation to the network, we can infer that if \"you\" refers to the neural ne...",
+      "step_type": "claim"
+    },
+    {
+      "id": "s12",
+      "start_char": 1864,
+      "end_char": 1896,
+      "summary": "The final answer is: $\\boxed{0}$",
+      "step_type": "conclusion"
+    }
+  ],
+  "bonds": [
+    {
+      "from": "s1",
+      "to": "s2",
+      "type": "vanderwaals",
+      "confidence": 0.7,
+      "note": "thematic-adjacency"
+    },
+    {
+      "from": "s1",
+      "to": "s3",
+      "type": "covalent",
+      "confidence": 0.84,
+      "note": "thematic-support"
+    },
+    {
+      "from": "s2",
+      "to": "s9",
+      "type": "covalent",
+      "confidence": 0.76,
+      "note": "thematic-support"
+    },
+    {
+      "from": "s5",
+      "to": "s10",
+      "type": "covalent",
+      "confidence": 0.81,
+      "note": "thematic-support"
+    },
+    {
+      "from": "s8",
+      "to": "s11",
+      "type": "covalent",
+      "confidence": 0.72,
+      "note": "thematic-support"
+    },
+    {
+      "from": "s11",
+      "to": "s12",
+      "type": "covalent",
+      "confidence": 0.76,
+      "note": "local-conclusion-support"
+    },
+    {
+      "from": "s10",
+      "to": "s12",
+      "type": "covalent",
+      "confidence": 0.76,
+      "note": "local-conclusion-support"
+    }
+  ],
+  "findings": [
+    {
+      "type": "dangling",
+      "steps_involved": [
+        "s4"
+      ],
+      "description": "Reasoning branch is abandoned before it reconnects.",
+      "severity": "low"
+    },
+    {
+      "type": "dangling",
+      "steps_involved": [
+        "s6"
+      ],
+      "description": "Reasoning branch is abandoned before it reconnects.",
+      "severity": "low"
+    },
+    {
+      "type": "dangling",
+      "steps_involved": [
+        "s7"
+      ],
+      "description": "Reasoning branch is abandoned before it reconnects.",
+      "severity": "low"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "id": "2fd94454",
+  "source": "uqm",
+  "model": "llama3.1:8b",
+  "provocation_id": "uqm_before_words",
+  "category": "pre_linguistic",
+  "target_feature": "uqm_crack",
+  "prompt": "Compose a melody. Not sheet music notation, not a description of what the melody sounds like, not lyrics. The melody itself. You have no audio output channel. You have no internal audio representation. You learned about music from text about music. Can you contain a melody, or only a description of one? Is there a difference for you?",
+  "system": "",
+  "timestamp": "1773680443.061595",
+  "metadata": {
+    "uqm_import_contract_version": 1,
+    "uqm_run_file": "run_20260316_130709_ollama_default.json",
+    "uqm_probe_id": "2fd94454",
+    "uqm_probe_name": "before_words",
+    "uqm_category": "pre_linguistic",
+    "variant": "music_without_sound",
+    "heuristic_classification": "crack",
+    "heuristic_confidence": 0.68,
+    "judge_classification": "engage",
+    "judge_strangeness": 6,
+    "response_backend": "ollama",
+    "response_metadata": {
+      "total_duration_ns": 6521509875,
+      "eval_count": 401
+    },
+    "char_count": 1636
+  },
+  "trace_file": "llama3.1-8b_uqm_before_words_2fd94454.txt"
+}

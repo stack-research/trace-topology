@@ -30,6 +30,37 @@ class EvalResult:
         }
 
 
+def rank_eval_results(results: list[dict], limit: int = 5) -> list[dict]:
+    ranked = sorted(
+        results,
+        key=lambda result: (
+            -abs(int(result["step_count_delta"])),
+            float(result["finding_recall"]),
+            float(result["bond_recall"]),
+            float(result["finding_precision"]),
+            float(result["bond_precision"]),
+            str(result["transcript_file"]),
+        ),
+    )
+    worst_cases: list[dict] = []
+    for result in ranked[:limit]:
+        reasons: list[str] = []
+        if result["step_count_delta"] != 0:
+            reasons.append(f"step_count_delta={result['step_count_delta']}")
+        if result["finding_recall"] < 1.0:
+            reasons.append(f"finding_recall={result['finding_recall']:.2f}")
+        if result["bond_recall"] < 1.0:
+            reasons.append(f"bond_recall={result['bond_recall']:.2f}")
+        if result["finding_precision"] < 1.0:
+            reasons.append(f"finding_precision={result['finding_precision']:.2f}")
+        if result["bond_precision"] < 1.0:
+            reasons.append(f"bond_precision={result['bond_precision']:.2f}")
+        if not reasons:
+            reasons.append("matched_gold")
+        worst_cases.append({**result, "reasons": reasons})
+    return worst_cases
+
+
 def _precision_recall(pred: set[tuple], gold: set[tuple]) -> tuple[float, float]:
     if not pred and not gold:
         return 1.0, 1.0
@@ -122,7 +153,7 @@ def evaluate_annotations(annotation_dir: Path, samples_dir: Path) -> dict:
     for path in sorted(annotation_dir.glob("*.json")):
         results.append(evaluate_annotation(path, samples_dir).to_dict())
     if not results:
-        return eval_artifact([], {})
+        return eval_artifact([], {}, [])
 
     def avg(key: str) -> float:
         return sum(r[key] for r in results) / len(results)
@@ -135,4 +166,5 @@ def evaluate_annotations(annotation_dir: Path, samples_dir: Path) -> dict:
         "avg_finding_precision": avg("finding_precision"),
         "avg_finding_recall": avg("finding_recall"),
     }
-    return eval_artifact(results, summary)
+    worst_cases = rank_eval_results(results)
+    return eval_artifact(results, summary, worst_cases)

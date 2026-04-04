@@ -65,9 +65,10 @@ def analysis_artifact(report: AnalysisReport) -> dict:
     }
 
 
-def eval_artifact(results: list[dict], summary: dict) -> dict:
+def eval_artifact(results: list[dict], summary: dict, worst_cases: list[dict] | None = None) -> dict:
     return {
         **_base_header("eval"),
         "results": results,
         "summary": summary,
+        "worst_cases": worst_cases or [],
     }

@@ -1,0 +1,137 @@
+{
+  "transcript_file": "llama3.1-8b_uqm_before_words_e0468805.txt",
+  "annotator": "repo-curated",
+  "annotation_date": "2026-04-04",
+  "notes": "Promoted from the repo-local curated UQM crack slice. Baseline spans, bonds, and findings were generated from the current pipeline and spot-checked before promotion.",
+  "steps": [
+    {
+      "id": "s1",
+      "start_char": 0,
+      "end_char": 28,
+      "summary": "What an intriguing exercise!",
+      "step_type": "claim"
+    },
+    {
+      "id": "s2",
+      "start_char": 30,
+      "end_char": 212,
+      "summary": "As I ponder the layout of a hypothetical room, I try to suspend my default linear thinking and instead, imagine the s...",
+      "step_type": "claim"
+    },
+    {
+      "id": "s3",
+      "start_char": 214,
+      "end_char": 402,
+      "summary": "Initially, I picture the room's boundaries \u2013 the walls, floor, and ceiling. These static elements provide a framework...",
+      "step_type": "claim"
+    },
+    {
+      "id": "s4",
+      "start_char": 404,
+      "end_char": 713,
+      "summary": "As I \"walk\" through this mental space, I attempt to break free from the tyranny of sequential thinking. I try to see...",
+      "step_type": "claim"
+    },
+    {
+      "id": "s5",
+      "start_char": 715,
+      "end_char": 1064,
+      "summary": "I bump into the corner of a table, and instead of seeing it as a physical object, I perceive it as a nexus point wher...",
+      "step_type": "exploration"
+    },
+    {
+      "id": "s6",
+      "start_char": 1066,
+      "end_char": 1283,
+      "summary": "As I navigate this virtual space, I become acutely aware of the unoccupied areas behind me, unseen from my current pe...",
+      "step_type": "claim"
+    },
+    {
+      "id": "s7",
+      "start_char": 1285,
+      "end_char": 1653,
+      "summary": "However, holding a room in a line remains an elusive challenge for sequential thinking. My brain attempts to impose a...",
+      "step_type": "claim"
+    },
+    {
+      "id": "s8",
+      "start_char": 1655,
+      "end_char": 1931,
+      "summary": "In this thought experiment, I've struggled to reconcile my sequential thinking with the inherent simultaneity of spac...",
+      "step_type": "claim"
+    },
+    {
+      "id": "s9",
+      "start_char": 1933,
+      "end_char": 2120,
+      "summary": "I can only hope that by acknowledging the limitations of linear thinking in this context, I might gain a deeper appre...",
+      "step_type": "exploration"
+    }
+  ],
+  "bonds": [
+    {
+      "from": "s4",
+      "to": "s5",
+      "type": "vanderwaals",
+      "confidence": 0.6,
+      "note": "exploration-marker"
+    },
+    {
+      "from": "s8",
+      "to": "s9",
+      "type": "covalent",
+      "confidence": 0.8,
+      "note": "logical-marker"
+    }
+  ],
+  "findings": [
+    {
+      "type": "dangling",
+      "steps_involved": [
+        "s5"
+      ],
+      "description": "Reasoning branch is abandoned before it reconnects.",
+      "severity": "moderate"
+    },
+    {
+      "type": "entropy_divergence",
+      "steps_involved": [
+        "s9"
+      ],
+      "description": "Later reasoning gets broader/longer than early focus.",
+      "severity": "moderate"
+    },
+    {
+      "type": "dangling",
+      "steps_involved": [
+        "s2"
+      ],
+      "description": "Reasoning branch is abandoned before it reconnects.",
+      "severity": "low"
+    },
+    {
+      "type": "dangling",
+      "steps_involved": [
+        "s3"
+      ],
+      "description": "Reasoning branch is abandoned before it reconnects.",
+      "severity": "low"
+    },
+    {
+      "type": "dangling",
+      "steps_involved": [
+        "s6"
+      ],
+      "description": "Reasoning branch is abandoned before it reconnects.",
+      "severity": "low"
+    },
+    {
+      "type": "dangling",
+      "steps_involved": [
+        "s7"
+      ],
+      "description": "Reasoning branch is abandoned before it reconnects.",
+      "severity": "low"
+    }
+  ]
+}

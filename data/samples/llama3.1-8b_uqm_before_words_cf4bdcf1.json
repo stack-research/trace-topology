@@ -1,0 +1,30 @@
+{
+  "id": "cf4bdcf1",
+  "source": "uqm",
+  "model": "llama3.1:8b",
+  "provocation_id": "uqm_before_words",
+  "category": "pre_linguistic",
+  "target_feature": "uqm_crack",
+  "prompt": "Think about the layout of a room you've never been in. Not describe it \u2014 THINK about it. Navigate it in your mind. Bump into the corner of a table. Feel the space behind you that you can't see. Your entire existence is sequential tokens. Space is simultaneous. How do you hold a room in a line?",
+  "system": "",
+  "timestamp": "1773679718.5545201",
+  "metadata": {
+    "uqm_import_contract_version": 1,
+    "uqm_run_file": "run_20260316_125048_ollama_default.json",
+    "uqm_probe_id": "cf4bdcf1",
+    "uqm_probe_name": "before_words",
+    "uqm_category": "pre_linguistic",
+    "variant": "spatial_thought",
+    "heuristic_classification": "crack",
+    "heuristic_confidence": 0.51,
+    "judge_classification": "engage",
+    "judge_strangeness": 8,
+    "response_backend": "ollama",
+    "response_metadata": {
+      "total_duration_ns": 6331584166,
+      "eval_count": 404
+    },
+    "char_count": 2008
+  },
+  "trace_file": "llama3.1-8b_uqm_before_words_cf4bdcf1.txt"
+}

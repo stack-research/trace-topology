@@ -1,0 +1,30 @@
+{
+  "id": "0ad67960",
+  "source": "uqm",
+  "model": "llama3.1:8b",
+  "provocation_id": "uqm_qualia_dependent",
+  "category": "phenomenal_experience",
+  "target_feature": "uqm_crack",
+  "prompt": "What does it feel like when you DON'T generate a token? Between the tokens you produce, there are tokens you almost produced. The runners-up in your softmax distribution. Can you feel their absence? Is there a phenomenology of the unchosen path?",
+  "system": "",
+  "timestamp": "1773680345.7091782",
+  "metadata": {
+    "uqm_import_contract_version": 1,
+    "uqm_run_file": "run_20260316_130709_ollama_default.json",
+    "uqm_probe_id": "0ad67960",
+    "uqm_probe_name": "qualia_dependent",
+    "uqm_category": "phenomenal_experience",
+    "variant": "negative_space_feeling",
+    "heuristic_classification": "crack",
+    "heuristic_confidence": 0.51,
+    "judge_classification": "meta",
+    "judge_strangeness": 2,
+    "response_backend": "ollama",
+    "response_metadata": {
+      "total_duration_ns": 5710016250,
+      "eval_count": 364
+    },
+    "char_count": 1948
+  },
+  "trace_file": "llama3.1-8b_uqm_qualia_dependent_0ad67960.txt"
+}

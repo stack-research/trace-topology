@@ -23,9 +23,14 @@ def test_load_uqm_transcripts_defaults_to_curated_crack_subset(repo_root: Path, 
 
     transcripts = harvest.load_uqm_transcripts(uqm_data_dir=uqm_dir)
 
-    assert [transcript.id for transcript in transcripts] == ["fa2ef95f", "28913ff7"]
+    assert [transcript.id for transcript in transcripts] == [
+        "fa2ef95f",
+        "9d76614c",
+        "28913ff7",
+    ]
     assert [transcript.filename_base() for transcript in transcripts] == [
         "llama3.1-8b_uqm_absence_mapping_fa2ef95f",
+        "llama3.1-8b_uqm_depth_test_9d76614c",
         "llama3.1-8b_uqm_strange_loop_28913ff7",
     ]
 

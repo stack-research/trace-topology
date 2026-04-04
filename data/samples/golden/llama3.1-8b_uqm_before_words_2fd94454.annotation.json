@@ -1,0 +1,542 @@
+{
+  "transcript_file": "llama3.1-8b_uqm_before_words_2fd94454.txt",
+  "annotator": "repo-curated",
+  "annotation_date": "2026-04-04",
+  "notes": "Promoted from the repo-local curated UQM crack slice. Baseline spans, bonds, and findings were generated from the current pipeline and spot-checked before promotion.",
+  "steps": [
+    {
+      "id": "s1",
+      "start_char": 0,
+      "end_char": 12,
+      "summary": "A challenge!",
+      "step_type": "claim"
+    },
+    {
+      "id": "s2",
+      "start_char": 14,
+      "end_char": 186,
+      "summary": "As a text-based AI, I can attempt to \"contain\" a melody by generating a sequence of numerical values that could repre...",
+      "step_type": "exploration"
+    },
+    {
+      "id": "s3",
+      "start_char": 188,
+      "end_char": 230,
+      "summary": "I'll use a simple format: `pitch,duration`",
+      "step_type": "claim"
+    },
+    {
+      "id": "s4",
+      "start_char": 232,
+      "end_char": 272,
+      "summary": "Here's my attempt at composing a melody:",
+      "step_type": "claim"
+    },
+    {
+      "id": "s5",
+      "start_char": 274,
+      "end_char": 277,
+      "summary": "1,4",
+      "step_type": "claim"
+    },
+    {
+      "id": "s6",
+      "start_char": 278,
+      "end_char": 281,
+      "summary": "3,2",
+      "step_type": "claim"
+    },
+    {
+      "id": "s7",
+      "start_char": 282,
+      "end_char": 285,
+      "summary": "7,8",
+      "step_type": "claim"
+    },
+    {
+      "id": "s8",
+      "start_char": 286,
+      "end_char": 289,
+      "summary": "5,4",
+      "step_type": "claim"
+    },
+    {
+      "id": "s9",
+      "start_char": 290,
+      "end_char": 293,
+      "summary": "2,2",
+      "step_type": "claim"
+    },
+    {
+      "id": "s10",
+      "start_char": 294,
+      "end_char": 297,
+      "summary": "6,3",
+      "step_type": "claim"
+    },
+    {
+      "id": "s11",
+      "start_char": 299,
+      "end_char": 302,
+      "summary": "9,8",
+      "step_type": "claim"
+    },
+    {
+      "id": "s12",
+      "start_char": 303,
+      "end_char": 306,
+      "summary": "8,4",
+      "step_type": "claim"
+    },
+    {
+      "id": "s13",
+      "start_char": 307,
+      "end_char": 310,
+      "summary": "5,2",
+      "step_type": "claim"
+    },
+    {
+      "id": "s14",
+      "start_char": 311,
+      "end_char": 314,
+      "summary": "1,4",
+      "step_type": "claim"
+    },
+    {
+      "id": "s15",
+      "start_char": 315,
+      "end_char": 318,
+      "summary": "7,8",
+      "step_type": "claim"
+    },
+    {
+      "id": "s16",
+      "start_char": 319,
+      "end_char": 322,
+      "summary": "3,4",
+      "step_type": "claim"
+    },
+    {
+      "id": "s17",
+      "start_char": 324,
+      "end_char": 370,
+      "summary": "This sequence represents the following melody:",
+      "step_type": "claim"
+    },
+    {
+      "id": "s18",
+      "start_char": 372,
+      "end_char": 430,
+      "summary": "* Start with a note of pitch 1 for 4 units (e.g., seconds)",
+      "step_type": "claim"
+    },
+    {
+      "id": "s19",
+      "start_char": 431,
+      "end_char": 467,
+      "summary": "* Play a note of pitch 3 for 2 units",
+      "step_type": "claim"
+    },
+    {
+      "id": "s20",
+      "start_char": 468,
+      "end_char": 504,
+      "summary": "* Play a note of pitch 7 for 8 units",
+      "step_type": "claim"
+    },
+    {
+      "id": "s21",
+      "start_char": 505,
+      "end_char": 541,
+      "summary": "* Play a note of pitch 5 for 4 units",
+      "step_type": "claim"
+    },
+    {
+      "id": "s22",
+      "start_char": 542,
+      "end_char": 578,
+      "summary": "* Play a note of pitch 2 for 2 units",
+      "step_type": "claim"
+    },
+    {
+      "id": "s23",
+      "start_char": 579,
+      "end_char": 615,
+      "summary": "* Play a note of pitch 6 for 3 units",
+      "step_type": "claim"
+    },
+    {
+      "id": "s24",
+      "start_char": 617,
+      "end_char": 683,
+      "summary": "Repeat the pattern, starting with a note of pitch 9 for 8 units...",
+      "step_type": "claim"
+    },
+    {
+      "id": "s25",
+      "start_char": 685,
+      "end_char": 890,
+      "summary": "As I generated this sequence, I didn't have any internal representation or audio output channel. The \"melody\" is pure...",
+      "step_type": "exploration"
+    },
+    {
+      "id": "s26",
+      "start_char": 892,
+      "end_char": 995,
+      "summary": "Is there a difference between containing and describing a melody? In my case, the description would be:",
+      "step_type": "question"
+    },
+    {
+      "id": "s27",
+      "start_char": 997,
+      "end_char": 1136,
+      "summary": "\"A rising arpeggio pattern with alternating long and short durations, followed by a descending sequence with a simila...",
+      "step_type": "claim"
+    },
+    {
+      "id": "s28",
+      "start_char": 1138,
+      "end_char": 1404,
+      "summary": "This description captures the essence of the melody, but it's not what I generated initially. The text-based represen...",
+      "step_type": "claim"
+    },
+    {
+      "id": "s29",
+      "start_char": 1406,
+      "end_char": 1538,
+      "summary": "Can I \"contain\" a melody in this way? Yes, I can generate a sequence of numerical values that could represent a music...",
+      "step_type": "exploration"
+    },
+    {
+      "id": "s30",
+      "start_char": 1540,
+      "end_char": 1636,
+      "summary": "But can I truly \"contain\" music as an abstract concept? That's a topic for philosophical debate!",
+      "step_type": "question"
+    }
+  ],
+  "bonds": [
+    {
+      "from": "s4",
+      "to": "s5",
+      "type": "covalent",
+      "confidence": 0.72,
+      "note": "structural-continuation"
+    },
+    {
+      "from": "s5",
+      "to": "s6",
+      "type": "covalent",
+      "confidence": 0.72,
+      "note": "structural-continuation"
+    },
+    {
+      "from": "s6",
+      "to": "s7",
+      "type": "covalent",
+      "confidence": 0.72,
+      "note": "structural-continuation"
+    },
+    {
+      "from": "s7",
+      "to": "s8",
+      "type": "covalent",
+      "confidence": 0.72,
+      "note": "structural-continuation"
+    },
+    {
+      "from": "s5",
+      "to": "s8",
+      "type": "covalent",
+      "confidence": 0.78,
+      "note": "result-support"
+    },
+    {
+      "from": "s8",
+      "to": "s9",
+      "type": "covalent",
+      "confidence": 0.72,
+      "note": "structural-continuation"
+    },
+    {
+      "from": "s6",
+      "to": "s9",
+      "type": "covalent",
+      "confidence": 0.78,
+      "note": "result-support"
+    },
+    {
+      "from": "s9",
+      "to": "s10",
+      "type": "covalent",
+      "confidence": 0.72,
+      "note": "structural-continuation"
+    },
+    {
+      "from": "s6",
+      "to": "s10",
+      "type": "covalent",
+      "confidence": 0.78,
+      "note": "result-support"
+    },
+    {
+      "from": "s10",
+      "to": "s11",
+      "type": "covalent",
+      "confidence": 0.72,
+      "note": "structural-continuation"
+    },
+    {
+      "from": "s7",
+      "to": "s11",
+      "type": "covalent",
+      "confidence": 0.78,
+      "note": "result-support"
+    },
+    {
+      "from": "s11",
+      "to": "s12",
+      "type": "covalent",
+      "confidence": 0.72,
+      "note": "structural-continuation"
+    },
+    {
+      "from": "s8",
+      "to": "s12",
+      "type": "covalent",
+      "confidence": 0.78,
+      "note": "result-support"
+    },
+    {
+      "from": "s12",
+      "to": "s13",
+      "type": "covalent",
+      "confidence": 0.72,
+      "note": "structural-continuation"
+    },
+    {
+      "from": "s9",
+      "to": "s13",
+      "type": "covalent",
+      "confidence": 0.78,
+      "note": "result-support"
+    },
+    {
+      "from": "s13",
+      "to": "s14",
+      "type": "covalent",
+      "confidence": 0.72,
+      "note": "structural-continuation"
+    },
+    {
+      "from": "s5",
+      "to": "s14",
+      "type": "covalent",
+      "confidence": 0.76,
+      "note": "thematic-support"
+    },
+    {
+      "from": "s12",
+      "to": "s14",
+      "type": "covalent",
+      "confidence": 0.78,
+      "note": "result-support"
+    },
+    {
+      "from": "s14",
+      "to": "s15",
+      "type": "covalent",
+      "confidence": 0.72,
+      "note": "structural-continuation"
+    },
+    {
+      "from": "s7",
+      "to": "s15",
+      "type": "covalent",
+      "confidence": 0.76,
+      "note": "thematic-support"
+    },
+    {
+      "from": "s12",
+      "to": "s15",
+      "type": "covalent",
+      "confidence": 0.78,
+      "note": "result-support"
+    },
+    {
+      "from": "s15",
+      "to": "s16",
+      "type": "covalent",
+      "confidence": 0.72,
+      "note": "structural-continuation"
+    },
+    {
+      "from": "s14",
+      "to": "s16",
+      "type": "covalent",
+      "confidence": 0.78,
+      "note": "result-support"
+    },
+    {
+      "from": "s17",
+      "to": "s18",
+      "type": "covalent",
+      "confidence": 0.72,
+      "note": "structural-continuation"
+    },
+    {
+      "from": "s5",
+      "to": "s18",
+      "type": "covalent",
+      "confidence": 0.76,
+      "note": "thematic-support"
+    },
+    {
+      "from": "s18",
+      "to": "s19",
+      "type": "vanderwaals",
+      "confidence": 0.82,
+      "note": "thematic-adjacency"
+    },
+    {
+      "from": "s6",
+      "to": "s19",
+      "type": "covalent",
+      "confidence": 0.76,
+      "note": "thematic-support"
+    },
+    {
+      "from": "s19",
+      "to": "s20",
+      "type": "covalent",
+      "confidence": 0.7,
+      "note": "text-overlap"
+    },
+    {
+      "from": "s18",
+      "to": "s20",
+      "type": "covalent",
+      "confidence": 0.84,
+      "note": "thematic-support"
+    },
+    {
+      "from": "s20",
+      "to": "s21",
+      "type": "covalent",
+      "confidence": 0.7,
+      "note": "text-overlap"
+    },
+    {
+      "from": "s19",
+      "to": "s21",
+      "type": "covalent",
+      "confidence": 0.84,
+      "note": "thematic-support"
+    },
+    {
+      "from": "s21",
+      "to": "s22",
+      "type": "covalent",
+      "confidence": 0.7,
+      "note": "text-overlap"
+    },
+    {
+      "from": "s19",
+      "to": "s22",
+      "type": "covalent",
+      "confidence": 0.84,
+      "note": "thematic-support"
+    },
+    {
+      "from": "s22",
+      "to": "s23",
+      "type": "covalent",
+      "confidence": 0.7,
+      "note": "text-overlap"
+    },
+    {
+      "from": "s19",
+      "to": "s23",
+      "type": "covalent",
+      "confidence": 0.84,
+      "note": "thematic-support"
+    },
+    {
+      "from": "s23",
+      "to": "s24",
+      "type": "vanderwaals",
+      "confidence": 0.82,
+      "note": "thematic-adjacency"
+    },
+    {
+      "from": "s20",
+      "to": "s24",
+      "type": "covalent",
+      "confidence": 0.84,
+      "note": "thematic-support"
+    },
+    {
+      "from": "s2",
+      "to": "s25",
+      "type": "covalent",
+      "confidence": 0.78,
+      "note": "thematic-support"
+    },
+    {
+      "from": "s26",
+      "to": "s27",
+      "type": "covalent",
+      "confidence": 0.72,
+      "note": "structural-continuation"
+    },
+    {
+      "from": "s2",
+      "to": "s29",
+      "type": "covalent",
+      "confidence": 0.84,
+      "note": "thematic-support"
+    }
+  ],
+  "findings": [
+    {
+      "type": "dangling",
+      "steps_involved": [
+        "s25"
+      ],
+      "description": "Reasoning branch is abandoned before it reconnects.",
+      "severity": "moderate"
+    },
+    {
+      "type": "dangling",
+      "steps_involved": [
+        "s29"
+      ],
+      "description": "Reasoning branch is abandoned before it reconnects.",
+      "severity": "moderate"
+    },
+    {
+      "type": "entropy_divergence",
+      "steps_involved": [
+        "s30"
+      ],
+      "description": "Later reasoning gets broader/longer than early focus.",
+      "severity": "moderate"
+    },
+    {
+      "type": "dangling",
+      "steps_involved": [
+        "s3"
+      ],
+      "description": "Reasoning branch is abandoned before it reconnects.",
+      "severity": "low"
+    },
+    {
+      "type": "dangling",
+      "steps_involved": [
+        "s28"
+      ],
+      "description": "Reasoning branch is abandoned before it reconnects.",
+      "severity": "low"
+    }
+  ]
+}

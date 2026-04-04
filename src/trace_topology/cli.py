@@ -218,6 +218,18 @@ def eval_cmd(
     payload = evaluate_annotations(annotations, samples)
     _write_json(out_path, payload)
     click.echo(json.dumps(payload["summary"], indent=2))
+    if payload["worst_cases"]:
+        click.echo("worst-cases:")
+        for case in payload["worst_cases"]:
+            reasons = ", ".join(case["reasons"])
+            click.echo(
+                "  - "
+                f"{case['transcript_file']}: "
+                f"step_delta={case['step_count_delta']} "
+                f"bond_recall={case['bond_recall']:.2f} "
+                f"finding_recall={case['finding_recall']:.2f} "
+                f"({reasons})"
+            )
     ok, reasons = summary_meets_minimums(
         payload["summary"],
         min_avg_bond_recall=min_avg_bond_recall,

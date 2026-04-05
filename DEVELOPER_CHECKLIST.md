@@ -6,6 +6,14 @@ Use `- [ ]` for open work and `- [x]` for done when you edit this file.
 
 ---
 
+## Usage-enabling priorities (next)
+
+- [ ] **Packaging / install friction**: make it easy for another developer to get `trace-topology` running locally with minimal setup pain. This is adoption work, not a feature flourish: tighten the `pip install` / Homebrew / one-command local story enough that early users can try the tool without reading the source tree first.
+- [ ] **Small stable library API** for embedding in other tools. Keep the supported surface narrow: `parse`, `graph`, `analyze`, and artifact loading/export, with explicit documentation of what is stable and what remains internal research code.
+- [ ] **Real-trace collection workflow**: define a tight path for early users to share curated transcript + artifact bundles from real debugging sessions. Treat this as local artifact exchange, not built-in telemetry or background network collection.
+- [ ] **Decision-impact examples**: add stronger examples around "this changed my debugging decision" so the project shows when the tool altered a revert, root-cause, or prompt-debugging move, not just that it can render a graph.
+- [ ] **Secure intake for external traces and artifacts**: outside text is hostile by default. Any import path for external transcripts or analysis artifacts must enforce a strict trust boundary, redaction expectations, provenance metadata, and sandboxed handling before material enters the repo's trusted calibration or example path. Validate that workflow with seeded hostile fixtures, including cracked / pathological transcripts, before treating wild traces as trusted input.
+
 ## Parser (step segmentation)
 
 - [x] Reduce **over-segmentation** on terse, line-broken traces (e.g. some harvested Llama-style handshakes). — Heuristic: line-split only when structural list markers dominate or dense long-line prose blocks; see `data/samples/terse_linebreak_prose_0001.txt`.
@@ -18,7 +26,8 @@ Use `- [ ]` for open work and `- [x]` for done when you edit this file.
 - [x] Continue improving **support-link construction** on real traces where steps are right but edges were thin. — Cycle calibration now adds reciprocal restatement links on repo-local cycle traces and regresses them in `tests/test_analysis.py` / `tests/test_eval.py`.
 - [x] Calibrate **bond type** heuristics against more hand-annotated gold (not only synthetic). — Real handshake traces now regress cleanly in `tests/test_analysis.py` and `tests/test_eval.py`.
 - [x] Clear rules for when **optional backends** (`--backend ollama|anthropic|openai`) help vs add noise; document defaults. — `README.md` now recommends `--backend none` for CI/eval, positions Ollama as local exploratory judging, and Anthropic / OpenAI as explicit external judging.
-- [ ] **LLM-assisted bond type classification**: harden the optional backend judge path so it produces reliable, evaluable bond labels instead of the current naive string-scan. `--provider` selects the backend (`ollama` default, `anthropic`, `openai`); `--model` selects the model (defaults: `llama3.1:8b` for ollama, `claude-haiku-4-5-20251001` for anthropic, `gpt-4.1-mini` for openai — fast/cheap tier for each). Requires: structured-output prompts that return a JSON label+confidence+reason, eval-gated regression (compare backend bond labels against gold annotations via `tt eval`), and documentation of when the judge measurably beats the heuristic baseline.
+- [ ] **LLM-assisted bond type classification experiment**: not a core priority; keep below packaging and the stable library API unless it proves real value on ambiguous prose. The current backend path is prompt + string-scan and should be treated as experimental, not hardened by default.
+- [ ] If explored, keep it **narrow and eval-gated**. Scope: one explicit ambiguous-prose cohort, structured JSON output (`label`, `confidence`, `reason`), and `tt eval` comparison of backend labels vs heuristic labels. Keep the feature only if it measurably improves bond precision/recall on that cohort without reducing downstream finding recall; otherwise document it as exploratory and leave `--backend none` as the serious path.
 
 ## Analysis (detectors)
 

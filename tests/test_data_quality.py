@@ -14,7 +14,7 @@ def test_samples_have_trace_and_metadata(samples_dir: Path) -> None:
 def test_golden_annotations_reference_existing_transcripts(
     samples_dir: Path, golden_dir: Path
 ) -> None:
-    annotations = sorted(golden_dir.glob("*.json"))
+    annotations = sorted(golden_dir.glob("*.annotation.json"))
     assert annotations, "Expected golden annotation files."
     for ann_path in annotations:
         ann = json.loads(ann_path.read_text(encoding="utf-8"))
@@ -23,7 +23,7 @@ def test_golden_annotations_reference_existing_transcripts(
 
 
 def test_annotation_step_ranges_and_bonds(samples_dir: Path, golden_dir: Path) -> None:
-    for ann_path in sorted(golden_dir.glob("*.json")):
+    for ann_path in sorted(golden_dir.glob("*.annotation.json")):
         ann = json.loads(ann_path.read_text(encoding="utf-8"))
         transcript_text = (samples_dir / ann["transcript_file"]).read_text(encoding="utf-8")
         step_ids = {s["id"] for s in ann["steps"]}
@@ -48,3 +48,17 @@ def test_uqm_sample_metadata_contains_provenance_keys(samples_dir: Path) -> None
             assert "judge_classification" in metadata
             assert "response_metadata" in metadata
     assert uqm_meta_paths, "Expected imported UQM sample metadata files in data/samples/"
+
+
+def test_cohort_manifest_references_existing_annotations(golden_dir: Path) -> None:
+    cohorts_path = golden_dir / "cohorts.json"
+    assert cohorts_path.exists(), "Expected golden cohort manifest."
+
+    cohorts = json.loads(cohorts_path.read_text(encoding="utf-8"))
+    referenced = {ann["transcript_file"] for ann in (json.loads(path.read_text(encoding="utf-8")) for path in golden_dir.glob("*.annotation.json"))}
+
+    assert cohorts, "Expected cohort entries."
+    for transcript_file, tags in cohorts.items():
+        assert transcript_file in referenced
+        assert isinstance(tags, list)
+        assert tags

@@ -12,7 +12,10 @@ Each top-level artifact includes:
 ```json
 {
   "artifact_type": "parse|graph|analysis|eval",
-  "schema_version": 1
+  "schema_version": 1,
+  "config": {
+    "parser_granularity": "heuristic|paragraph|sentence"
+  }
 }
 ```
 
@@ -35,6 +38,9 @@ Within schema version `1`, `analysis.findings` are ordered highest-priority firs
 {
   "artifact_type": "parse",
   "schema_version": 1,
+  "config": {
+    "parser_granularity": "heuristic"
+  },
   "transcript_id": "data/samples/synthetic_cycle_trust_0001.txt",
   "steps": [
     {
@@ -59,6 +65,9 @@ Within schema version `1`, `analysis.findings` are ordered highest-priority firs
 {
   "artifact_type": "graph",
   "schema_version": 1,
+  "config": {
+    "parser_granularity": "heuristic"
+  },
   "transcript_id": "data/samples/synthetic_cycle_trust_0001.txt",
   "steps": [],
   "bonds": [
@@ -84,6 +93,9 @@ Within schema version `1`, `analysis.findings` are ordered highest-priority firs
 {
   "artifact_type": "analysis",
   "schema_version": 1,
+  "config": {
+    "parser_granularity": "heuristic"
+  },
   "graph": {
     "transcript_id": "data/samples/synthetic_cycle_trust_0001.txt",
     "steps": [],
@@ -124,6 +136,9 @@ The nested `graph` object keeps the same shape as the standalone graph payload, 
 {
   "artifact_type": "eval",
   "schema_version": 1,
+  "config": {
+    "parser_granularity": "heuristic"
+  },
   "results": [
     {
       "transcript_file": "synthetic_cycle_trust_0001.txt",
@@ -141,6 +156,18 @@ The nested `graph` object keeps the same shape as the standalone graph payload, 
     "avg_bond_recall": 1.0,
     "avg_finding_precision": 1.0,
     "avg_finding_recall": 1.0
+  },
+  "cohorts": {
+    "synthetic": {
+      "count": 1,
+      "avg_step_count_delta": 0.0,
+      "avg_bond_precision": 1.0,
+      "avg_bond_recall": 1.0,
+      "avg_finding_precision": 1.0,
+      "avg_finding_recall": 1.0
+    }
   }
 }
 ```
+
+`config.parser_granularity` records the parse mode used to generate the artifact. `tt eval` loads `data/samples/golden/cohorts.json` when present and reports additive per-cohort summaries under `cohorts`.

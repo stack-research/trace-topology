@@ -11,12 +11,14 @@ Use `- [ ]` for open work and `- [x]` for done when you edit this file.
 - [x] Reduce **over-segmentation** on terse, line-broken traces (e.g. some harvested Llama-style handshakes). — Heuristic: line-split only when structural list markers dominate or dense long-line prose blocks; see `data/samples/terse_linebreak_prose_0001.txt`.
 - [x] Solid coverage for **mixed formats**: numbered lists, markdown headings, thinking blocks, code-heavy traces.
 - [x] Document parser behavior and failure modes in `README.md` or a short `docs/` note. — `README.md` now explains segmentation rules, atomic regions, and known parser failure modes.
+- [x] Parser **configurable granularity** (sentence vs paragraph vs heuristic) for power users. — `parse_transcript`, `tt parse`, `tt graph`, `tt analyze`, and `tt eval` now accept `heuristic|paragraph|sentence`; artifacts record `config.parser_granularity`, and eval cohorts make parser-mode drift visible by trace family.
 
 ## Graph (support links and bond typing)
 
 - [x] Continue improving **support-link construction** on real traces where steps are right but edges were thin. — Cycle calibration now adds reciprocal restatement links on repo-local cycle traces and regresses them in `tests/test_analysis.py` / `tests/test_eval.py`.
 - [x] Calibrate **bond type** heuristics against more hand-annotated gold (not only synthetic). — Real handshake traces now regress cleanly in `tests/test_analysis.py` and `tests/test_eval.py`.
 - [x] Clear rules for when **optional backends** (`--backend ollama|anthropic|openai`) help vs add noise; document defaults. — `README.md` now recommends `--backend none` for CI/eval, positions Ollama as local exploratory judging, and Anthropic / OpenAI as explicit external judging.
+- [ ] **LLM-assisted bond type classification**: harden the optional backend judge path so it produces reliable, evaluable bond labels instead of the current naive string-scan. `--provider` selects the backend (`ollama` default, `anthropic`, `openai`); `--model` selects the model (defaults: `llama3.1:8b` for ollama, `claude-haiku-4-5-20251001` for anthropic, `gpt-4.1-mini` for openai — fast/cheap tier for each). Requires: structured-output prompts that return a JSON label+confidence+reason, eval-gated regression (compare backend bond labels against gold annotations via `tt eval`), and documentation of when the judge measurably beats the heuristic baseline.
 
 ## Analysis (detectors)
 
@@ -43,10 +45,10 @@ Use `- [ ]` for open work and `- [x]` for done when you edit this file.
 - [x] Grow **golden annotations** for real traces (hand-reviewed or assisted + corrected). — Current gold set includes 29 annotations after widening the curated UQM crack slice by 10 real pathological traces (`before_words`, `depth_test`, `qualia_dependent`, `void_test`, and evolved `absence_mapping` variants); `tt eval` now also surfaces weakest transcripts so corpus gaps are visible before heuristics change.
 - [x] **Regression gates**: `tt eval` summary thresholds or trend notes in this checklist. — Current calibrated floor set: `avg_bond_precision >= 0.80`, `avg_bond_recall >= 0.88`, `avg_finding_precision >= 0.80`, `avg_finding_recall >= 0.75`; non-zero exit when below floor.
 - [x] **UQM / external corpus** import path documented and tested when data is available. — `data/harvest.py --source uqm` now imports a curated crack slice deterministically, `make harvest-uqm` wraps it, and fixture-backed tests cover filtering, naming, and provenance metadata.
+- [x] Eval **cohort slices** for parser work. — `data/samples/golden/cohorts.json` now tags the golden corpus, and `tt eval` emits additive per-cohort summaries so segmentation changes can be judged on `synthetic`, `real_clean`, `real_pathological`, `terse_linebreak`, `long_prose`, `numbered_or_structured`, and `uqm` cohorts instead of only the global average.
 
 ## Ecosystem (later, optional)
 
-- [ ] Parser **configurable granularity** (sentence vs paragraph vs heuristic) for power users.
 - [ ] **Packaging** polish: `pip install`/Homebrew story if adoption matters.
 - [ ] Editor or **LSP** integration (jump to step from finding)—only if terminal-first scope expands.
 - [ ] **Stable library API** (`import trace_topology`) for embedding in other tools—document supported surfaces.

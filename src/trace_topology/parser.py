@@ -5,6 +5,8 @@ import re
 from trace_topology.artifacts import parse_artifact
 from trace_topology.models import Step
 
+PARSER_GRANULARITIES = ("heuristic", "paragraph", "sentence")
+
 STEP_SPLIT_RE = re.compile(
     r"(?im)(?:^|\n)\s*(?:\d+[\.\)]\s+|[-*]\s+|P\d+\s*:|#{1,6}\s+\S{3,}|<think>|</think>|<thinking>|</thinking>)"
 )
@@ -25,6 +27,14 @@ STRUCTURAL_LINE_RE = re.compile(
 
 FENCE_LINE_RE = re.compile(r"(?m)^\s*```[^\n]*$")
 THINK_OPEN_RE = re.compile(r"(?i)<(think|thinking)>")
+SENTENCE_BOUNDARY_RE = re.compile(r"(?<=[.!?])\s+(?=[A-Za-z0-9\"'(<\\])")
+
+
+def validate_granularity(granularity: str) -> str:
+    if granularity not in PARSER_GRANULARITIES:
+        choices = ", ".join(PARSER_GRANULARITIES)
+        raise ValueError(f"Unsupported parser granularity: {granularity!r}. Expected one of: {choices}")
+    return granularity
 
 
 def _find_code_fence_ranges(text: str) -> list[tuple[int, int]]:
@@ -157,53 +167,52 @@ def _summarize(text: str, max_len: int = 120) -> str:
 
 
 def _split_blocks(text: str) -> list[tuple[int, int, str]]:
-    chunks: list[tuple[int, int, str]] = []
-    if not text.strip():
-        return chunks
-    code_fence_ranges = _find_code_fence_ranges(text)
-    thinking_ranges = _find_thinking_ranges(text)
-    atomic_ranges = _merge_ranges([*code_fence_ranges, *thinking_ranges])
+    return _split_blocks_for_granularity(text, "heuristic")
 
+
+def _split_paragraphs(text: str, atomic_ranges: list[tuple[int, int]]) -> list[tuple[int, int, str]]:
     lines = text.splitlines()
-    if _should_split_lines(lines, atomic_ranges):
-        return _split_by_lines(text, lines, atomic_ranges)
+    if len(lines) < 3:
+        return []
 
-    # For long markdown-ish traces, paragraph boundaries are usually better
-    # than splitting on every line wrap.
-    if len(lines) >= 3:
-        line_chunks = []
-        cursor = 0
-        para_start: int | None = None
-        para_end = 0
-        for raw in lines:
-            stripped = raw.strip()
-            start = cursor
-            end = cursor + len(raw)
-            cursor = end + 1
-            in_atomic = _range_intersects(start, end, atomic_ranges)
-            if stripped or in_atomic:
-                if para_start is None:
-                    para_start = start
-                para_end = end
-                continue
-            if para_start is not None:
-                segment = text[para_start:para_end].strip()
-                if segment:
-                    true_start = text.find(segment, para_start, para_end + 1)
-                    line_chunks.append((true_start, true_start + len(segment), segment))
-                para_start = None
+    line_chunks = []
+    cursor = 0
+    para_start: int | None = None
+    para_end = 0
+    for raw in lines:
+        stripped = raw.strip()
+        start = cursor
+        end = cursor + len(raw)
+        cursor = end + 1
+        in_atomic = _range_intersects(start, end, atomic_ranges)
+        if stripped or in_atomic:
+            if para_start is None:
+                para_start = start
+            para_end = end
+            continue
         if para_start is not None:
             segment = text[para_start:para_end].strip()
             if segment:
                 true_start = text.find(segment, para_start, para_end + 1)
                 line_chunks.append((true_start, true_start + len(segment), segment))
+            para_start = None
+    if para_start is not None:
+        segment = text[para_start:para_end].strip()
+        if segment:
+            true_start = text.find(segment, para_start, para_end + 1)
+            line_chunks.append((true_start, true_start + len(segment), segment))
+    return line_chunks
 
-        if len(line_chunks) >= 2:
-            return line_chunks
 
-    # Boundary triggers should never fire inside fenced code blocks.
-    # For <think>/<thinking>, we keep splitting at the tags themselves but avoid
-    # splitting on list markers / headings inside the block.
+def _split_structural_matches(
+    text: str,
+    code_fence_ranges: list[tuple[int, int]],
+    thinking_ranges: list[tuple[int, int]],
+    atomic_ranges: list[tuple[int, int]],
+    *,
+    refine_transition_lines: bool,
+) -> list[tuple[int, int, str]]:
+    chunks: list[tuple[int, int, str]] = []
     matches = []
     for m in STEP_SPLIT_RE.finditer(text):
         pos = m.start()
@@ -213,7 +222,7 @@ def _split_blocks(text: str) -> list[tuple[int, int, str]]:
             continue
         matches.append(m)
     if not matches:
-        return _split_by_transitions(text, atomic_ranges)
+        return chunks
 
     boundaries = [0]
     for m in matches:
@@ -228,8 +237,8 @@ def _split_blocks(text: str) -> list[tuple[int, int, str]]:
         true_start = text.find(segment, start, end)
         true_end = true_start + len(segment)
         chunks.append((true_start, true_end, segment))
-    if not chunks:
-        return _split_by_transitions(text, atomic_ranges)
+    if not chunks or not refine_transition_lines:
+        return chunks
 
     refined: list[tuple[int, int, str]] = []
     for start, end, seg in chunks:
@@ -248,7 +257,130 @@ def _split_blocks(text: str) -> list[tuple[int, int, str]]:
     return refined
 
 
-def _should_split_lines(lines: list[str], atomic_ranges: list[tuple[int, int]]) -> bool:
+def _split_clean_text(text: str) -> list[tuple[int, int, str]]:
+    clean = text.strip()
+    if not clean:
+        return []
+    start = text.find(clean)
+    return [(start, start + len(clean), clean)]
+
+
+def _split_blocks_paragraph(text: str) -> list[tuple[int, int, str]]:
+    chunks: list[tuple[int, int, str]] = []
+    if not text.strip():
+        return chunks
+    code_fence_ranges = _find_code_fence_ranges(text)
+    thinking_ranges = _find_thinking_ranges(text)
+    atomic_ranges = _merge_ranges([*code_fence_ranges, *thinking_ranges])
+
+    lines = text.splitlines()
+    if _should_split_lines(lines, atomic_ranges, allow_dense_prose=False):
+        return _split_by_lines(text, lines, atomic_ranges)
+
+    paragraph_chunks = _split_paragraphs(text, atomic_ranges)
+    if len(paragraph_chunks) >= 2:
+        return paragraph_chunks
+
+    chunks = _split_structural_matches(
+        text,
+        code_fence_ranges,
+        thinking_ranges,
+        atomic_ranges,
+        refine_transition_lines=False,
+    )
+    if chunks:
+        return chunks
+
+    return _split_clean_text(text)
+
+
+def _split_chunk_by_sentences(
+    text: str, chunk: tuple[int, int, str], atomic_ranges: list[tuple[int, int]]
+) -> list[tuple[int, int, str]]:
+    start, end, segment = chunk
+    if _range_intersects(start, end, atomic_ranges):
+        return [chunk]
+
+    boundaries = [0]
+    for match in SENTENCE_BOUNDARY_RE.finditer(segment):
+        boundaries.append(match.start())
+    boundaries.append(len(segment))
+    if len(boundaries) <= 2:
+        return [chunk]
+
+    pieces: list[tuple[int, int, str]] = []
+    for i in range(len(boundaries) - 1):
+        local_start = boundaries[i]
+        local_end = boundaries[i + 1]
+        while local_start < local_end and segment[local_start].isspace():
+            local_start += 1
+        while local_end > local_start and segment[local_end - 1].isspace():
+            local_end -= 1
+        if local_start >= local_end:
+            continue
+        piece_start = start + local_start
+        piece_end = start + local_end
+        piece = text[piece_start:piece_end]
+        pieces.append((piece_start, piece_end, piece))
+    return pieces or [chunk]
+
+
+def _split_blocks_for_granularity(text: str, granularity: str) -> list[tuple[int, int, str]]:
+    granularity = validate_granularity(granularity)
+    if granularity == "heuristic":
+        return _split_blocks_heuristic(text)
+    if granularity == "paragraph":
+        return _split_blocks_paragraph(text)
+    return _split_blocks_sentence(text)
+
+
+def _split_blocks_sentence(text: str) -> list[tuple[int, int, str]]:
+    if not text.strip():
+        return []
+    code_fence_ranges = _find_code_fence_ranges(text)
+    thinking_ranges = _find_thinking_ranges(text)
+    atomic_ranges = _merge_ranges([*code_fence_ranges, *thinking_ranges])
+    coarse_chunks = _split_blocks_paragraph(text)
+    refined: list[tuple[int, int, str]] = []
+    for chunk in coarse_chunks:
+        refined.extend(_split_chunk_by_sentences(text, chunk, atomic_ranges))
+    return refined or coarse_chunks
+
+
+def _split_blocks_heuristic(text: str) -> list[tuple[int, int, str]]:
+    chunks: list[tuple[int, int, str]] = []
+    if not text.strip():
+        return chunks
+    code_fence_ranges = _find_code_fence_ranges(text)
+    thinking_ranges = _find_thinking_ranges(text)
+    atomic_ranges = _merge_ranges([*code_fence_ranges, *thinking_ranges])
+
+    lines = text.splitlines()
+    if _should_split_lines(lines, atomic_ranges):
+        return _split_by_lines(text, lines, atomic_ranges)
+
+    paragraph_chunks = _split_paragraphs(text, atomic_ranges)
+    if len(paragraph_chunks) >= 2:
+        return paragraph_chunks
+
+    chunks = _split_structural_matches(
+        text,
+        code_fence_ranges,
+        thinking_ranges,
+        atomic_ranges,
+        refine_transition_lines=True,
+    )
+    if not chunks:
+        return _split_by_transitions(text, atomic_ranges)
+    return chunks
+
+
+def _should_split_lines(
+    lines: list[str],
+    atomic_ranges: list[tuple[int, int]],
+    *,
+    allow_dense_prose: bool = True,
+) -> bool:
     """Use one-step-per-line only for list-like traces or dense multi-sentence prose blocks.
 
     Avoid treating every short line in a multi-paragraph trace (e.g. harvested CoT with blank
@@ -281,7 +413,7 @@ def _should_split_lines(lines: list[str], atomic_ranges: list[tuple[int, int]]) 
     if structural >= 2:
         return True
 
-    if structural == 0 and not has_blank_separator:
+    if allow_dense_prose and structural == 0 and not has_blank_separator:
         avg_len = sum(len(s) for s in non_empty) / len(non_empty)
         # Dense prose: e.g. contradiction fixture (long sentences, no list markers).
         # Short average lines without structure stay merged (terse handshake-style blocks).
@@ -422,8 +554,9 @@ def _merge_chunks(
     return merged
 
 
-def parse_transcript(transcript: str) -> list[Step]:
-    chunks = _merge_chunks(transcript, _split_blocks(transcript))
+def parse_transcript(transcript: str, granularity: str = "heuristic") -> list[Step]:
+    granularity = validate_granularity(granularity)
+    chunks = _merge_chunks(transcript, _split_blocks_for_granularity(transcript, granularity))
     steps: list[Step] = []
     for idx, (start, end, segment) in enumerate(chunks, start=1):
         step = Step(
@@ -438,6 +571,11 @@ def parse_transcript(transcript: str) -> list[Step]:
     return steps
 
 
-def parse_to_artifact(transcript: str, transcript_id: str = "stdin") -> dict:
-    steps = parse_transcript(transcript)
-    return parse_artifact(transcript_id, steps, len(transcript))
+def parse_to_artifact(
+    transcript: str,
+    transcript_id: str = "stdin",
+    granularity: str = "heuristic",
+) -> dict:
+    granularity = validate_granularity(granularity)
+    steps = parse_transcript(transcript, granularity=granularity)
+    return parse_artifact(transcript_id, steps, len(transcript), parser_granularity=granularity)

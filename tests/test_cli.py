@@ -32,6 +32,22 @@ def test_analyze_accepts_backend_flag(tmp_path) -> None:
     assert "unsupported_terminal" in result.output
 
 
+def test_parse_accepts_granularity_flag(tmp_path) -> None:
+    transcript_path = tmp_path / "trace.txt"
+    transcript_path.write_text(
+        "Let us work step by step.\nEach person shakes seven hands.\nThe answer is twenty-eight.",
+        encoding="utf-8",
+    )
+
+    runner = CliRunner()
+    result = runner.invoke(cli, ["parse", str(transcript_path), "--granularity", "sentence"])
+
+    assert result.exit_code == 0
+    payload = json.loads(result.output)
+    assert payload["config"]["parser_granularity"] == "sentence"
+    assert payload["stats"]["step_count"] == 3
+
+
 def test_analyze_accepts_openai_backend_flag(tmp_path, monkeypatch) -> None:
     transcript_path = tmp_path / "trace.txt"
     transcript_path.write_text("Therefore the answer is 42.", encoding="utf-8")
@@ -50,6 +66,23 @@ def test_graph_accepts_backend_flag(tmp_path) -> None:
 
     runner = CliRunner()
     result = runner.invoke(cli, ["graph", str(transcript_path), "--backend", "none"])
+
+    assert result.exit_code == 0
+    assert "legend:" in result.output
+
+
+def test_graph_accepts_granularity_flag(tmp_path) -> None:
+    transcript_path = tmp_path / "trace.txt"
+    transcript_path.write_text(
+        "Let us work step by step.\nEach person shakes seven hands.\nThe answer is twenty-eight.",
+        encoding="utf-8",
+    )
+
+    runner = CliRunner()
+    result = runner.invoke(
+        cli,
+        ["graph", str(transcript_path), "--backend", "none", "--granularity", "sentence"],
+    )
 
     assert result.exit_code == 0
     assert "legend:" in result.output
@@ -77,6 +110,20 @@ def test_analyze_fail_on_findings_exits_nonzero(tmp_path) -> None:
     )
 
     assert result.exit_code == 1
+
+
+def test_analyze_accepts_granularity_flag(tmp_path) -> None:
+    transcript_path = tmp_path / "trace.txt"
+    transcript_path.write_text("Therefore the answer is 42.", encoding="utf-8")
+
+    runner = CliRunner()
+    result = runner.invoke(
+        cli,
+        ["analyze", str(transcript_path), "--backend", "none", "--granularity", "sentence"],
+    )
+
+    assert result.exit_code == 0
+    assert "unsupported_terminal" in result.output
 
 
 def test_analyze_fail_on_min_severity_exits_only_for_matching_findings(tmp_path) -> None:
@@ -165,6 +212,25 @@ def test_eval_min_threshold_exits_nonzero(golden_dir, samples_dir) -> None:
     assert "below" in result.output or "annotation" in result.output.lower()
 
 
+def test_eval_accepts_granularity_flag(golden_dir, samples_dir) -> None:
+    runner = CliRunner()
+    result = runner.invoke(
+        cli,
+        [
+            "eval",
+            "--annotations",
+            str(golden_dir),
+            "--samples",
+            str(samples_dir),
+            "--granularity",
+            "sentence",
+        ],
+    )
+
+    assert result.exit_code == 0
+    assert "cohorts:" in result.output
+
+
 def test_parse_out_file_has_schema_header(tmp_path) -> None:
     transcript_path = tmp_path / "trace.txt"
     out_path = tmp_path / "steps.json"
@@ -177,6 +243,7 @@ def test_parse_out_file_has_schema_header(tmp_path) -> None:
     payload = json.loads(out_path.read_text(encoding="utf-8"))
     assert payload["artifact_type"] == "parse"
     assert payload["schema_version"] == 1
+    assert payload["config"] == {"parser_granularity": "heuristic"}
 
 
 def test_graph_out_file_has_schema_header(tmp_path) -> None:
@@ -191,6 +258,7 @@ def test_graph_out_file_has_schema_header(tmp_path) -> None:
     payload = json.loads(out_path.read_text(encoding="utf-8"))
     assert payload["artifact_type"] == "graph"
     assert payload["schema_version"] == 1
+    assert payload["config"] == {"parser_granularity": "heuristic"}
 
 
 def test_analyze_out_file_has_schema_header(tmp_path) -> None:
@@ -208,6 +276,7 @@ def test_analyze_out_file_has_schema_header(tmp_path) -> None:
     payload = json.loads(out_path.read_text(encoding="utf-8"))
     assert payload["artifact_type"] == "analysis"
     assert payload["schema_version"] == 1
+    assert payload["config"] == {"parser_granularity": "heuristic"}
 
 
 def test_eval_out_file_has_schema_header(tmp_path, golden_dir, samples_dir) -> None:
@@ -230,6 +299,7 @@ def test_eval_out_file_has_schema_header(tmp_path, golden_dir, samples_dir) -> N
     payload = json.loads(out_path.read_text(encoding="utf-8"))
     assert payload["artifact_type"] == "eval"
     assert payload["schema_version"] == 1
+    assert payload["config"] == {"parser_granularity": "heuristic"}
 
 
 def test_backend_none_does_not_import_backends_module(monkeypatch) -> None:
@@ -239,6 +309,33 @@ def test_backend_none_does_not_import_backends_module(monkeypatch) -> None:
 
     assert backend is None
     assert "trace_topology.backends" not in sys.modules
+
+
+def test_default_granularity_matches_explicit_heuristic(tmp_path) -> None:
+    transcript_path = tmp_path / "trace.txt"
+    transcript_path.write_text(
+        "Let us work step by step.\nEach person shakes seven hands.\nThe answer is twenty-eight.",
+        encoding="utf-8",
+    )
+
+    runner = CliRunner()
+    default_result = runner.invoke(cli, ["parse", str(transcript_path)])
+    explicit_result = runner.invoke(cli, ["parse", str(transcript_path), "--granularity", "heuristic"])
+
+    assert default_result.exit_code == 0
+    assert explicit_result.exit_code == 0
+    assert json.loads(default_result.output) == json.loads(explicit_result.output)
+
+
+def test_invalid_granularity_is_rejected(tmp_path) -> None:
+    transcript_path = tmp_path / "trace.txt"
+    transcript_path.write_text("Claim.\nTherefore conclusion.", encoding="utf-8")
+
+    runner = CliRunner()
+    result = runner.invoke(cli, ["parse", str(transcript_path), "--granularity", "token"])
+
+    assert result.exit_code != 0
+    assert "Invalid value for '--granularity'" in result.output
 
 
 def test_graph_ollama_missing_dependency_has_install_hint(tmp_path, monkeypatch) -> None:

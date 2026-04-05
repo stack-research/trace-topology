@@ -7,7 +7,7 @@ from pathlib import Path
 from trace_topology.analysis import analyze_graph
 from trace_topology.artifacts import eval_artifact
 from trace_topology.graph import build_graph
-from trace_topology.parser import parse_transcript
+from trace_topology.parser import parse_transcript, validate_granularity
 
 
 @dataclass(slots=True)
@@ -28,6 +28,10 @@ class EvalResult:
             "finding_precision": self.finding_precision,
             "finding_recall": self.finding_recall,
         }
+
+
+def _annotation_paths(annotation_dir: Path) -> list[Path]:
+    return sorted(annotation_dir.glob("*.annotation.json"))
 
 
 def rank_eval_results(results: list[dict], limit: int = 5) -> list[dict]:
@@ -70,14 +74,64 @@ def _precision_recall(pred: set[tuple], gold: set[tuple]) -> tuple[float, float]
     return precision, recall
 
 
-def evaluate_annotation(annotation_path: Path, samples_dir: Path) -> EvalResult:
+def _summary_from_results(results: list[dict]) -> dict:
+    if not results:
+        return {}
+
+    def avg(key: str) -> float:
+        return sum(float(r[key]) for r in results) / len(results)
+
+    return {
+        "count": len(results),
+        "avg_step_count_delta": avg("step_count_delta"),
+        "avg_bond_precision": avg("bond_precision"),
+        "avg_bond_recall": avg("bond_recall"),
+        "avg_finding_precision": avg("finding_precision"),
+        "avg_finding_recall": avg("finding_recall"),
+    }
+
+
+def _load_cohorts(annotation_dir: Path, cohorts_path: Path | None) -> dict[str, list[str]]:
+    path = cohorts_path
+    if path is None:
+        default_path = annotation_dir / "cohorts.json"
+        if default_path.exists():
+            path = default_path
+    if path is None or not path.exists():
+        return {}
+
+    raw = json.loads(path.read_text(encoding="utf-8"))
+    mapping: dict[str, list[str]] = {}
+    for transcript_file, tags in raw.items():
+        if isinstance(tags, str):
+            mapping[transcript_file] = [tags]
+            continue
+        if isinstance(tags, list):
+            mapping[transcript_file] = [str(tag) for tag in tags]
+    return mapping
+
+
+def _cohort_summaries(results: list[dict], cohorts: dict[str, list[str]]) -> dict[str, dict]:
+    grouped: dict[str, list[dict]] = {}
+    for result in results:
+        for tag in cohorts.get(result["transcript_file"], []):
+            grouped.setdefault(tag, []).append(result)
+    return {tag: _summary_from_results(group_results) for tag, group_results in sorted(grouped.items())}
+
+
+def evaluate_annotation(
+    annotation_path: Path,
+    samples_dir: Path,
+    granularity: str = "heuristic",
+) -> EvalResult:
+    granularity = validate_granularity(granularity)
     annotation = json.loads(annotation_path.read_text(encoding="utf-8"))
     transcript_file = annotation["transcript_file"]
     transcript_path = samples_dir / transcript_file
     transcript = transcript_path.read_text(encoding="utf-8")
 
-    steps = parse_transcript(transcript)
-    graph = build_graph(steps, transcript_id=transcript_file)
+    steps = parse_transcript(transcript, granularity=granularity)
+    graph = build_graph(steps, transcript_id=transcript_file, parser_granularity=granularity)
     report = analyze_graph(graph)
 
     gold_bonds = {(b["from"], b["to"], b["type"]) for b in annotation.get("bonds", [])}
@@ -148,23 +202,41 @@ def summary_meets_minimums(
     return (not failures, failures)
 
 
-def evaluate_annotations(annotation_dir: Path, samples_dir: Path) -> dict:
+def evaluate_annotations_with_options(
+    annotation_dir: Path,
+    samples_dir: Path,
+    granularity: str = "heuristic",
+    cohorts_path: Path | None = None,
+) -> dict:
+    granularity = validate_granularity(granularity)
     results = []
-    for path in sorted(annotation_dir.glob("*.json")):
-        results.append(evaluate_annotation(path, samples_dir).to_dict())
+    for path in _annotation_paths(annotation_dir):
+        results.append(evaluate_annotation(path, samples_dir, granularity=granularity).to_dict())
     if not results:
-        return eval_artifact([], {}, [])
+        return eval_artifact([], {}, [], parser_granularity=granularity, cohorts={})
 
-    def avg(key: str) -> float:
-        return sum(r[key] for r in results) / len(results)
-
-    summary = {
-        "count": len(results),
-        "avg_step_count_delta": avg("step_count_delta"),
-        "avg_bond_precision": avg("bond_precision"),
-        "avg_bond_recall": avg("bond_recall"),
-        "avg_finding_precision": avg("finding_precision"),
-        "avg_finding_recall": avg("finding_recall"),
-    }
+    summary = _summary_from_results(results)
     worst_cases = rank_eval_results(results)
-    return eval_artifact(results, summary, worst_cases)
+    cohort_mapping = _load_cohorts(annotation_dir, cohorts_path)
+    cohort_summaries = _cohort_summaries(results, cohort_mapping)
+    return eval_artifact(
+        results,
+        summary,
+        worst_cases,
+        parser_granularity=granularity,
+        cohorts=cohort_summaries,
+    )
+
+
+def evaluate_annotations(
+    annotation_dir: Path,
+    samples_dir: Path,
+    granularity: str = "heuristic",
+    cohorts_path: Path | None = None,
+) -> dict:
+    return evaluate_annotations_with_options(
+        annotation_dir,
+        samples_dir,
+        granularity=granularity,
+        cohorts_path=cohorts_path,
+    )

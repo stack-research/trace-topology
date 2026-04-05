@@ -150,8 +150,13 @@ def build_graph(
     steps: list[Step],
     transcript_id: str = "stdin",
     backend: BondBackend | None = None,
+    parser_granularity: str = "heuristic",
 ) -> TraceGraph:
-    graph = TraceGraph(transcript_id=transcript_id, steps=steps, metadata={})
+    graph = TraceGraph(
+        transcript_id=transcript_id,
+        steps=steps,
+        metadata={"parser_granularity": parser_granularity},
+    )
     if not steps:
         return graph
 

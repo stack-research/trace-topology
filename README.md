@@ -149,12 +149,19 @@ tt analyze transcript.txt
 # Parse into steps only
 tt parse transcript.txt --out steps.json
 
+# Parse with explicit sentence-level segmentation
+tt parse transcript.txt --granularity sentence --out steps.sentence.json
+
 # Build graph only
 tt graph transcript.txt --out graph.json
 
 # Use LLM-assisted bond classification
 tt analyze transcript.txt --backend ollama --model llama3.1:8b
 tt analyze transcript.txt --backend openai --model gpt-5-mini
+
+# Compare parser modes on the same trace
+tt analyze transcript.txt --granularity paragraph
+tt analyze transcript.txt --granularity sentence
 
 # Pipe from stdin
 cat thinking_block.txt | tt analyze -
@@ -181,11 +188,13 @@ tt eval --annotations data/samples/golden --samples data/samples \
 
 Exit codes: by default commands exit `0`. Use `--fail-on-findings`, `--fail-on-min-severity`, or `--fail-on-min-score` on `tt analyze`, or `--min-avg-*` on `tt eval`, to return `1` when gates fail (for CI).
 
-`tt eval` now reports both the summary averages and a `worst-cases:` block so you can see which transcripts are dragging recall or showing step-count drift without opening the JSON by hand. The eval artifact also carries a top-level `worst_cases` array with the same ranking.
+`tt eval` now reports both the summary averages and a `worst-cases:` block so you can see which transcripts are dragging recall or showing step-count drift without opening the JSON by hand. When `data/samples/golden/cohorts.json` is present, it also prints a `cohorts:` block so you can compare parser behavior across trace families like `synthetic`, `real_clean`, `real_pathological`, `terse_linebreak`, `long_prose`, and `uqm`.
+
+Parser granularity defaults to `heuristic`. Use `paragraph` when you want the coarsest stable segmentation on long prose, and `sentence` when you want to open prose traces into finer steps without splitting fenced code or bounded thinking blocks.
 
 Rendering adapts automatically: traces under 15 steps keep the full step-by-step adjacency view, while larger traces switch to a compact phase summary with aggregated phase links. `tt analyze` adds finding-local hotspot neighborhoods in that compact mode.
 
-Machine-readable outputs follow the v1 contract in [docs/ARTIFACT_CONTRACT.md](docs/ARTIFACT_CONTRACT.md). Breaking JSON changes must bump the schema version and be called out there.
+Machine-readable outputs follow the v1 contract in [docs/ARTIFACT_CONTRACT.md](docs/ARTIFACT_CONTRACT.md). Every top-level artifact now includes a `config.parser_granularity` field so downstream tooling can tell which parse mode produced it. Breaking JSON changes must bump the schema version and be called out there.
 
 ## Finding priority
 
@@ -208,7 +217,13 @@ The `analysis.findings` array is highest-priority first. The report also prints 
 
 ## Parser behavior
 
-Step segmentation is heuristic. The parser prefers structure when it sees it:
+Step segmentation now has three explicit modes:
+
+- `heuristic` — current default; prefers structure, then paragraph boundaries, then transition markers
+- `paragraph` — structural markers plus paragraph boundaries only
+- `sentence` — structural markers first, then sentence boundaries inside prose spans
+
+All modes prefer structure when they see it:
 
 - numbered and bulleted lists
 - markdown headings
@@ -221,7 +236,7 @@ Atomic regions:
 - fenced code blocks are kept intact
 - `<think>` / `<thinking>` regions are treated as bounded blocks
 
-Large prose traces are usually split by paragraph before finer transition markers are used. Short lead-in lines can be merged with nearby equation or result lines to avoid trivial one-line arithmetic steps.
+`heuristic` still uses paragraph and transition cues. `sentence` is intentionally more aggressive on free-form prose, but the merge pass still collapses short lead-ins, equation/result pairs, and verification tails so arithmetic traces do not explode into trivial fragments.
 
 Known failure modes:
 
@@ -328,8 +343,9 @@ Each stage produces a JSON artifact. Stages can be run independently.
 
 - End-to-end local pipeline is operational: harvest -> parse -> graph -> analyze -> ASCII render.
 - JSON artifacts are emitted at every stage and can be evaluated against golden annotations.
-- JSON artifacts now carry a versioned top-level contract (`artifact_type`, `schema_version = 1`) documented in `docs/ARTIFACT_CONTRACT.md`.
+- JSON artifacts now carry a versioned top-level contract (`artifact_type`, `schema_version = 1`) plus `config.parser_granularity`, documented in `docs/ARTIFACT_CONTRACT.md`.
 - The current gold set contains 29 annotations, mixing synthetic controls with real Ollama and curated UQM traces.
+- Eval now includes cohort summaries from `data/samples/golden/cohorts.json`, so parser-mode regressions can be read by trace family instead of only by global average.
 - Real transcript harvesting works via Ollama (`llama3.1:8b`, `deepseek-r1:8b` used in calibration).
 - Cycle detection is confirmed on a real harvested closed-loop trace (`deepseek-r1-8b_circular_closed_loop_20260402.txt`).
 - Self-correction arithmetic traces are calibrated so the clean DeepSeek handshake trace produces no findings and the flawed Llama handshake trace collapses to a single unsupported-terminal finding.
@@ -340,9 +356,9 @@ Each stage produces a JSON artifact. Stages can be run independently.
 - The corpus path now includes a tested UQM import flow and curated pathological crack samples under `data/samples/`.
 - Golden-set regression harness is in place and run continuously during graph calibration.
 - Current golden baseline (`tt eval --annotations data/samples/golden --samples data/samples`) is:
-  - `count = 19`
-  - `avg_bond_precision = 0.956`
-  - `avg_bond_recall = 0.974`
+  - `count = 29`
+  - `avg_bond_precision = 0.971`
+  - `avg_bond_recall = 0.983`
   - `avg_finding_precision = 1.000`
   - `avg_finding_recall = 1.000`
 
@@ -350,7 +366,7 @@ Each stage produces a JSON artifact. Stages can be run independently.
 
 - **Detectors / findings:** Heuristic-based; behavior is regression-tested on golden fixtures, but long free-form traces can still produce false positives or false negatives.
 - **Graph / bonds:** Support edges are stronger on the current gold set, real arithmetic traces, and the calibrated cycle corpus, but a common failure mode is still **bad step boundaries**, not only missing links in linear prose. Format cues (headings, labels, discourse markers) still help.
-- The core is being treated as stable at `v0.2`; remaining backlog items are mostly parser granularity, packaging polish, library API, and future corpus growth.
+- The core is being treated as stable at `v0.2`; remaining backlog items are mostly backend judge quality, packaging polish, library API, and future corpus growth.
 - The parser treats triple-backtick fenced code blocks, markdown headings, and `<think>` / `<thinking>` blocks as atomic regions to reduce over-segmentation.
 - ASCII rendering now adapts for large traces with phase summaries and finding-local hotspots, but it is still a compression layer rather than a full graph-layout system.
 - Optional backend-assisted bond judging is available for `tt graph` and `tt analyze` (`--backend none|ollama|anthropic|openai`); it is not required for the local core pipeline.

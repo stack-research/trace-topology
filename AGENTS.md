@@ -16,7 +16,7 @@ For the plain-English, developer-first onboarding path, see `docs/FIRST_DEBUG_SE
 - Terminal-native. No web UI, no browser, no HTML output.
 - Core analysis requires zero API calls and zero network access. The tool works on local transcript files only.
 - Optional LLM-assisted classification is extra-installed: Ollama via the `ollama` extra, Anthropic via the `anthropic` extra, OpenAI via the `openai` extra. The default path is `--backend none`.
-- All intermediate representations are JSON. Every top-level artifact now carries `artifact_type` and `schema_version` fields; see `docs/ARTIFACT_CONTRACT.md`.
+- All intermediate representations are JSON. Every top-level artifact now carries `artifact_type`, `schema_version`, and `config.parser_granularity`; see `docs/ARTIFACT_CONTRACT.md`.
 - Analysis findings are ranked highest-priority first. Severity vocabulary is fixed to `low`, `moderate`, `severe`.
 - ASCII rendering only. No image generation for graphs.
 
@@ -94,6 +94,10 @@ Start with heuristic keyword/pattern matching. Add optional LLM judge later.
 ```bash
 # Analyze a transcript file
 tt analyze transcript.txt
+
+# Compare coarse vs fine segmentation on the same trace
+tt analyze transcript.txt --granularity paragraph
+tt analyze transcript.txt --granularity sentence
 
 # Parse only (emit step JSON)
 tt parse transcript.txt --out steps.json

@@ -14,6 +14,10 @@ def _base_header(artifact_type: str) -> dict:
     }
 
 
+def _config_payload(parser_granularity: str) -> dict:
+    return {"parser_granularity": parser_granularity}
+
+
 def step_payload(step: Step) -> dict:
     return asdict(step)
 
@@ -37,9 +41,16 @@ def graph_payload(graph: TraceGraph) -> dict:
     }
 
 
-def parse_artifact(transcript_id: str, steps: list[Step], char_count: int) -> dict:
+def parse_artifact(
+    transcript_id: str,
+    steps: list[Step],
+    char_count: int,
+    *,
+    parser_granularity: str = "heuristic",
+) -> dict:
     return {
         **_base_header("parse"),
+        "config": _config_payload(parser_granularity),
         "transcript_id": transcript_id,
         "steps": [step_payload(step) for step in steps],
         "stats": {"step_count": len(steps), "char_count": char_count},
@@ -47,8 +58,10 @@ def parse_artifact(transcript_id: str, steps: list[Step], char_count: int) -> di
 
 
 def graph_artifact(graph: TraceGraph) -> dict:
+    parser_granularity = graph.metadata.get("parser_granularity", "heuristic")
     return {
         **_base_header("graph"),
+        "config": _config_payload(parser_granularity),
         **graph_payload(graph),
     }
 
@@ -57,18 +70,29 @@ def analysis_artifact(report: AnalysisReport) -> dict:
     from trace_topology.analysis import rank_findings
 
     ranked_findings = rank_findings(report.findings, report.graph)
+    parser_granularity = report.graph.metadata.get("parser_granularity", "heuristic")
     return {
         **_base_header("analysis"),
+        "config": _config_payload(parser_granularity),
         "graph": graph_payload(report.graph),
         "findings": [finding.to_dict() for finding in ranked_findings],
         "stats": report.stats,
     }
 
 
-def eval_artifact(results: list[dict], summary: dict, worst_cases: list[dict] | None = None) -> dict:
+def eval_artifact(
+    results: list[dict],
+    summary: dict,
+    worst_cases: list[dict] | None = None,
+    *,
+    parser_granularity: str = "heuristic",
+    cohorts: dict | None = None,
+) -> dict:
     return {
         **_base_header("eval"),
+        "config": _config_payload(parser_granularity),
         "results": results,
         "summary": summary,
         "worst_cases": worst_cases or [],
+        "cohorts": cohorts or {},
     }

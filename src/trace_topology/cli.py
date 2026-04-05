@@ -10,7 +10,7 @@ from trace_topology.analysis import analyze_graph, finding_matches_gate
 from trace_topology.artifacts import graph_artifact
 from trace_topology.eval import evaluate_annotations, summary_meets_minimums
 from trace_topology.graph import build_graph
-from trace_topology.parser import parse_to_artifact, parse_transcript
+from trace_topology.parser import PARSER_GRANULARITIES, parse_to_artifact, parse_transcript
 from trace_topology.render import render_graph_ascii, render_report_ascii
 
 
@@ -59,9 +59,20 @@ def cli() -> None:
 @cli.command()
 @click.argument("transcript_path")
 @click.option("--out", "out_path", default=None, help="Write parse artifact JSON.")
-def parse(transcript_path: str, out_path: str | None) -> None:
+@click.option(
+    "--granularity",
+    type=click.Choice(PARSER_GRANULARITIES),
+    default="heuristic",
+    show_default=True,
+    help="Parser step-segmentation mode.",
+)
+def parse(transcript_path: str, out_path: str | None, granularity: str) -> None:
     transcript = _read_input(transcript_path)
-    artifact = parse_to_artifact(transcript, transcript_id=transcript_path)
+    artifact = parse_to_artifact(
+        transcript,
+        transcript_id=transcript_path,
+        granularity=granularity,
+    )
     _write_json(out_path, artifact)
     click.echo(json.dumps(artifact, indent=2))
 
@@ -84,18 +95,31 @@ def parse(transcript_path: str, out_path: str | None) -> None:
     show_default=True,
     help="Base URL for the Ollama backend.",
 )
+@click.option(
+    "--granularity",
+    type=click.Choice(PARSER_GRANULARITIES),
+    default="heuristic",
+    show_default=True,
+    help="Parser step-segmentation mode.",
+)
 def graph(
     transcript_path: str,
     out_path: str | None,
     backend_name: str,
     model: str | None,
     base_url: str,
+    granularity: str,
 ) -> None:
     transcript = _read_input(transcript_path)
-    steps = parse_transcript(transcript)
+    steps = parse_transcript(transcript, granularity=granularity)
     try:
         backend = _build_backend(backend_name, model=model, base_url=base_url)
-        trace_graph = build_graph(steps, transcript_id=transcript_path, backend=backend)
+        trace_graph = build_graph(
+            steps,
+            transcript_id=transcript_path,
+            backend=backend,
+            parser_granularity=granularity,
+        )
         payload = graph_artifact(trace_graph)
     except RuntimeError as exc:
         raise click.ClickException(str(exc)) from exc
@@ -140,6 +164,13 @@ def graph(
     metavar="F",
     help="Exit with code 1 if any finding has score >= F.",
 )
+@click.option(
+    "--granularity",
+    type=click.Choice(PARSER_GRANULARITIES),
+    default="heuristic",
+    show_default=True,
+    help="Parser step-segmentation mode.",
+)
 def analyze(
     transcript_path: str,
     out_path: str | None,
@@ -149,12 +180,18 @@ def analyze(
     fail_on_findings: bool,
     fail_on_min_severity: str | None,
     fail_on_min_score: float | None,
+    granularity: str,
 ) -> None:
     transcript = _read_input(transcript_path)
-    steps = parse_transcript(transcript)
+    steps = parse_transcript(transcript, granularity=granularity)
     try:
         backend = _build_backend(backend_name, model=model, base_url=base_url)
-        trace_graph = build_graph(steps, transcript_id=transcript_path, backend=backend)
+        trace_graph = build_graph(
+            steps,
+            transcript_id=transcript_path,
+            backend=backend,
+            parser_granularity=granularity,
+        )
         report = analyze_graph(trace_graph)
         payload = report.to_dict()
     except RuntimeError as exc:
@@ -206,6 +243,13 @@ def analyze(
     metavar="F",
     help="If set, exit 1 when summary avg_finding_precision is below F.",
 )
+@click.option(
+    "--granularity",
+    type=click.Choice(PARSER_GRANULARITIES),
+    default="heuristic",
+    show_default=True,
+    help="Parser step-segmentation mode.",
+)
 def eval_cmd(
     annotations: Path,
     samples: Path,
@@ -214,8 +258,9 @@ def eval_cmd(
     min_avg_bond_precision: float | None,
     min_avg_finding_recall: float | None,
     min_avg_finding_precision: float | None,
+    granularity: str,
 ) -> None:
-    payload = evaluate_annotations(annotations, samples)
+    payload = evaluate_annotations(annotations, samples, granularity=granularity)
     _write_json(out_path, payload)
     click.echo(json.dumps(payload["summary"], indent=2))
     if payload["worst_cases"]:
@@ -229,6 +274,17 @@ def eval_cmd(
                 f"bond_recall={case['bond_recall']:.2f} "
                 f"finding_recall={case['finding_recall']:.2f} "
                 f"({reasons})"
+            )
+    if payload["cohorts"]:
+        click.echo("cohorts:")
+        for name, summary in payload["cohorts"].items():
+            click.echo(
+                "  - "
+                f"{name}: "
+                f"count={summary['count']} "
+                f"step_delta={summary['avg_step_count_delta']:.2f} "
+                f"bond_recall={summary['avg_bond_recall']:.2f} "
+                f"finding_recall={summary['avg_finding_recall']:.2f}"
             )
     ok, reasons = summary_meets_minimums(
         payload["summary"],

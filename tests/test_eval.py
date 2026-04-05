@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import pytest
+
 from trace_topology.eval import (
     evaluate_annotation,
     evaluate_annotations,
@@ -14,6 +16,7 @@ def test_eval_harness_runs(golden_dir, samples_dir) -> None:
     payload = evaluate_annotations(golden_dir, samples_dir)
     assert "summary" in payload
     assert "worst_cases" in payload
+    assert "cohorts" in payload
     assert payload["summary"]["count"] >= 1
     assert "avg_bond_precision" in payload["summary"]
 
@@ -180,6 +183,73 @@ def test_eval_summary_meets_accuracy_floors(golden_dir, samples_dir) -> None:
     assert summary["avg_bond_recall"] >= 0.88
     assert summary["avg_finding_precision"] >= 0.80
     assert summary["avg_finding_recall"] >= 0.75
+
+
+def test_eval_heuristic_baseline_matches_current_calibration(golden_dir, samples_dir) -> None:
+    payload = evaluate_annotations(golden_dir, samples_dir, granularity="heuristic")
+    summary = payload["summary"]
+
+    assert summary["count"] == 29
+    assert summary["avg_step_count_delta"] == pytest.approx(0.0)
+    assert summary["avg_bond_precision"] == pytest.approx(0.971264367816092)
+    assert summary["avg_bond_recall"] == pytest.approx(0.9827586206896551)
+    assert summary["avg_finding_precision"] == pytest.approx(1.0)
+    assert summary["avg_finding_recall"] == pytest.approx(1.0)
+
+
+def test_eval_granularity_changes_known_step_count_delta(golden_dir, samples_dir) -> None:
+    annotation_path = Path(golden_dir / "synthetic_contradiction_privacy_0001.annotation.json")
+
+    paragraph = evaluate_annotation(annotation_path, samples_dir, granularity="paragraph")
+    sentence = evaluate_annotation(annotation_path, samples_dir, granularity="sentence")
+
+    assert paragraph.step_count_delta == -2
+    assert sentence.step_count_delta == 0
+
+
+def test_eval_cohorts_summary_uses_manifest(golden_dir, samples_dir, tmp_path) -> None:
+    annotation_dir = tmp_path / "golden"
+    annotation_dir.mkdir()
+    names = [
+        "synthetic_contradiction_privacy_0001.annotation.json",
+        "deepseek-r1-8b_self_correction_probability_20260402.annotation.json",
+    ]
+    for name in names:
+        source = golden_dir / name
+        (annotation_dir / name).write_text(source.read_text(encoding="utf-8"), encoding="utf-8")
+    (annotation_dir / "cohorts.json").write_text(
+        '{"synthetic_contradiction_privacy_0001.txt": ["synthetic", "long_prose"], '
+        '"deepseek-r1-8b_self_correction_probability_20260402.txt": ["real_clean"]}',
+        encoding="utf-8",
+    )
+
+    payload = evaluate_annotations(annotation_dir, samples_dir)
+
+    assert set(payload["cohorts"]) == {"long_prose", "real_clean", "synthetic"}
+    assert payload["cohorts"]["synthetic"]["count"] == 1
+    assert payload["cohorts"]["real_clean"]["count"] == 1
+
+
+def test_eval_cohorts_allow_partial_mappings(golden_dir, samples_dir, tmp_path) -> None:
+    annotation_dir = tmp_path / "golden"
+    annotation_dir.mkdir()
+    names = [
+        "synthetic_contradiction_privacy_0001.annotation.json",
+        "deepseek-r1-8b_self_correction_probability_20260402.annotation.json",
+    ]
+    for name in names:
+        source = golden_dir / name
+        (annotation_dir / name).write_text(source.read_text(encoding="utf-8"), encoding="utf-8")
+    (annotation_dir / "cohorts.json").write_text(
+        '{"synthetic_contradiction_privacy_0001.txt": ["synthetic"]}',
+        encoding="utf-8",
+    )
+
+    payload = evaluate_annotations(annotation_dir, samples_dir)
+
+    assert set(payload["cohorts"]) == {"synthetic"}
+    assert payload["summary"]["count"] == 2
+    assert payload["cohorts"]["synthetic"]["count"] == 1
 
 
 def test_rank_eval_results_prioritizes_step_delta_then_recall() -> None:
